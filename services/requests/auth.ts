@@ -1,3 +1,4 @@
+import { LoginResponse } from "@/types/auth/login";
 import { instance } from "../instance";
 import { Session } from "next-auth";
 
@@ -23,5 +24,45 @@ export async function RefreshAccessToken(token: Session["user"]) {
       ...token,
       error: "RefreshAccessTokenError",
     };
+  }
+}
+
+// Bot code bilan login qilish
+export async function Login({
+  code,
+}: {
+  code: string;
+}): Promise<LoginResponse | null> {
+  try {
+    // Refresh token orqali yangi access token olish
+    const { data }: { data: LoginResponse } = await instance.post(
+      "/authbot/login/",
+      {
+        code,
+      }
+    );
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+// User profilni olish
+
+export async function GetMe({
+  access,
+}: {
+  access: string;
+}): Promise<GetMeResponse | null> {
+  try {
+    // Refresh token orqali yangi access token olish
+    const { data }: { data: GetMeResponse } = await instance.get("/auth/me/", {
+      headers: {
+        Authorization: `Bearer ${access}`,
+      },
+    });
+    return data;
+  } catch {
+    return null;
   }
 }

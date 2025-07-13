@@ -8,6 +8,7 @@ import {
   BarChart3,
   Settings,
   ChevronDown,
+  LogOut,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -30,9 +31,10 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { signOut, useSession } from "next-auth/react";
 
 // Navigation data
-const data = {
+const Navigation = {
   navMain: [
     {
       title: "Asosiy",
@@ -69,6 +71,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data } = useSession();
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -93,7 +97,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {data.navMain.map((group) => (
+        {Navigation.navMain.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -134,9 +138,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <AvatarFallback className="rounded-lg">JD</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">John Doe</span>
+                    <span className="truncate font-semibold">
+                      {data?.user.first_name}
+                      {data?.user.last_name}
+                    </span>
                     <span className="truncate text-xs text-muted-foreground">
-                      john@example.com
+                      {data?.user.phone}
                     </span>
                   </div>
                   <ChevronDown className="ml-auto size-4" />
@@ -154,8 +161,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <span>Profil</span>
                   </a>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="gap-2">
-                  <Settings className="size-4" />
+                <DropdownMenuItem onClick={() => signOut()} className="gap-2">
+                  <LogOut className="size-4" />
                   <span>Chiqish</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>

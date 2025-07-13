@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 
 import { queryGenerator } from "@/lib/query-generator";
 import { useDebounces } from "@/hooks/use-debounces";
-import { instance } from "../instance";
+import { instance, instanceAuth } from "../instance";
 
 export const useReactQueryAction = <T>({
   url,
@@ -36,7 +36,7 @@ export const useReactQueryAction = <T>({
     queryKey: [debouncedUrl],
     queryFn: async () => {
       try {
-        let { data } = await instance.get(debouncedUrl);
+        let { data } = await instanceAuth.get(debouncedUrl);
         return data;
       } catch (error) {
         return null;

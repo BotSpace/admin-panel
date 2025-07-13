@@ -19,7 +19,7 @@ instanceAuth.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error: any) => Promise.reject(error)
 );
 
 instanceAuth.interceptors.response.use(
@@ -45,7 +45,7 @@ instanceAuth.interceptors.response.use(
     }
 
     // log out if user is not authenticated
-    await signOut();
+    // await signOut();
 
     return Promise.reject(error);
   }

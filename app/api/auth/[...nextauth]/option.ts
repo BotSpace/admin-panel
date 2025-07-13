@@ -2,46 +2,45 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { GetMe, Login, RefreshAccessToken } from "@/services/requests/auth";
 import { AuthSession } from "../next-auth";
-import { GetMeResponse } from "@/types/get-me";
 
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        phone: {},
-        password: {},
+        code: {},
       },
 
       async authorize(credentials) {
-        const phone = credentials?.phone as string;
-        const password = credentials?.password as string;
+        const code = credentials?.code as string;
 
         // Avval Confirm API orqali tasdiqlash tokenlarini olish
-        let { data } = await Login<{
-          refresh: string;
-          access: string;
-        }>({
-          phone,
-          password,
+        let data = await Login({ code });
+
+        if (!data) {
+          throw new Error("Code hato");
+        }
+
+        const getMe = await GetMe({
+          access: data?.token.access,
         });
 
-        const { data: user } = await GetMe<GetMeResponse>({
-          access: data?.access,
-        });
+        if (!getMe) {
+          throw new Error("get me xatolik berdi");
+        }
 
         if (data) {
           return {
-            id: user.data.id,
+            id: String(getMe.data.id),
             avatar: "",
-            access: data.access,
-            refresh: data.refresh,
-            first_name: user.data.first_name,
-            last_name: user.data.last_name,
-            phone: phone,
+            access: data.token.access,
+            refresh: data.token.refresh,
+            first_name: getMe.data.first_name,
+            last_name: getMe.data.last_name,
+            phone: data.user.phone,
             lang: "uz",
             accessTokenExpires: Date.now() + 5 * 60 * 1000,
-            role: user.data.role,
+            role: getMe.data.role,
           };
         } else {
           console.log(data);

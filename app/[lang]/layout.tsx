@@ -8,6 +8,10 @@ import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import LayoutController from "./layout-controller";
 
+import { Toaster } from "react-hot-toast";
+import AuthProvider from "./AuthProvider";
+import ReactQueryProvider from "./ReactQueryProvider";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,14 +41,30 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang={lang} className="dark" style={{ colorScheme: "dark" }}>
+    <html
+      lang={lang}
+      className="dark"
+      style={{ colorScheme: "dark" }}
+      suppressHydrationWarning
+    >
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        suppressHydrationWarning
       >
-        <NextIntlClientProvider>
-          <LayoutController>{children}</LayoutController>
-        </NextIntlClientProvider>
+        <ReactQueryProvider>
+          <AuthProvider>
+            <NextIntlClientProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <LayoutController>{children}</LayoutController>
+                <Toaster />
+              </ThemeProvider>
+            </NextIntlClientProvider>
+          </AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );
