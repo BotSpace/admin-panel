@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Bot } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,10 +29,11 @@ import toast from "react-hot-toast";
 import React, { useState } from "react";
 
 type Props = {
-  children: React.ReactNode;
+  dialogOpenButton: React.ReactNode;
+  refetch: () => void;
 };
 
-export function CreateBotModal({ children }: Props) {
+export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   // 1. Formani aniqlash.
@@ -41,7 +41,6 @@ export function CreateBotModal({ children }: Props) {
     resolver: zodResolver(botFormSchema),
     defaultValues: {
       name: "",
-      development_token: "",
     },
   });
 
@@ -50,11 +49,12 @@ export function CreateBotModal({ children }: Props) {
     let toastId = toast.loading("Yaratilmoqda...");
 
     instanceAuth
-      .post("/project/bot/", {
+      .post("/project/", {
         ...values,
       })
       .then(() => {
-        setIsOpen(true);
+        refetch();
+
         toast.success("Bot yaratildi!", {
           id: toastId,
         });
@@ -64,12 +64,16 @@ export function CreateBotModal({ children }: Props) {
         toast.error(data.message, {
           id: toastId,
         });
+      })
+      .finally(() => {
+        form.reset();
+        setIsOpen(false);
       });
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger asChild>{dialogOpenButton}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Yangi bot yaratish</DialogTitle>
@@ -84,28 +88,11 @@ export function CreateBotModal({ children }: Props) {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                  <FormItem className="flex flex-col gap-4">
                     <FormLabel className="text-right">Bot nomi</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Masalan, Mening Super Botim"
-                        className="col-span-3"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="col-span-4 text-right" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="development_token"
-                render={({ field }) => (
-                  <FormItem className="grid grid-cols-4 items-center gap-4">
-                    <FormLabel className="text-right">Token</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="BotFather'dan olingan token"
                         className="col-span-3"
                         {...field}
                       />

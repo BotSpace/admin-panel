@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bot, Wand2, MoreHorizontal, Plus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -24,76 +24,9 @@ import { BotType } from "@/types/http/bot";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CreateBotModal } from "@/components/create-new-bot";
 import { Link } from "@/i18n/routing";
-
-// Mock data for demonstration
-const mockBots = [
-  {
-    id: 1,
-    name: "Sales Master Bot",
-    username: "@salesmaster_bot",
-    avatar: "/placeholder.svg?height=40&width=40",
-    plan: "Pro",
-    isActive: true,
-    subscribers: 1450,
-    todayMessages: 2100,
-    growthData: [120, 132, 101, 134, 90, 230, 210], // 7 days of growth data
-  },
-  {
-    id: 2,
-    name: "Support Helper",
-    username: "@support_helper_bot",
-    avatar: "/placeholder.svg?height=40&width=40",
-    plan: "Free",
-    isActive: true,
-    subscribers: 890,
-    todayMessages: 450,
-    growthData: [80, 95, 110, 125, 140, 155, 170],
-  },
-  {
-    id: 3,
-    name: "News Broadcaster",
-    username: "@news_bot",
-    avatar: "/placeholder.svg?height=40&width=40",
-    plan: "Pro",
-    isActive: false,
-    subscribers: 2340,
-    todayMessages: 0,
-    growthData: [200, 195, 180, 175, 160, 150, 140],
-  },
-];
-
-// Simple sparkline component
-function Sparkline({ data }: { data: number[] }) {
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-
-  const points = data
-    .map((value, index) => {
-      const x = (index / (data.length - 1)) * 100;
-      const y = 100 - ((value - min) / range) * 100;
-      return `${x},${y}`;
-    })
-    .join(" ");
-
-  return (
-    <div className="h-8 w-16">
-      <svg
-        width="100%"
-        height="100%"
-        viewBox="0 0 100 100"
-        className="text-primary"
-      >
-        <polyline
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          points={points}
-        />
-      </svg>
-    </div>
-  );
-}
+import { useSession } from "next-auth/react";
+import DeleteModal from "@/components/common/delte-modal/delete-modal";
+import { instanceAuth } from "@/services/instance";
 
 // Empty state component
 function EmptyState() {
@@ -123,7 +56,16 @@ function EmptyState() {
 }
 
 // Bot card component
-function BotCard({ bot }: { bot: BotType }) {
+function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
+
+  async function deleteBot(params: { id: number }) {
+    // Call delete API or perform delete action
+    instanceAuth.delete(`project/${params.id}/`).then((res) => {
+      refetch();
+    });
+  }
+
   return (
     <Card className="cursor-pointer transition-all hover:shadow-md">
       <CardHeader className="pb-3">
@@ -144,9 +86,9 @@ function BotCard({ bot }: { bot: BotType }) {
           <div className="flex items-center space-x-2">
             <div
               className={`h-2 w-2 rounded-full ${
-                bot.is_active ? "bg-green-500" : "bg-gray-400"
+                bot.bot_is_released ? "bg-green-500" : "bg-gray-400"
               }`}
-              title={bot.is_active ? "Active" : "Inactive"}
+              title={bot.bot_is_released ? "Active" : "Inactive"}
             />
           </div>
         </div>
@@ -155,17 +97,24 @@ function BotCard({ bot }: { bot: BotType }) {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">Obunachilar</p>
-            <p className="font-semibold">{bot.clients_count}</p>
+            <p className="font-semibold">{bot.project_members_count}</p>
           </div>
         </div>
       </CardContent>
       <CardFooter className="flex items-center justify-between pt-3">
         <Link
           className={buttonVariants({ variant: "outline" })}
-          href={`/${bot.id}/`}
+          href={`/bot/${bot.id}/constructor`}
         >
           Boshqarish
         </Link>
+
+        <DeleteModal
+          itemName="Project Phoenix"
+          onConfirm={() => deleteBot({ id: bot.id })}
+          open={deleteModalIsOpen}
+          onOpenChange={setDeleteModalIsOpen}
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm">
@@ -179,6 +128,12 @@ function BotCard({ bot }: { bot: BotType }) {
             <DropdownMenuItem>
               <Link href={`/${bot.id}/settings`}>Sozlamalar</Link>
             </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setDeleteModalIsOpen(true)}
+              variant="destructive"
+            >
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </CardFooter>
@@ -190,10 +145,16 @@ function BotCard({ bot }: { bot: BotType }) {
 export default function Page() {
   const [hasBots] = useState(true); // Change to false to see empty state
 
-  const { data, isLoading, isError, error } = useReactQueryAction<
+  const session = useSession();
+
+  useEffect(() => {
+    console.log(session);
+  }, [session]);
+
+  const { data, isLoading, refetch } = useReactQueryAction<
     PaginationResponse<BotType[]>
   >({
-    url: "project/bot/",
+    url: "project/",
   });
 
   if (!hasBots) {
@@ -211,12 +172,15 @@ export default function Page() {
             Barcha botlaringizni boshqaring va kuzatib boring
           </p>
         </div>
-        <CreateBotModal>
-          <Button>
-            <Bot className="mr-2 h-4 w-4" />
-            Yangi Bot Yaratish
-          </Button>
-        </CreateBotModal>
+        <CreateBotModal
+          dialogOpenButton={
+            <Button>
+              <Bot className="mr-2 h-4 w-4" />
+              Yangi Bot Yaratish
+            </Button>
+          }
+          refetch={refetch}
+        ></CreateBotModal>
       </div>
 
       {isLoading && (
@@ -228,15 +192,18 @@ export default function Page() {
       )}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {data?.data.results.map((bot) => (
-          <BotCard key={bot.id} bot={bot} />
+          <BotCard key={bot.id} bot={bot} refetch={refetch} />
         ))}
         {data && data?.data.results.length < 0 && (
-          <CreateBotModal>
-            <div className="flex gap-2 flex-col items-center justify-center rounded-4xl bg-background border-2 cursor-pointer h-[200px]">
-              <Plus size={40} />
-              <p className="text-sm text-white/40">Botingizni yarating</p>
-            </div>
-          </CreateBotModal>
+          <CreateBotModal
+            refetch={refetch}
+            dialogOpenButton={
+              <div className="flex gap-2 flex-col items-center justify-center rounded-4xl bg-background border-2 cursor-pointer h-[200px]">
+                <Plus size={40} />
+                <p className="text-sm text-white/40">Botingizni yarating</p>
+              </div>
+            }
+          />
         )}
       </div>
     </div>

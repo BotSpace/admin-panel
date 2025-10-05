@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 
 import { queryGenerator } from "@/lib/query-generator";
 import { useDebounces } from "@/hooks/use-debounces";
-import { instance, instanceAuth } from "../instance";
+import { instanceAuth } from "../instance";
 
 export const useReactQueryAction = <T>({
   url,

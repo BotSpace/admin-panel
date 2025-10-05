@@ -2,12 +2,14 @@ import axios from "axios";
 import { getSession, signOut } from "next-auth/react";
 import { RefreshAccessToken } from "./requests/auth";
 
+import env from "@/lib/env";
+
 export const instanceAuth = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API,
+  baseURL: env.NEXT_PUBLIC_API + "/api/",
 });
 
 export const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API,
+  baseURL: env.NEXT_PUBLIC_API,
 });
 
 // interceptors

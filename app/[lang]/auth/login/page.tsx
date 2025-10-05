@@ -12,24 +12,30 @@ import Logo from "@/public/botmather.png";
 import { signIn } from "next-auth/react";
 
 import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
+import { Send } from "lucide-react";
 
 export default function AuthenticationPage() {
   const [code, setCode] = React.useState<string>("");
 
+  const LoginUser = () => {
+    toast.loading("Login...");
+
+    signIn("credentials", {
+      code: code,
+      callbackUrl: "/",
+    })
+      .then(() => {
+        toast.success("Login success");
+      })
+      .catch(() => {
+        toast.error("Login error");
+      });
+  };
+
   React.useEffect(() => {
     if (code.length == 6) {
-      toast.loading("Login...");
-
-      signIn("credentials", {
-        code: code,
-        callbackUrl: "/",
-      })
-        .then(() => {
-          toast.success("Login success");
-        })
-        .catch(() => {
-          toast.error("Login error");
-        });
+      LoginUser();
     }
   }, [code]);
 
@@ -91,6 +97,18 @@ export default function AuthenticationPage() {
             ></InputOTPSlot>
           </InputOTPGroup>
         </InputOTP>
+
+        {/* Kodeni yuborish tugmasi */}
+        <div className="flex gap-2">
+          <Button>
+            <Send />
+            Kodni Yuborish
+          </Button>
+          <Button onClick={() => LoginUser()}>
+            <Send />
+            DEBUG Login
+          </Button>
+        </div>
       </div>
     </div>
   );

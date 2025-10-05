@@ -2,7 +2,7 @@ export interface BotType {
   id: number;
   name: string;
   username: string;
-  is_active: boolean;
+  bot_is_released: boolean;
   avatar: string | null;
-  clients_count: number;
+  project_members_count: number;
 }
