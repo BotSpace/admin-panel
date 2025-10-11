@@ -1,23 +1,13 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
+import type { LucideIcon } from "lucide-react";
 import {
-  LayoutDashboard,
-  Bot,
-  MessageSquare,
-  BarChart3,
-  Settings,
   ChevronDown,
+  Settings,
   LogOut,
+  Bot as DefaultBrandIcon,
 } from "lucide-react";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -31,145 +21,217 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { signOut, useSession } from "next-auth/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSession, signOut as defaultSignOut } from "next-auth/react";
+import { Link, usePathname } from "@/i18n/routing";
 
-// Navigation data
-const Navigation = {
-  navMain: [
-    {
-      title: "Asosiy",
-      items: [
-        {
-          title: "Boshqaruv Paneli",
-          url: "/",
-          icon: LayoutDashboard,
-          isActive: true,
-          isDisabled: false,
-        },
-      ],
-    },
-    {
-      title: "Boshqaruv",
-      items: [
-        {
-          title: "Obunachilar",
-          url: "/subscribers",
-          icon: MessageSquare,
-          isActive: false,
-          isDisabled: true,
-        },
-        {
-          title: "Analitika",
-          url: "/analytics",
-          icon: BarChart3,
-          isActive: false,
-          isDisabled: true,
-        },
-      ],
-    },
-  ],
+// ------------------------------
+// Types
+// ------------------------------
+export type NavItem = {
+  title: string;
+  href: string;
+  icon?: LucideIcon;
+  disabled?: boolean;
+  // exact = true bo'lsa to'liq tenglik, aks holda startsWith bilan tekshiriladi
+  exact?: boolean;
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export type NavGroup = {
+  title: string;
+  items: NavItem[];
+};
+
+type Brand = {
+  name: string;
+  version?: string;
+  href?: string;
+  icon?: LucideIcon;
+};
+
+type LinkLike = React.ElementType<{
+  href: string;
+  className?: string;
+  children?: React.ReactNode;
+  "aria-disabled"?: boolean;
+}>;
+
+export type ReusableSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  nav: NavGroup[];
+  brand?: Brand;
+  showUserFooter?: boolean;
+  onSignOut?: () => void;
+};
+
+// Fallback <a> — agar LinkComponent berilmasa
+const AnchorLink: LinkLike = (props: any) => <a {...props} />;
+
+// ------------------------------
+// Component
+// ------------------------------
+export function ReusableSidebar({
+  nav,
+  brand = { name: "App", version: "", href: "/", icon: DefaultBrandIcon },
+  showUserFooter = true,
+  onSignOut = defaultSignOut,
+  ...props
+}: ReusableSidebarProps) {
+  const pathname = usePathname() ?? "/";
   const { data } = useSession();
+
+  const BrandIcon = brand.icon ?? DefaultBrandIcon;
+
+  const isActive = React.useCallback(
+    (item: NavItem) => {
+      return pathname === item.href;
+    },
+    [pathname]
+  );
+
+  const fullName = [
+    (data?.user as any)?.first_name,
+    (data?.user as any)?.last_name,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const phoneOrEmail = (data?.user as any)?.phone ?? data?.user?.email ?? "";
+  const initials =
+    fullName
+      ?.trim()
+      ?.split(" ")
+      ?.map((s: string) => s[0]?.toUpperCase())
+      .join("")
+      .slice(0, 2) ||
+    (data?.user?.email?.[0]?.toUpperCase() ?? "U");
 
   return (
     <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Bot className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    Bot Constructor
-                  </span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    v1.0.0
-                  </span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
+      {/* Brand header (optional) */}
+      {brand && (
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" asChild>
+                <Link href={brand.href ?? "/"}>
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                    <BrandIcon className="size-4" />
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">{brand.name}</span>
+                    {brand.version ? (
+                      <span className="truncate text-xs text-muted-foreground">
+                        {brand.version}
+                      </span>
+                    ) : null}
+                  </div>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+      )}
+
+      {/* Nav */}
       <SidebarContent>
-        {Navigation.navMain.map((group) => (
+        {nav.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {group.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a
-                        aria-disabled={item.isDisabled}
-                        href={item.url}
-                        className="flex items-center gap-2"
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname == item.href}
                       >
-                        <item.icon className="size-4" />
-                        <span>{item.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                        <Link
+                          href={item.href}
+                          aria-disabled={item.disabled}
+                          className={
+                            item.disabled
+                              ? "pointer-events-none opacity-50"
+                              : "flex items-center gap-2"
+                          }
+                        >
+                          {Icon ? <Icon className="size-4" /> : null}
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+
+      {/* User footer (optional) */}
+      {showUserFooter && (
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  >
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarImage
+                        src="/placeholder.svg?height=32&width=32"
+                        alt="User"
+                      />
+                      <AvatarFallback className="rounded-lg">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {fullName || "Foydalanuvchi"}
+                      </span>
+                      <span className="truncate text-xs text-muted-foreground">
+                        {phoneOrEmail}
+                      </span>
+                    </div>
+                    <ChevronDown className="ml-auto size-4" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent
+                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                  side="bottom"
+                  align="end"
+                  sideOffset={4}
                 >
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage
-                      src="/placeholder.svg?height=32&width=32"
-                      alt="User"
-                    />
-                    <AvatarFallback className="rounded-lg">JD</AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {data?.user.first_name}
-                      {data?.user.last_name}
-                    </span>
-                    <span className="truncate text-xs text-muted-foreground">
-                      {data?.user.phone}
-                    </span>
-                  </div>
-                  <ChevronDown className="ml-auto size-4" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                side="bottom"
-                align="end"
-                sideOffset={4}
-              >
-                <DropdownMenuItem asChild>
-                  <a href="/profile" className="gap-2">
-                    <Settings className="size-4" />
-                    <span>Profil</span>
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => signOut()} className="gap-2">
-                  <LogOut className="size-4" />
-                  <span>Chiqish</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+                  <DropdownMenuItem asChild>
+                    <AnchorLink href="/profile" className="gap-2">
+                      <Settings className="size-4" />
+                      <span>Profil</span>
+                    </AnchorLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => onSignOut()}
+                    className="gap-2"
+                  >
+                    <LogOut className="size-4" />
+                    <span>Chiqish</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      )}
+
       <SidebarRail />
     </Sidebar>
   );
