@@ -7,25 +7,9 @@ export const HomePageNavigation: NavGroup[] = [
     items: [
       {
         title: "Boshqaruv Paneli",
-        href: "/bot/123",
+        href: "/",
         icon: LayoutDashboard,
         exact: true,
-      },
-    ],
-  },
-  {
-    title: "Boshqaruv",
-    items: [
-      {
-        title: "Xabar yuborish",
-        href: "/bot/123/send-message",
-        icon: MessageSquare,
-      },
-      {
-        title: "Versions",
-        href: "/bot/123/versions",
-        icon: BarChart3,
-        disabled: false,
       },
     ],
   },
