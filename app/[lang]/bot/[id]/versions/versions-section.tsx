@@ -4,33 +4,17 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
-
-interface Version {
-  id: string;
-  timestamp: string;
-  author: string;
-  changes: number;
-  isLive?: boolean;
-}
-
-const versions: Version[] = [
-  {
-    id: "1",
-    timestamp: "20d ago",
-    author: "Muhiddin Kabraliev",
-    changes: 1,
-    isLive: true,
-  },
-  { id: "2", timestamp: "2mo ago", author: "Muhiddin Kabraliev", changes: 2 },
-  { id: "3", timestamp: "2mo ago", author: "Muhiddin Kabraliev", changes: 1 },
-  { id: "4", timestamp: "2mo ago", author: "Muhiddin Kabraliev", changes: 0 },
-  { id: "5", timestamp: "3mo ago", author: "Muhiddin Kabraliev", changes: 2 },
-  { id: "6", timestamp: "3mo ago", author: "Muhiddin Kabraliev", changes: 2 },
-  { id: "7", timestamp: "3mo ago", author: "Muhiddin Kabraliev", changes: 1 },
-];
+import { useReactQueryAction } from "@/services/react-query";
 
 export function VersionsSection() {
-  const [selectedVersion, setSelectedVersion] = useState(versions[0]);
+  const { data } = useReactQueryAction({
+    url: "/relase",
+  });
+
+  console.log(
+    "🔍 ~ VersionsSection ~ app/[lang]/bot/[id]/versions/versions-section.tsx:10 ~ data:",
+    data
+  );
 
   return (
     <div className="rounded-lg border border-border bg-card">
@@ -41,7 +25,7 @@ export function VersionsSection() {
       <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr]">
         {/* Version List */}
         <div className="border-r border-border">
-          {versions.map((version) => (
+          {/* {versions.map((version) => (
             <button
               key={version.id}
               onClick={() => setSelectedVersion(version)}
@@ -69,7 +53,7 @@ export function VersionsSection() {
                 {version.changes} {version.changes === 1 ? "Change" : "Changes"}
               </p>
             </button>
-          ))}
+          ))} */}
         </div>
 
         {/* Version Details */}
@@ -94,9 +78,9 @@ export function VersionsSection() {
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">
                 Published by
               </h3>
-              <p className="text-sm text-foreground">
+              {/* <p className="text-sm text-foreground">
                 {selectedVersion.author}
-              </p>
+              </p> */}
             </div>
 
             <div>

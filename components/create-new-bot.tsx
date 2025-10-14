@@ -27,6 +27,9 @@ import { botFormSchema } from "@/schema/botSchema"; // Sxema faylini import qili
 import { instanceAuth } from "@/services/instance";
 import toast from "react-hot-toast";
 import React, { useState } from "react";
+import { useRouter } from "@/i18n/routing";
+import { APIResponseType } from "@/types/http/http";
+import { Project } from "@/types/http/project";
 
 type Props = {
   dialogOpenButton: React.ReactNode;
@@ -34,6 +37,8 @@ type Props = {
 };
 
 export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
+  const route = useRouter();
+
   const [isOpen, setIsOpen] = useState(false);
 
   // 1. Formani aniqlash.
@@ -49,12 +54,11 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
     let toastId = toast.loading("Yaratilmoqda...");
 
     instanceAuth
-      .post("/project/", {
+      .post<APIResponseType<Project>>("/project/", {
         ...values,
       })
-      .then(() => {
-        refetch();
-
+      .then(({ data }) => {
+        route.push(`/bot/${data.data.id}/constructor`);
         toast.success("Bot yaratildi!", {
           id: toastId,
         });
@@ -77,12 +81,10 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Yangi bot yaratish</DialogTitle>
-          <DialogDescription>
-            Yangi bot yaratish uchun uning nomini va tokenini kiriting.
-          </DialogDescription>
+          <DialogDescription>Loyihangiz uchun nom bering</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
             <div className="grid gap-4 py-4">
               <FormField
                 control={form.control}
