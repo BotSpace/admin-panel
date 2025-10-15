@@ -31,8 +31,8 @@ export const BotPageNavigation = (id: string): NavGroup[] => {
           icon: MessageSquare,
         },
         {
-          title: "Versions",
-          href: `/bot/${id}/versions`,
+          title: "Release",
+          href: `/bot/${id}/release`,
           icon: BarChart3,
           disabled: false,
         },

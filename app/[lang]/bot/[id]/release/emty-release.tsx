@@ -1,0 +1,37 @@
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
+import { Link } from "@/i18n/routing";
+import { useParams } from "next/navigation";
+
+type Props = {};
+
+function EmptyRelease({}: Props) {
+  const { id }: { id: string } = useParams();
+  return (
+    <Card className="max-w-md mx-auto">
+      <CardHeader>
+        <CardTitle>No Releases</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>
+          There are no releases yet. Click the button below to create your first
+          release.
+        </p>
+      </CardContent>
+      <CardFooter>
+        <Link href={`/bot/${id}/constructor`} className={buttonVariants()}>
+          Create Release 🎉
+        </Link>
+      </CardFooter>
+    </Card>
+  );
+}
+
+export default EmptyRelease;

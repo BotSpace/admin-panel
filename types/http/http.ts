@@ -1,9 +1,4 @@
-export interface APIResponseType<T> {
-  status: boolean;
-  data: T;
-}
-
-export interface PaginationResponse<T> {
+export interface APIListResponse<T> {
   status: boolean;
   data: {
     links: Links;

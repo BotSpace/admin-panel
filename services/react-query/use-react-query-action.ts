@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-
 import { queryGenerator } from "@/lib/query-generator";
 import { useDebounces } from "@/hooks/use-debounces";
 import { instanceAuth } from "../instance";
@@ -11,37 +10,46 @@ export const useReactQueryAction = <T>({
   url,
   query,
   debounceTime,
-  enabled,
+  enabled = true,
 }: {
   url: string;
   query?: Record<string, any>;
   debounceTime?: number;
   enabled?: boolean;
 }) => {
-  let params: any = useParams();
+  const params = useParams();
 
-  Object.keys(params).map((key) => {
-    url = url.replace(`[${key}]`, params[key]);
+  Object.keys(params).forEach((key) => {
+    const regex = new RegExp(`\\[${key}\\]`, "g");
+    const value = Array.isArray(params[key])
+      ? params[key]?.[0] // agar array bo'lsa — birinchi elementni olamiz
+      : params[key];
+
+    if (value !== undefined) {
+      url = url.replace(regex, String(value));
+    }
   });
 
-  // urlga paramslarni qo'shish
+  // ✅ Agar query object bo'lsa, uni stringga qo'shamiz
   if (query) {
-    url = url + queryGenerator(query);
+    url += queryGenerator(query);
   }
 
-  // Debounced URL
+  // ✅ Debounce ishlatish (ixtiyoriy)
   const debouncedUrl = debounceTime ? useDebounces(url, debounceTime) : url;
 
   return useQuery<T>({
     queryKey: [debouncedUrl],
     queryFn: async () => {
       try {
-        let { data } = await instanceAuth.get(debouncedUrl);
+        const { data } = await instanceAuth.get(debouncedUrl);
         return data;
       } catch (error) {
+        console.error("Request failed:", error);
         return null;
       }
     },
+    // ✅ Debounce bo'lsa, URL tayyor bo'lganda ishga tushsin
     enabled: enabled && (!debounceTime || debouncedUrl === url),
   });
 };
