@@ -1,37 +1,158 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Botmather - Telegram Bot Constructor Manager
 
-## Getting Started
+Botmather - bu Telegram botlarini yaratish va boshqarish uchun professional platforma. Vizual konstruktor, real-time analytics va kuchli boshqaruv paneli bilan.
 
-First, run the development server:
+## 🚀 Xususiyatlar
 
+- **Vizual Bot Konstruktor** - Kod yozmasdan bot yarating
+- **Real-time Analytics** - Bot faoliyatini kuzating
+- **Multi-language Support** - O'zbek, Rus, Ingliz, Yapon tillari
+- **Secure Authentication** - Telegram OTP orqali xavfsiz kirish
+- **Modern UI/UX** - Tailwind CSS va shadcn/ui komponentlari
+- **Type Safety** - To'liq TypeScript qo'llab-quvvatlash
+- **Error Handling** - Professional error boundary va retry strategiya
+- **Performance Optimized** - React Query cache va lazy loading
+
+## 🛠 Texnologiyalar
+
+- **Frontend:** Next.js 15, React 19, TypeScript
+- **Styling:** Tailwind CSS, shadcn/ui
+- **State Management:** Zustand, React Query
+- **Authentication:** NextAuth.js
+- **Internationalization:** next-intl
+- **Icons:** Lucide React
+- **Forms:** React Hook Form + Zod validation
+- **Notifications:** React Hot Toast
+
+## 📦 O'rnatish
+
+1. **Repository'ni clone qiling:**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/botmather.git
+cd botmather
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Dependencies'ni o'rnating:**
+```bash
+npm install
+# yoki
+yarn install
+# yoki
+pnpm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Environment variables'ni sozlang:**
+```bash
+cp example.env .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`.env.local` faylini tahrirlang:
+```env
+NEXT_PUBLIC_API="https://your-api-url.com"
+CONSTRUCTOR_URL="https://your-constructor-url.com"
+NEXTAUTH_SECRET="your-secret-key-here"
+DEBUG="true"
+```
 
-## Learn More
+4. **Development server'ni ishga tushiring:**
+```bash
+npm run dev
+# yoki
+yarn dev
+# yoki
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+5. **Brauzerda oching:** [http://localhost:3000](http://localhost:3000)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🏗 Loyiha Strukturasi
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+botmather/
+├── app/                    # Next.js App Router
+│   ├── [lang]/            # Internationalization
+│   │   ├── auth/          # Authentication pages
+│   │   ├── bot/           # Bot management
+│   │   └── market/        # Bot marketplace
+│   └── api/               # API routes
+├── components/            # Reusable components
+│   ├── ui/               # shadcn/ui components
+│   ├── common/           # Common components
+│   └── theme/            # Theme components
+├── lib/                  # Utility functions
+├── services/             # API services
+├── types/                # TypeScript types
+├── messages/             # i18n translations
+└── hooks/                # Custom React hooks
+```
 
-## Deploy on Vercel
+## 🔧 Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Available Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# botmather
+- `npm run dev` - Development server
+- `npm run build` - Production build
+- `npm run start` - Production server
+- `npm run lint` - ESLint check
+
+### Code Quality
+
+Loyiha quyidagi best practice'lar bilan qurilgan:
+
+- ✅ **Type Safety** - To'liq TypeScript
+- ✅ **Error Boundaries** - Global error handling
+- ✅ **Environment Validation** - Zod bilan env validation
+- ✅ **Performance** - React Query cache strategiya
+- ✅ **Security** - Production-ready security
+- ✅ **i18n** - Multi-language support
+- ✅ **Clean Code** - Consistent naming va structure
+
+## 🌐 Deployment
+
+### Vercel (Recommended)
+
+1. GitHub'ga push qiling
+2. [Vercel](https://vercel.com)'ga connect qiling
+3. Environment variables'ni sozlang
+4. Deploy!
+
+### Docker
+
+```bash
+docker build -t botmather .
+docker run -p 3000:3000 botmather
+```
+
+## 📱 API Integration
+
+Loyiha REST API bilan ishlaydi. API endpoints:
+
+- `POST /api/auth/login` - Authentication
+- `GET /api/project/` - Bot list
+- `POST /api/project/` - Create bot
+- `PUT /api/project/:id` - Update bot
+- `DELETE /api/project/:id` - Delete bot
+
+## 🤝 Contributing
+
+1. Fork qiling
+2. Feature branch yarating (`git checkout -b feature/amazing-feature`)
+3. Commit qiling (`git commit -m 'Add amazing feature'`)
+4. Push qiling (`git push origin feature/amazing-feature`)
+5. Pull Request yarating
+
+## 📄 License
+
+Bu loyiha MIT litsenziyasi ostida tarqatiladi. Batafsil ma'lumot uchun [LICENSE](LICENSE) faylini ko'ring.
+
+## 📞 Support
+
+Savollar yoki muammolar bo'lsa:
+
+- 📧 Email: support@botmather.com
+- 💬 Telegram: [@botmather_support](https://t.me/botmather_support)
+- 🐛 Issues: [GitHub Issues](https://github.com/your-username/botmather/issues)
+
+---
+
+**Botmather** - Telegram botlarini professional darajada yaratish va boshqarish uchun eng yaxshi yechim! 🚀

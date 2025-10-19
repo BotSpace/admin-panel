@@ -1,0 +1,26 @@
+{
+  "hello": "Salom",
+  "world": "Dunyoda",
+  "auth": {
+    "login": {
+      "title": "Kodni Kiriting",
+      "description": "Telegram botiga kiring va 1 daqiqalik kodingizni oling.",
+      "botLink": "@bot_mather_auth_bot",
+      "sendCode": "Kodni Yuborish",
+      "debugLogin": "DEBUG Login",
+      "loading": "Login...",
+      "success": "Login success",
+      "error": "Login error",
+      "heading": "Botmather hisobiga kirish",
+      "subheading": "Kirish uchun Telegram botimizdan 6 xonali kod oling.",
+      "stepsTitle": "Qanday kiriladi?",
+      "step1": "Telegram'da {bot} sahifasini oching",
+      "step2": "Start bosing va 6 xonali kod oling",
+      "step3": "Kodda raqamlarni shu yerga kiriting",
+      "openTelegram": "Telegram botni ochish",
+      "or": "yoki",
+      "enterCodeBelow": "Pastga kodingizni kiriting",
+      "note": "Kod 1 daqiqa davomida amal qiladi"
+    }
+  }
+}

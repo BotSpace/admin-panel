@@ -1,7 +1,7 @@
 import createNextIntlPlugin from "next-intl/plugin";
 
-const withNextIntl = createNextIntlPlugin();
-import env from "@/lib/env";
+const withNextIntl = createNextIntlPlugin("./src/shared/i18n/request.ts");
+import env from "@/shared/lib/env";
 
 export default withNextIntl({
   async rewrites() {
