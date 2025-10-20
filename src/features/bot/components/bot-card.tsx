@@ -106,61 +106,8 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">Obunachilar</p>
-            <p className="font-semibold">{bot.project_members_count}</p>
+            <p className="font-semibold">{bot.project_members_count || 1000}</p>
           </div>
-          <div>
-            <p className="text-muted-foreground">Holat</p>
-            <p
-              className={`font-semibold ${
-                isRunning ? "text-green-600" : "text-gray-500"
-              }`}
-            >
-              {isRunning ? "Aktiv" : "Nofaol"}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <Button
-            size="sm"
-            variant={isRunning ? "destructive" : "default"}
-            onClick={toggleBotStatus}
-            disabled={isLoading}
-            className="flex-1 min-w-[100px]"
-          >
-            {isRunning ? (
-              <>
-                <PowerOff className="h-4 w-4 mr-1" />
-                O'chirish
-              </>
-            ) : (
-              <>
-                <Power className="h-4 w-4 mr-1" />
-                Yoqish
-              </>
-            )}
-          </Button>
-
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={reloadBot}
-            disabled={isLoading || !isRunning}
-            className="flex-1 min-w-[100px] bg-transparent"
-          >
-            <RotateCw className="h-4 w-4 mr-1" />
-            Reload
-          </Button>
-
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setLogsModalOpen(true)}
-            className="flex-1 min-w-[100px]"
-          >
-            <FileText className="h-4 w-4 mr-1" />
-            Loglar
-          </Button>
         </div>
       </CardContent>
 
@@ -173,50 +120,82 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
         </Link>
 
         <DeleteModal
-          itemName="Project Phoenix"
+          itemName={bot.name}
           onConfirm={() => deleteBot({ id: bot.id })}
           open={deleteModalIsOpen}
           onOpenChange={setDeleteModalIsOpen}
         />
 
-        {/* <DeleteModal
-          itemName={bot.name}
-          onConfirm={() => deleteBot({ id: bot.id })}
-          open={deleteModalIsOpen}
-          onOpenChange={setDeleteModalIsOpen}
-        /> */}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="icon"
+            variant={isRunning ? "destructive" : "default"}
+            onClick={toggleBotStatus}
+            disabled={isLoading}
+          >
+            {isRunning ? (
+              <>
+                <PowerOff />
+              </>
+            ) : (
+              <>
+                <Power />
+              </>
+            )}
+          </Button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Link
-                href={`bot/${bot.id}/constructor`}
-                className="cursor-pointer"
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={reloadBot}
+            disabled={isLoading || !isRunning}
+          >
+            <RotateCw />
+          </Button>
+
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={() => setLogsModalOpen(true)}
+          >
+            <FileText />
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`bot/${bot.id}/constructor`}
+                  className="cursor-pointer"
+                >
+                  <Wrench className="h-4 w-4 mr-2" />
+                  Konstructor
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`bot/${bot.id}/settings`}
+                  className="cursor-pointer"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Sozlamalar
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setDeleteModalIsOpen(true)}
+                className="text-destructive focus:text-destructive cursor-pointer"
               >
-                <Wrench className="h-4 w-4 mr-2" />
-                Konstructor
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href={`bot/${bot.id}/settings`} className="cursor-pointer">
-                <Settings className="h-4 w-4 mr-2" />
-                Sozlamalar
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setDeleteModalIsOpen(true)}
-              className="text-destructive focus:text-destructive cursor-pointer"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </CardFooter>
 
       {logsModalOpen && (

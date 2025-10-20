@@ -27,9 +27,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/shared/components/ui/avatar";
 import { useSession, signOut as defaultSignOut } from "next-auth/react";
 import { Link, usePathname } from "@/shared/i18n/routing";
+import type { StaticImageData } from "next/image";
+import Image from "next/image";
 
 // ------------------------------
 // Types
@@ -52,7 +58,7 @@ type Brand = {
   name: string;
   version?: string;
   href?: string;
-  icon?: LucideIcon;
+  image?: string | StaticImageData;
 };
 
 type LinkLike = React.ElementType<{
@@ -77,7 +83,7 @@ const AnchorLink: LinkLike = (props: any) => <a {...props} />;
 // ------------------------------
 export function ReusableSidebar({
   nav,
-  brand = { name: "App", version: "", href: "/", icon: DefaultBrandIcon },
+  brand = { name: "App", version: "", href: "/", image: "" },
   showUserFooter = true,
   onSignOut = defaultSignOut,
   ...props
@@ -85,19 +91,7 @@ export function ReusableSidebar({
   const pathname = usePathname() ?? "/";
   const { data } = useSession();
 
-  const BrandIcon = brand.icon ?? DefaultBrandIcon;
-
-  const isActive = React.useCallback(
-    (item: NavItem) => {
-      return pathname === item.href;
-    },
-    [pathname]
-  );
-
-  const fullName = [
-    data?.user?.first_name,
-    data?.user?.last_name,
-  ]
+  const fullName = [data?.user?.first_name, data?.user?.last_name]
     .filter(Boolean)
     .join(" ");
   const phoneOrEmail = data?.user?.phone ?? data?.user?.email ?? "";
@@ -120,7 +114,13 @@ export function ReusableSidebar({
               <SidebarMenuButton size="lg" asChild>
                 <Link href={brand.href ?? "/"}>
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                    <BrandIcon className="size-4" />
+                    {brand.image ? (
+                      <Image
+                        src={brand.image}
+                        alt={brand.name}
+                        className="rounded-2xl"
+                      />
+                    ) : null}
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">{brand.name}</span>
