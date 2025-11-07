@@ -20,6 +20,10 @@ export default withNextIntl({
         source: "/:locale/bot/:bot/constructor",
         destination: `${env.CONSTRUCTOR_URL}/share/:bot`,
       },
+      {
+        source: "/:locale/bot/:bot/constructor/collection",
+        destination: `${env.CONSTRUCTOR_URL}/share/:bot/collection`,
+      },
     ];
   },
   images: {

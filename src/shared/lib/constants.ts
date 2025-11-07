@@ -20,7 +20,7 @@ export const UI_CONSTANTS = {
   SKELETON_COUNT: 6, // Default skeleton count for loading states
   PAGINATION_SIZE: 20, // Default page size
   MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
-  SUPPORTED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+  SUPPORTED_IMAGE_TYPES: ["image/jpeg", "image/png", "image/gif", "image/webp"],
 } as const;
 
 // Validation constants
@@ -36,28 +36,28 @@ export const VALIDATION_CONSTANTS = {
 
 // Route constants
 export const ROUTE_CONSTANTS = {
-  LOGIN: '/auth/login',
-  REGISTER: '/auth/register',
-  DASHBOARD: '/',
-  PROFILE: '/profile',
-  SETTINGS: '/settings',
+  LOGIN: "/auth/login",
+  REGISTER: "/auth/register",
+  DASHBOARD: "/",
+  PROFILE: "/profile",
+  SETTINGS: "/settings",
 } as const;
 
 // Environment constants
 export const ENV_CONSTANTS = {
-  DEVELOPMENT: 'development',
-  PRODUCTION: 'production',
-  TEST: 'test',
+  DEVELOPMENT: "development",
+  PRODUCTION: "production",
+  TEST: "test",
 } as const;
 
 // Error codes
 export const ERROR_CODES = {
-  NETWORK_ERROR: 'NETWORK_ERROR',
-  UNAUTHORIZED: 'UNAUTHORIZED',
-  FORBIDDEN: 'FORBIDDEN',
-  NOT_FOUND: 'NOT_FOUND',
-  VALIDATION_ERROR: 'VALIDATION_ERROR',
-  RATE_LIMITED: 'RATE_LIMITED',
-  SERVER_ERROR: 'SERVER_ERROR',
-  UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+  NETWORK_ERROR: "NETWORK_ERROR",
+  UNAUTHORIZED: "UNAUTHORIZED",
+  FORBIDDEN: "FORBIDDEN",
+  NOT_FOUND: "NOT_FOUND",
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+  RATE_LIMITED: "RATE_LIMITED",
+  SERVER_ERROR: "SERVER_ERROR",
+  UNKNOWN_ERROR: "UNKNOWN_ERROR",
 } as const;
