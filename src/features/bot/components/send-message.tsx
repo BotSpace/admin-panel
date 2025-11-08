@@ -11,7 +11,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@radix-ui/react-popover";
+} from "@/shared/components/ui/popover";
 import EmojiPicker from "emoji-picker-react";
 
 export default function FilesView({}: {}) {
@@ -180,10 +180,10 @@ export default function FilesView({}: {}) {
             <Upload className="h-6 w-6 text-primary" />
           </div>
           <p className="mt-3 text-center text-sm font-semibold">
-            Click to select files
+            Fayllarni tanlash uchun bosing
           </p>
           <p className="mt-1 text-center text-xs text-muted-foreground">
-            or drag and drop your files here
+            yoki fayllarni shu yerga sudrab tashlang
           </p>
         </div>
 
@@ -191,14 +191,15 @@ export default function FilesView({}: {}) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium">
-                Selected files ({files.length})
+                Tanlangan fayllar ({files.length})
               </p>
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
               >
-                Add more
+                Qo'shish
               </Button>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -208,18 +209,19 @@ export default function FilesView({}: {}) {
         )}
 
         <div className="space-y-2 relative">
-          <label className="text-sm font-medium">Message</label>
+          <label className="text-sm font-medium">Xabar matni</label>
           <Textarea
             onChange={(e) => changeTextContent(e.target.value as string)}
-            defaultValue={text_content}
-            placeholder="Add a message to your files..."
+            value={text_content}
+            placeholder="Xabar matnini kiriting..."
             className="resize-none"
-            rows={3}
+            rows={4}
           />
 
           <Popover>
             <PopoverTrigger asChild>
               <Button
+                type="button"
                 variant="ghost"
                 size="icon"
                 className="absolute bottom-3 right-2 z-10 h-9 w-9 rounded-full"
@@ -227,8 +229,15 @@ export default function FilesView({}: {}) {
                 <Smile className="h-5 w-5 text-muted-foreground" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-              <EmojiPicker autoFocusSearch allowExpandReactions />
+            <PopoverContent className="w-auto p-0" align="end">
+              <EmojiPicker
+                onEmojiClick={(emojiData) => {
+                  const currentText = text_content || "";
+                  changeTextContent(currentText + emojiData.emoji);
+                }}
+                autoFocusSearch
+                allowExpandReactions
+              />
             </PopoverContent>
           </Popover>
         </div>

@@ -141,14 +141,14 @@ export function ChartLineInteractive() {
 
   return (
     <Card className="py-4 sm:py-0">
-      <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
+      <CardHeader className="flex flex-col items-stretch border-b py-6 !px-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 sm:pb-0">
-          <CardTitle>Line Chart - Interactive</CardTitle>
+          <CardTitle>Telegram bot foydalanuvchilarining o'sishi</CardTitle>
           <CardDescription>
-            Showing total visitors for the last 3 months
+            Telegram bot foydalanuvchilarining o'sishi
           </CardDescription>
         </div>
-        <div className="flex">
+        {/* <div className="flex">
           {["desktop", "mobile"].map((key) => {
             const chart = key as keyof typeof chartConfig;
             return (
@@ -167,7 +167,7 @@ export function ChartLineInteractive() {
               </button>
             );
           })}
-        </div>
+        </div> */}
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
         <ChartContainer
