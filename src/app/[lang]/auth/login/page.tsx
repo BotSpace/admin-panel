@@ -9,8 +9,9 @@ import {
 import Image from "next/image";
 
 import Logo from "../../../../../public/botmather.png";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/shared/i18n/routing";
 
 import toast from "react-hot-toast";
 import { Button } from "@/shared/components/ui/button";
@@ -25,7 +26,22 @@ import { Send, ExternalLink } from "lucide-react";
 
 export default function AuthenticationPage() {
   const [code, setCode] = React.useState<string>("");
+  const [mounted, setMounted] = React.useState(false);
   const t = useTranslations("auth.login");
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Client-side'da mount bo'lganda
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Agar foydalanuvchi allaqachon kirgan bo'lsa, dashboardga redirect qilish
+  React.useEffect(() => {
+    if (mounted && status === "authenticated" && session?.user) {
+      router.push(`/`);
+    }
+  }, [mounted, status, session, router]);
 
   const LoginUser = () => {
     const loadingToast = toast.loading(t("loading"));
@@ -49,6 +65,24 @@ export default function AuthenticationPage() {
       LoginUser();
     }
   }, [code]);
+
+  // Hydration mismatch'ni oldini olish uchun dastlabki render'da loading ko'rsatish
+  if (!mounted || status === "loading") {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-background">
+        <div className="text-muted-foreground">Yuklanmoqda...</div>
+      </div>
+    );
+  }
+
+  // Agar foydalanuvchi allaqachon kirgan bo'lsa, loading ko'rsatish (redirect bo'ladi)
+  if (status === "authenticated" && session?.user) {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-background">
+        <div className="text-muted-foreground">Yuklanmoqda...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
@@ -88,7 +122,7 @@ export default function AuthenticationPage() {
             <div className="flex items-center gap-3">
               <Button asChild className="flex-1">
                 <a
-                  href="https://t.me/bot_mather_auth_bot"
+                  href="https://t.me/botmother_authbot"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

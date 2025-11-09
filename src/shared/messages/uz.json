@@ -5,7 +5,7 @@
     "login": {
       "title": "Kodni Kiriting",
       "description": "Telegram botiga kiring va 1 daqiqalik kodingizni oling.",
-      "botLink": "@bot_mather_auth_bot",
+      "botLink": "@botmother_authbot",
       "sendCode": "Kodni Yuborish",
       "debugLogin": "DEBUG Login",
       "loading": "Login...",
