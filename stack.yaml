@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   admin:
-    image: jscorptech/botmother-admin:6
+    image: jscorptech/botmother-admin:7
     ports:
       - mode: ingress
         target: 3000
