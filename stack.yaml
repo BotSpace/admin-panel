@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  constructor:
-    image: jscorptech/botmother-admin:3
+  admin:
+    image: jscorptech/botmother-admin:latest
     ports:
       - mode: ingress
         target: 3000
