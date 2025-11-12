@@ -8,9 +8,19 @@ import { DocumentsTable } from "@/shared/components/documents-table";
 import { ArrowRight, Pencil } from "lucide-react";
 import { Link } from "@/shared/i18n/routing";
 import { useParams } from "next/navigation";
+import { ApiRetrieveResponse } from "@/shared/types/http";
+import { Dashboard } from "@/shared/types/project";
+import { useReactQueryAction } from "@/shared/services/react-query";
+import { da } from "date-fns/locale";
 
 export default function DocumentsDashboard() {
   const { id }: { id: string } = useParams();
+  const { data, isLoading, refetch } = useReactQueryAction<
+    ApiRetrieveResponse<Dashboard>
+  >({
+    url: "project/4/dashboard/",
+  });
+
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -27,8 +37,8 @@ export default function DocumentsDashboard() {
         {/* Metrics Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <MetricCard
-            title="Jami daromad"
-            value="$1,250.00"
+            title="Foydalanuvchilar"
+            value={data?.data.total_users.toString() ?? "0"}
             trend={12.5}
             trendDirection="up"
             subtitle="Trending up this month"
@@ -61,7 +71,7 @@ export default function DocumentsDashboard() {
         </div>
 
         {/* Visitor Chart */}
-        <ChartLineInteractive />
+        <ChartLineInteractive chart={data?.data.chart.new_users ?? []} />
 
         {/* Documents Table */}
         <Card className="bg-card p-6">
