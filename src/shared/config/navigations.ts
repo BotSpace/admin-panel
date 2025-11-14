@@ -1,5 +1,10 @@
 import { NavGroup } from "@/shared/components/app-sidebar";
-import { BarChart3, LayoutDashboard, MessageSquare } from "lucide-react";
+import {
+  BarChart3,
+  Database,
+  LayoutDashboard,
+  MessageSquare,
+} from "lucide-react";
 
 export const HomePageNavigation: NavGroup[] = [
   {
@@ -34,6 +39,12 @@ export const BotPageNavigation = (id: string): NavGroup[] => {
           title: "Release",
           href: `/bot/${id}/release`,
           icon: BarChart3,
+          disabled: false,
+        },
+        {
+          title: "Collection",
+          href: `/bot/${id}/collection`,
+          icon: Database,
           disabled: false,
         },
       ],

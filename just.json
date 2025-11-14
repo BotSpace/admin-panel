@@ -1,0 +1,188 @@
+{
+  "nodes": [
+    {
+      "id": "trigger_start",
+      "type": "CommandTriggerNode",
+      "position": { "x": 100, "y": 100 },
+      "data": { "command": "/start" }
+    },
+    {
+      "id": "action_send_welcome",
+      "type": "SendTextMessageNode",
+      "position": { "x": 100, "y": 300 },
+      "data": {
+        "messageText": "Assalomu alaykum! 👋\nMen Support botman. Quyidagi menyulardan birini tanlang:",
+        "recipients": { "sendToSender": true },
+        "keyboard": {
+          "active": "reply",
+          "reply": [
+            [
+              { "text": "📞 Contact", "type": "reply" },
+              { "text": "🌐 Tilni o'zgartirish", "type": "reply" }
+            ],
+            [{ "text": "❓ Ko'p beriladigan savollar", "type": "reply" }]
+          ]
+        }
+      }
+    },
+    {
+      "id": "trigger_menu_selection",
+      "type": "ReplyButtonTriggerNode",
+      "position": { "x": 100, "y": 500 },
+      "data": {
+        "selectedButton": { "text": "any", "type": "reply" }
+      }
+    },
+    {
+      "id": "action_handle_contact",
+      "type": "SendTextMessageNode",
+      "position": { "x": -200, "y": 700 },
+      "data": {
+        "messageText": "Biz bilan bog'lanish uchun: support@example.com 📧 yoki +998 90 123 45 67 📞",
+        "recipients": { "sendToSender": true }
+      }
+    },
+    {
+      "id": "action_handle_language",
+      "type": "SendTextMessageNode",
+      "position": { "x": 100, "y": 700 },
+      "data": {
+        "messageText": "Tilni tanlang:",
+        "recipients": { "sendToSender": true },
+        "keyboard": {
+          "active": "inline",
+          "inline": [
+            [
+              { "text": "🇺🇿 O'zbek", "callback_data": "lang_uz" },
+              { "text": "🇷🇺 Русский", "callback_data": "lang_ru" },
+              { "text": "🇬🇧 English", "callback_data": "lang_en" }
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "trigger_language_callback",
+      "type": "CallbackQueryTriggerNode",
+      "position": { "x": 100, "y": 900 },
+      "data": {
+        "filter": "equals",
+        "context": { "value": "lang_" }
+      }
+    },
+    {
+      "id": "action_language_selected",
+      "type": "CustomCodeNode",
+      "position": { "x": 100, "y": 1100 },
+      "data": {
+        "pythonCode": "selected = message.data\nlang = selected.replace('lang_', '')\nawait message.answer(f'Til muvaffaqiyatli o\\'zgartirildi: {lang.upper()}')"
+      }
+    },
+    {
+      "id": "action_handle_faq",
+      "type": "SendTextMessageNode",
+      "position": { "x": 400, "y": 700 },
+      "data": {
+        "messageText": "Ko'p beriladigan savollardan birini tanlang:",
+        "recipients": { "sendToSender": true },
+        "keyboard": {
+          "active": "inline",
+          "inline": [
+            [
+              {
+                "text": "📌 Qanday ro'yxatdan o'taman?",
+                "callback_data": "faq_register"
+              }
+            ],
+            [
+              {
+                "text": "💰 To'lov qanday amalga oshiriladi?",
+                "callback_data": "faq_payment"
+              }
+            ],
+            [
+              {
+                "text": "⚙️ Sozlamalarni qayerdan topsam bo'ladi?",
+                "callback_data": "faq_settings"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "trigger_faq_callback",
+      "type": "CallbackQueryTriggerNode",
+      "position": { "x": 400, "y": 900 },
+      "data": {
+        "filter": "equals",
+        "context": { "value": "faq_" }
+      }
+    },
+    {
+      "id": "action_faq_answer",
+      "type": "CustomCodeNode",
+      "position": { "x": 400, "y": 1100 },
+      "data": {
+        "pythonCode": "faq_id = message.data\nanswers = {\n    'faq_register': \"Ro'yxatdan o'tish uchun /start buyrug'ini bosing va ko'rsatmalarga amal qiling.\",\n    'faq_payment': \"To'lovlar Click yoki Payme orqali amalga oshiriladi.\",\n    'faq_settings': \"Sozlamalar bo'limini menyudan topishingiz mumkin.\"\n}\nawait message.answer(answers.get(faq_id, 'Savol topilmadi'))"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "trigger_start",
+      "target": "action_send_welcome",
+      "id": "edge_1",
+      "type": "smart-edge"
+    },
+
+    {
+      "source": "action_send_welcome",
+      "target": "trigger_menu_selection",
+      "id": "edge_2",
+      "type": "smart-edge"
+    },
+    {
+      "source": "trigger_menu_selection",
+      "target": "action_handle_contact",
+      "id": "edge_contact",
+      "type": "smart-edge"
+    },
+    {
+      "source": "trigger_menu_selection",
+      "target": "action_handle_language",
+      "id": "edge_language",
+      "type": "smart-edge"
+    },
+    {
+      "source": "trigger_menu_selection",
+      "target": "action_handle_faq",
+      "id": "edge_faq",
+      "type": "smart-edge"
+    },
+    {
+      "source": "action_handle_language",
+      "target": "trigger_language_callback",
+      "id": "edge_3",
+      "type": "smart-edge"
+    },
+    {
+      "source": "trigger_language_callback",
+      "target": "action_language_selected",
+      "id": "edge_4",
+      "type": "smart-edge"
+    },
+    {
+      "source": "action_handle_faq",
+      "target": "trigger_faq_callback",
+      "id": "edge_5",
+      "type": "smart-edge"
+    },
+    {
+      "source": "trigger_faq_callback",
+      "target": "action_faq_answer",
+      "id": "edge_6",
+      "type": "smart-edge"
+    }
+  ]
+}

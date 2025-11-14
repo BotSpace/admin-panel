@@ -2,21 +2,25 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { queryGenerator } from "@/shared/lib/query-generator";
-import { useDebounces } from "@/shared/hooks/use-debounces";
 import { instanceAuth } from "../instance";
+import { useDebounces } from "@/shared/hooks/use-debounces";
 import { handleApiError } from "@/shared/lib/error-handler";
+import { queryGenerator } from "@/shared/lib/query-generator";
 
 export const useReactQueryAction = <T>({
   url,
   query,
   debounceTime,
   enabled = true,
+  method = "GET",
+  data,
 }: {
   url: string;
   query?: Record<string, any>;
   debounceTime?: number;
   enabled?: boolean;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  data?: any;
 }) => {
   const params = useParams();
 
@@ -43,11 +47,15 @@ export const useReactQueryAction = <T>({
     queryKey: [debouncedUrl],
     queryFn: async () => {
       try {
-        const { data } = await instanceAuth.get(debouncedUrl);
-        return data;
+        const { data: responseData } = await instanceAuth.request({
+          method,
+          url: debouncedUrl,
+          data,
+        });
+        return responseData;
       } catch (error) {
         const apiError = handleApiError(error);
-        
+
         // Development'da error'ni console'ga chiqarish
         if (process.env.NODE_ENV === "development") {
           console.error("React Query Error:", {
@@ -56,7 +64,7 @@ export const useReactQueryAction = <T>({
             originalError: error,
           });
         }
-        
+
         // Error'ni throw qilish React Query'ga error state'ni berish uchun
         throw apiError;
       }
@@ -65,7 +73,7 @@ export const useReactQueryAction = <T>({
     enabled: enabled && (!debounceTime || debouncedUrl === url),
     retry: (failureCount, error) => {
       // 401, 403, 404 kabi error'larda retry qilmaslik
-      if (error && typeof error === 'object' && 'status' in error) {
+      if (error && typeof error === "object" && "status" in error) {
         const status = (error as any).status;
         if ([401, 403, 404].includes(status)) {
           return false;
