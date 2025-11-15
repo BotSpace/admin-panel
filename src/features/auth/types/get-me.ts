@@ -1,4 +1,4 @@
-interface AuthData {
+export interface AuthData {
   id: number;
   last_login: string;
   is_superuser: boolean;
@@ -14,7 +14,7 @@ interface AuthData {
   role: string;
 }
 
-interface GetMeResponse {
+export interface GetMeResponse {
   status: boolean;
   data: AuthData;
 }

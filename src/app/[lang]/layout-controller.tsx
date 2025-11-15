@@ -26,7 +26,9 @@ export default function LayoutController({ children }: Props) {
         nav={HomePageNavigation}
       />
       <SidebarInset>
-        <div className="flex flex-1 flex-col gap-4 p-8 pt-6">{children}</div>
+        <div className="flex flex-1 flex-col gap-4 p-8 pt-6 bg-gradient rounded-l-3xl">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

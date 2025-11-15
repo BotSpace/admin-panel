@@ -75,7 +75,7 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
   const statusText = isRunning ? "Ishlamoqda" : "To'xtagan";
 
   return (
-    <Card className="transition-all hover:shadow-md">
+    <Card className="transition-all hover:shadow-md ">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -245,7 +245,7 @@ function LogsModal({
 
   return (
     <div
-      className={`fixed inset-0 z-50 ${open ? "block" : "hidden"}`}
+      className={`theme-custom fixed inset-0 z-50 ${open ? "block" : "hidden"}`}
       onClick={() => onOpenChange(false)}
     >
       <div className="fixed inset-0 bg-black/50" />

@@ -8,12 +8,12 @@ export default withNextIntl({
     return [
       // Media files - constructor
       {
-        source: "/:locale/bot/:bot/constructor/_next/image",
+        source: "/:lang/bot/:bot/constructor/_next/image",
         destination: `${env.CONSTRUCTOR_URL}/share/_next/image`,
       },
       // Media files - sales (new child)
       {
-        source: "/:locale/bot/:bot/sales/_next/image",
+        source: "/:lang/bot/:bot/sales/_next/image",
         destination: `${env.SALES_URL}/share/_next/image`,
       },
 
@@ -23,12 +23,12 @@ export default withNextIntl({
         destination: `${env.CONSTRUCTOR_URL}/share/:path*`,
       },
       {
-        source: "/:locale/bot/:bot/constructor",
-        destination: `${env.CONSTRUCTOR_URL}/share/:bot`,
+        source: "/:lang/bot/:bot/constructor",
+        destination: `${env.CONSTRUCTOR_URL}/share/:lang/:bot`,
       },
       {
-        source: "/:locale/bot/:bot/constructor/collection",
-        destination: `${env.CONSTRUCTOR_URL}/share/:bot/collection`,
+        source: "/:lang/bot/:bot/constructor/collection",
+        destination: `${env.CONSTRUCTOR_URL}/share/:lang/:bot/collection`,
       },
 
       // sales (new child) - routes under /sales go to the sales project
@@ -37,12 +37,8 @@ export default withNextIntl({
         destination: `${env.SALES_URL}/share/:path*`,
       },
       {
-        source: "/:locale/bot/:bot/sales",
+        source: "/:lang/bot/:bot/sales",
         destination: `${env.SALES_URL}/share/:bot`,
-      },
-      {
-        source: "/:locale/bot/:bot/sales/collection",
-        destination: `${env.SALES_URL}/share/:bot/collection`,
       },
     ];
   },
