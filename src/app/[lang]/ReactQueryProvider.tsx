@@ -46,7 +46,7 @@ const ReactQueryProvider = ({ children }: { children: React.ReactNode }) => {
             },
           },
         },
-      }),
+      })
   );
 
   return (

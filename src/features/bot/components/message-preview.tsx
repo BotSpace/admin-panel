@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 export default function MessagePreview() {
-  const { text_content, files } = useChatMessageStore();
+  const { text_content, files, inlineButtons } = useChatMessageStore();
   const [previews, setPreviews] = React.useState<string[]>([]);
 
   React.useEffect(() => {
@@ -301,6 +301,25 @@ export default function MessagePreview() {
               </div>
             );
           })}
+
+          {/* Inline Buttons Preview */}
+          {inlineButtons.length > 0 && (
+            <div className="mt-3 space-y-1 max-w-[85%]">
+              {inlineButtons.map((row, rowIndex) => (
+                <div key={rowIndex} className="flex flex-wrap gap-1">
+                  {row.map((button, buttonIndex) => (
+                    <button
+                      key={buttonIndex}
+                      className="px-3 py-1.5 text-xs font-medium rounded-md bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 transition-colors"
+                      type="button"
+                    >
+                      {button.text}
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

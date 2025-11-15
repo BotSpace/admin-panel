@@ -1,12 +1,13 @@
 "use client";
 
 import * as React from "react";
-import type { LucideIcon } from "lucide-react";
+import type { DollarSignIcon, LucideIcon } from "lucide-react";
 import {
   ChevronDown,
   Settings,
   LogOut,
   Bot as DefaultBrandIcon,
+  BadgeDollarSignIcon,
 } from "lucide-react";
 import {
   Sidebar,
@@ -213,10 +214,16 @@ export function ReusableSidebar({
                   sideOffset={4}
                 >
                   <DropdownMenuItem asChild>
-                    <AnchorLink href="/profile" className="gap-2">
+                    <Link href="/profile" className="gap-2">
                       <Settings className="size-4" />
                       <span>Profil</span>
-                    </AnchorLink>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/billing" className="gap-2">
+                      <BadgeDollarSignIcon className="size-4" />
+                      <span>Billing</span>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => onSignOut()}

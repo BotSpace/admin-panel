@@ -1,5 +1,10 @@
 import { LoginResponse } from "@/features/auth/types/login";
-import { instance } from "../instance";
+import { GetMeResponse } from "@/features/auth/types/get-me";
+import {
+  UserUpdateRequest,
+  UserUpdateResponse,
+} from "@/features/auth/types/profile";
+import { instance, instanceAuth } from "../instance";
 import { Session } from "next-auth";
 import { AxiosResponse } from "axios";
 
@@ -58,4 +63,34 @@ export async function GetMe({
   } catch {
     return null;
   }
+}
+
+// User profilni yangilash
+export async function UpdateProfile(
+  data: UserUpdateRequest
+): Promise<AxiosResponse<UserUpdateResponse>> {
+  return await instanceAuth.patch<UserUpdateResponse>(
+    "/auth/user-update/",
+    data
+  );
+}
+
+// Parolni o'zgartirish
+export interface ChangePasswordRequest {
+  old_password: string;
+  new_password: string;
+}
+
+export interface ChangePasswordResponse {
+  status: boolean;
+  message?: string;
+}
+
+export async function ChangePassword(
+  data: ChangePasswordRequest
+): Promise<AxiosResponse<ChangePasswordResponse>> {
+  return await instanceAuth.post<ChangePasswordResponse>(
+    "/auth/change-password/",
+    data
+  );
 }

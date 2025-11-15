@@ -12,6 +12,7 @@ import {
   Send,
   Search,
   Filter,
+  Loader2,
 } from "lucide-react";
 import { buttonVariants } from "@/shared/components/ui/button";
 import { Link } from "@/shared/i18n/routing";
@@ -24,7 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useReactQueryAction } from "@/shared/services/react-query";
+import { MessageListResponse, MessageStatus } from "@/shared/types/message";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 interface Message {
   id: string;
@@ -33,7 +37,10 @@ interface Message {
   sentAt: Date;
   status: "pending" | "delivered" | "failed";
   count: number;
-  filesCount?: number;
+  done: number;
+  fail: number;
+  message_type: "text" | "photo" | "video";
+  isNewlyCreated: boolean;
 }
 
 interface MessageHistoryProps {}
@@ -43,46 +50,87 @@ export default function MessageHistory({}: MessageHistoryProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  // Mock data - in real app, fetch from API
-  const messages: Message[] = [
-    {
-      id: "1",
-      content:
-        "Salom! Yangi xizmatlarimiz haqida ma'lumot olishni xohlaysizmi?",
-      recipients: "Barcha foydalanuvchilar",
-      sentAt: new Date("2024-01-15T10:30:00"),
-      status: "delivered",
-      count: 1250,
-      filesCount: 0,
-    },
-    {
-      id: "2",
-      content: "Yangi yangiliklar!",
-      recipients: "Aktiv foydalanuvchilar",
-      sentAt: new Date("2024-01-14T15:45:00"),
-      status: "delivered",
-      count: 890,
-      filesCount: 2,
-    },
-    {
-      id: "3",
-      content: "Tizim yangilandi",
-      recipients: "Barcha foydalanuvchilar",
-      sentAt: new Date("2024-01-13T09:20:00"),
-      status: "pending",
-      count: 1250,
-      filesCount: 0,
-    },
-    {
-      id: "4",
-      content: "Xatolik yuz berdi",
-      recipients: "Premium a'zolar",
-      sentAt: new Date("2024-01-12T14:10:00"),
-      status: "failed",
-      count: 45,
-      filesCount: 1,
-    },
-  ];
+  // Fetch messages from API
+  const { data, isLoading, error, refetch } =
+    useReactQueryAction<MessageListResponse>({
+      url: "message/",
+      query: { project: id },
+    });
+
+  // Map API status to frontend status
+  const mapStatus = (
+    status: MessageStatus
+  ): "pending" | "delivered" | "failed" => {
+    switch (status) {
+      case "progress":
+        return "pending";
+      case "done":
+        return "delivered";
+      case "failed":
+        return "failed";
+      default:
+        return "pending";
+    }
+  };
+
+  // Transform API data to frontend format
+  const messages = useMemo(() => {
+    if (!data?.data?.results) return [];
+
+    return data.data.results.map((msg) => {
+      // Determine status based on done/fail/total
+      let status: MessageStatus;
+
+      // If API provides status, use it
+      if (msg.status) {
+        status = msg.status;
+      } else {
+        // Otherwise, determine from total/done/fail
+        if (msg.total === 0 && msg.done === 0 && msg.fail === 0) {
+          // All zeros means message is done (no recipients or already completed)
+          status = "done";
+        } else if (msg.total > 0) {
+          if (msg.done === msg.total) {
+            // All messages delivered
+            status = "done";
+          } else if (
+            msg.fail > 0 &&
+            msg.done === 0 &&
+            msg.done + msg.fail === msg.total
+          ) {
+            // All failed
+            status = "failed";
+          } else if (msg.done > 0 || msg.fail > 0) {
+            // Partially sent (some done or some failed) - still in progress
+            status = "progress";
+          } else {
+            // Total > 0 but nothing done/failed yet - still in progress (queued)
+            status = "progress";
+          }
+        } else {
+          // Default case
+          status = "done";
+        }
+      }
+
+      // Determine if message is newly created (not yet started sending)
+      // If all zeros, it's done, not newly created
+      const isNewlyCreated = false;
+
+      return {
+        id: String(msg.id),
+        content: msg.caption,
+        recipients: "Barcha foydalanuvchilar", // API'da bu ma'lumot yo'q, default qo'yildi
+        sentAt: new Date(), // API'da sentAt yo'q, hozirgi vaqt qo'yildi
+        status: mapStatus(status),
+        count: msg.total || 0,
+        done: msg.done || 0,
+        fail: msg.fail || 0,
+        message_type: msg.message_type,
+        isNewlyCreated, // Flag to show different label for newly created messages
+      };
+    });
+  }, [data]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -95,7 +143,10 @@ export default function MessageHistory({}: MessageHistoryProps) {
     }
   };
 
-  const getStatusLabel = (status: string) => {
+  const getStatusLabel = (status: string, isNewlyCreated?: boolean) => {
+    if (isNewlyCreated) {
+      return "Kutilmoqda";
+    }
     switch (status) {
       case "delivered":
         return "Yuborildi";
@@ -119,14 +170,73 @@ export default function MessageHistory({}: MessageHistoryProps) {
     }
   };
 
-  const filteredMessages = messages.filter((message) => {
-    const matchesSearch =
-      message.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      message.recipients.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || message.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filteredMessages = useMemo(() => {
+    return messages.filter((message) => {
+      const matchesSearch =
+        message.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        message.recipients.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus =
+        statusFilter === "all" || message.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [messages, searchQuery, statusFilter]);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-2xl font-semibold text-foreground">
+              Jo'natilgan xabarlar
+            </h2>
+            <Skeleton className="h-4 w-32" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Skeleton className="h-10 flex-1" />
+              <Skeleton className="h-10 w-[200px]" />
+            </div>
+          </CardContent>
+        </Card>
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i} className="p-4">
+              <Skeleton className="h-20 w-full" />
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-2xl font-semibold text-foreground">
+              Jo'natilgan xabarlar
+            </h2>
+          </div>
+        </div>
+        <Card className="border-destructive">
+          <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+            <XCircle className="h-12 w-12 text-destructive mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Xatolik yuz berdi</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Xabarlarni yuklashda muammo yuz berdi
+            </p>
+            <Button onClick={() => refetch()}>Qayta urinish</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -228,9 +338,9 @@ export default function MessageHistory({}: MessageHistoryProps) {
                       <Badge variant="secondary" className="text-xs">
                         {message.recipients}
                       </Badge>
-                      {message.filesCount && message.filesCount > 0 && (
+                      {message.message_type !== "text" && (
                         <Badge variant="outline" className="text-xs">
-                          {message.filesCount} fayl
+                          {message.message_type === "photo" ? "Rasm" : "Video"}
                         </Badge>
                       )}
                       <span className="text-xs text-muted-foreground">
@@ -251,19 +361,34 @@ export default function MessageHistory({}: MessageHistoryProps) {
                       variant={getStatusBadgeVariant(message.status)}
                       className="text-xs"
                     >
-                      {getStatusLabel(message.status)}
+                      {getStatusLabel(message.status, message.isNewlyCreated)}
                     </Badge>
                   </div>
 
                   {/* Count */}
                   <div className="flex flex-col items-end sm:items-center gap-1">
-                    <div className="flex items-center gap-1">
-                      <span className="text-lg font-semibold text-primary">
-                        {message.count.toLocaleString()}
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-end">
+                        <span className="text-lg font-semibold text-primary">
+                          {message.done.toLocaleString()}
+                        </span>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">
+                          yuborildi
+                        </span>
+                      </div>
+                      {message.fail > 0 && (
+                        <div className="flex flex-col items-end">
+                          <span className="text-lg font-semibold text-destructive">
+                            {message.fail.toLocaleString()}
+                          </span>
+                          <span className="text-xs text-muted-foreground whitespace-nowrap">
+                            xato
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      foydalanuvchi
+                      Jami: {message.count.toLocaleString()}
                     </span>
                   </div>
                 </div>

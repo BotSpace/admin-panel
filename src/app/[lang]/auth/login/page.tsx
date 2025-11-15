@@ -43,21 +43,19 @@ export default function AuthenticationPage() {
     }
   }, [mounted, status, session, router]);
 
-  const LoginUser = () => {
+  const LoginUser = async () => {
     const loadingToast = toast.loading(t("loading"));
 
-    signIn("credentials", {
+    const response = await signIn("credentials", {
       code: code,
-      callbackUrl: "/",
-    })
-      .then(() => {
-        toast.dismiss(loadingToast);
-        toast.success(t("success"));
-      })
-      .catch(() => {
-        toast.dismiss(loadingToast);
-        toast.error(t("error"));
-      });
+      redirect: false,
+    });
+
+    if (response?.ok) {
+      toast.success(t("success"), { id: loadingToast });
+    } else {
+      toast.error(t("error"), { id: loadingToast });
+    }
   };
 
   React.useEffect(() => {
@@ -85,13 +83,10 @@ export default function AuthenticationPage() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen w-full items-center justify-center px-4 bg-gradient">
       <div className="w-full max-w-md">
-        <Card className="bg-card border-border">
+        <Card className="border-border">
           <CardHeader className="space-y-3 text-center">
-            {/* <div className="mx-auto h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <Bot className="h-8 w-8 text-primary" />
-            </div> */}
             <div className="flex flex-col items-center gap-2">
               <Image
                 className="rounded-2xl"

@@ -120,3 +120,46 @@
     @apply bg-background text-foreground;
   }
 }
+
+.bg-gradient {
+  /* background: linear-gradient(to top left, #5433ff, #20bdff, #a5fecb); */
+  /* background: url("https://gradient.page/samples/green-glory/green-glory-003.jpg"); */
+  background: url("https://gradient.page/samples/beautiful-blue/beautiful-blue-001.jpg");
+}
+
+.theme-custom {
+  /* Name: custom color palette
+       Author: Ilias Ism
+       URL: https://gradient.page */
+
+  --gradient: linear-gradient(to top left, #5433ff, #20bdff, #a5fecb);
+
+  --background: 265 65% 4.8%;
+  --foreground: 265 10% 98%;
+
+  --muted: 265 50% 18%;
+  --muted-foreground: 265 10% 56%;
+
+  --popover: 265 45% 7.8%;
+  --popover-foreground: 265 10% 98%;
+
+  --card: 265 45% 7.8%;
+  --card-foreground: 265 10% 98%;
+
+  --border: 265 50% 18%;
+  --input: 265 50% 18%;
+
+  --primary: 265 100% 60%;
+  --primary-foreground: 265 10% 6%;
+
+  --secondary: 265 50% 18%;
+  --secondary-foreground: 265 10% 98%;
+
+  --accent: 265 50% 18%;
+  --accent-foreground: 265 10% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 265 10% 98%;
+
+  --ring: 265 100% 60%;
+}
