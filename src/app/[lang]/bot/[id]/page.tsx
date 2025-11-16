@@ -21,7 +21,6 @@ export default function DocumentsDashboard() {
     url: "project/4/dashboard/",
   });
 
-
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-7xl space-y-6">
