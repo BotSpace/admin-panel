@@ -5,20 +5,19 @@ import { Card } from "@/shared/components/ui/card";
 import { MetricCard } from "@/shared/components/metric-card";
 import { ChartLineInteractive } from "@/shared/components/visitor-chart";
 import { DocumentsTable } from "@/shared/components/documents-table";
-import { ArrowRight, Pencil } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "@/shared/i18n/routing";
 import { useParams } from "next/navigation";
 import { ApiRetrieveResponse } from "@/shared/types/http";
 import { Dashboard } from "@/shared/types/project";
 import { useReactQueryAction } from "@/shared/services/react-query";
-import { da } from "date-fns/locale";
 
 export default function DocumentsDashboard() {
   const { id }: { id: string } = useParams();
   const { data, isLoading, refetch } = useReactQueryAction<
     ApiRetrieveResponse<Dashboard>
   >({
-    url: "project/4/dashboard/",
+    url: "project/[id]/dashboard/",
   });
 
   return (

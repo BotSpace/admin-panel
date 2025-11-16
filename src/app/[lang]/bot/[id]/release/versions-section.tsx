@@ -5,7 +5,7 @@ import { useReactQueryAction } from "@/shared/services/react-query";
 import { Release } from "@/shared/types/release";
 import { APIListResponse } from "@/shared/types/http";
 import { useEffect, useState } from "react";
-import ContainerBadge from "@/shared/components/common/badge/badge";
+import ContainerBadge from "@/shared/components/common/badge/container-badge";
 import EmptyRelease from "./emty-release";
 import BotInfo from "./bot-info";
 

@@ -42,7 +42,7 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
   async function toggleBotStatus() {
     setIsLoading(true);
     try {
-      const endpoint = bot.bot_is_released ? "stop" : "start";
+      const endpoint = bot.release?.status === "running" ? "stop" : "start";
       await instanceAuth.post(`project/${bot.id}/${endpoint}/`);
       refetch();
     } catch (error) {
@@ -70,7 +70,7 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
     });
   }
 
-  const isRunning = bot.bot_is_released ?? bot.bot_is_released;
+  const isRunning = bot.release?.status === "running";
   const statusColor = isRunning ? "bg-green-500" : "bg-gray-400";
   const statusText = isRunning ? "Ishlamoqda" : "To'xtagan";
 
@@ -106,7 +106,7 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">Obunachilar</p>
-            <p className="font-semibold">{bot.project_members_count || 1000}</p>
+            <p className="font-semibold">{bot.users}</p>
           </div>
         </div>
       </CardContent>
@@ -127,7 +127,8 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
         />
 
         <div className="flex flex-wrap gap-2">
-          <Button
+          {/* TODO: Bularni qo'shib qo'yish kerak */}
+          {/* <Button
             size="icon"
             variant={isRunning ? "destructive" : "default"}
             onClick={toggleBotStatus}
@@ -159,7 +160,7 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
             onClick={() => setLogsModalOpen(true)}
           >
             <FileText />
-          </Button>
+          </Button> */}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -178,10 +179,7 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link
-                  href={`bot/${bot.id}/settings`}
-                  className="cursor-pointer"
-                >
+                <Link href={`bot/${bot.id}/release`} className="cursor-pointer">
                   <Settings className="h-4 w-4 mr-2" />
                   Sozlamalar
                 </Link>

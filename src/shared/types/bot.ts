@@ -1,8 +1,13 @@
 export interface BotType {
   id: number;
   name: string;
-  username: string;
-  bot_is_released: boolean;
+  users: number;
+  username: string | null;
   avatar: string | null;
-  project_members_count: number;
+  release: {
+    id: number;
+    version: number;
+    status: string;
+    service_id: string;
+  } | null;
 }
