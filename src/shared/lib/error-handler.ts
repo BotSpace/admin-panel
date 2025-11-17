@@ -11,7 +11,7 @@ export function handleApiError(error: unknown): ApiError {
   if (error instanceof AxiosError) {
     const status = error.response?.status;
     const data = error.response?.data;
-    
+
     // Server error response
     if (data?.message) {
       return {
@@ -20,7 +20,7 @@ export function handleApiError(error: unknown): ApiError {
         code: data.code,
       };
     }
-    
+
     // Network error
     if (error.code === "NETWORK_ERROR" || !error.response) {
       return {
@@ -29,12 +29,13 @@ export function handleApiError(error: unknown): ApiError {
         code: "NETWORK_ERROR",
       };
     }
-    
+
     // HTTP status based errors
     switch (status) {
       case 400:
         return {
-          message: "Noto'g'ri so'rov. Ma'lumotlarni tekshirib qaytadan urinib ko'ring.",
+          message:
+            "Noto'g'ri so'rov. Ma'lumotlarni tekshirib qaytadan urinib ko'ring.",
           status,
           code: "BAD_REQUEST",
         };
@@ -58,13 +59,16 @@ export function handleApiError(error: unknown): ApiError {
         };
       case 422:
         return {
-          message: data?.errors ? Object.values(data.errors).flat().join(", ") : "Ma'lumotlar noto'g'ri.",
+          message: data?.errors
+            ? Object.values(data.errors).flat().join(", ")
+            : "Ma'lumotlar noto'g'ri.",
           status,
           code: "VALIDATION_ERROR",
         };
       case 429:
         return {
-          message: "Juda ko'p so'rov yuborildi. Biroz kutib qaytadan urinib ko'ring.",
+          message:
+            "Juda ko'p so'rov yuborildi. Biroz kutib qaytadan urinib ko'ring.",
           status,
           code: "RATE_LIMITED",
         };
@@ -82,7 +86,7 @@ export function handleApiError(error: unknown): ApiError {
         };
     }
   }
-  
+
   // Generic error
   if (error instanceof Error) {
     return {
@@ -90,7 +94,7 @@ export function handleApiError(error: unknown): ApiError {
       code: "GENERIC_ERROR",
     };
   }
-  
+
   // Unknown error
   return {
     message: "Noma'lum xatolik yuz berdi.",
@@ -101,9 +105,9 @@ export function handleApiError(error: unknown): ApiError {
 export function showApiError(error: unknown, customMessage?: string) {
   const apiError = handleApiError(error);
   const message = customMessage || apiError.message;
-  
+
   toast.error(message);
-  
+
   // Development'da to'liq error ma'lumotini console'ga chiqarish
   if (process.env.NODE_ENV === "development") {
     console.error("API Error:", {
@@ -111,7 +115,7 @@ export function showApiError(error: unknown, customMessage?: string) {
       processedError: apiError,
     });
   }
-  
+
   return apiError;
 }
 

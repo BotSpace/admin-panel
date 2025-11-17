@@ -11,8 +11,8 @@ export interface APIListResponse<T> {
 }
 
 export interface ApiRetrieveResponse<T> {
-  status: boolean,
-  data: T,
+  status: boolean;
+  data: T;
 }
 
 export interface APIDetailCreateResponse<T> {
