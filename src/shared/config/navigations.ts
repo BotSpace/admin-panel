@@ -16,6 +16,12 @@ export const HomePageNavigation: NavGroup[] = [
         icon: LayoutDashboard,
         exact: true,
       },
+      {
+        title: "Shablonlarim",
+        href: "/templates",
+        icon: LayoutDashboard,
+        exact: true,
+      },
     ],
   },
 ];
