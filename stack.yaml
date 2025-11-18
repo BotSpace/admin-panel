@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   admin:
-    image: jscorptech/botmother-admin:17
+    image: jscorptech/botmother-admin:18
     ports:
       - mode: ingress
         target: 3000
@@ -22,7 +22,8 @@ services:
         delay: 10s
         max_failure_ratio: 0.2
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000/uz/auth/login || exit 1"]
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:3000/uz/auth/login || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -38,5 +39,3 @@ networks:
     driver: overlay
     attachable: true
     external: true
-
-
