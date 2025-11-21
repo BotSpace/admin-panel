@@ -219,12 +219,6 @@ export function ReusableSidebar({
                       <span>Profil</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/billing" className="gap-2">
-                      <BadgeDollarSignIcon className="size-4" />
-                      <span>Billing</span>
-                    </Link>
-                  </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => onSignOut()}
                     className="gap-2"
