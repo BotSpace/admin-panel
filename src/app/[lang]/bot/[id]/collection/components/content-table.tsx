@@ -57,7 +57,7 @@ export default function ContentTable({
 
   const { data: collectionData, refetch: refetchCollectionData } =
     useReactQueryAction<APIDetailCreateResponse<[]>>({
-      url: `collection/${collection.name}/query/`,
+      url: `collection/${collection.name}/query/?page=${currentPage}&size=${pageSize}`,
       method: "POST",
       query: { action: "find", project: project },
       data: { 
@@ -131,10 +131,10 @@ export default function ContentTable({
 
   if (data)
     return (
-      <div className="space-y-4">
+      <div className="flex flex-col h-full overflow-hidden">
         {/* Header with Add Button */}
         {data?.data.fields.length > 0 && (
-          <div className="flex justify-between items-center">
+          <div className="flex-shrink-0 flex justify-between items-center p-4 border-b">
             <div className="flex items-center gap-4">
               <div>
                 <h2 className="text-2xl font-semibold">{collection.name}</h2>
@@ -185,8 +185,8 @@ export default function ContentTable({
           </div>
         )}
 
-        {/* Table */}
-        <div className="overflow-x-auto">
+        {/* Table Container with Scroll */}
+        <div className="flex-1 overflow-auto">
           {data?.data.fields.length ? (
             <table className="w-full">
               <TableHeader
@@ -293,9 +293,9 @@ export default function ContentTable({
           </AlertDialogContent>
         </AlertDialog>
 
-        {/* Pagination */}
+        {/* Pagination - Fixed at Bottom */}
         {collectionData?.data && collectionData.data.length > 0 && (
-          <div className="flex items-center justify-between px-2 py-4">
+          <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-t bg-background">
             <div className="flex-1 text-sm text-muted-foreground">
               {selectedItems.length > 0 && (
                 <span>
