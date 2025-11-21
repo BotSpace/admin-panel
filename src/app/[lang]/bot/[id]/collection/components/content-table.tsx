@@ -57,9 +57,14 @@ export default function ContentTable({
 
   const { data: collectionData, refetch: refetchCollectionData } =
     useReactQueryAction<APIDetailCreateResponse<[]>>({
-      url: `collection/${collection.name}/query/?page=${currentPage}&size=${pageSize}`,
+      url: `collection/${collection.name}/query/`,
       method: "POST",
-      query: { action: "find", project: project },
+      query: { 
+        action: "find", 
+        project: project,
+        page: currentPage.toString(),
+        size: pageSize.toString()
+      },
       data: { 
         limit: pageSize, 
         skip: (currentPage - 1) * pageSize 
