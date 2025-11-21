@@ -2,9 +2,10 @@
 
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-import { Plus } from "lucide-react";
-import { AddNewCollectionModal } from "./add-collection-modal";
+import { Settings } from "lucide-react";
 import { CollectionListItem } from "@/shared/types/collection";
+import { EditCollectionSheet } from "./edit-collection-sheet";
+import { useEffect, useState } from "react";
 
 interface EmptyStateProps {
   collection: CollectionListItem;
@@ -17,27 +18,38 @@ export default function EmptyState({
   project,
   onSuccess,
 }: EmptyStateProps) {
+  const [autoOpen, setAutoOpen] = useState(false);
+
+  useEffect(() => {
+    // Auto-open settings modal when component mounts
+    setAutoOpen(true);
+  }, []);
+
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <Card className="p-4 hover:shadow-lg cursor-pointer flex items-center justify-center">
         <CardContent className="flex flex-col items-center justify-center py-8">
-          <h2 className="text-lg font-semibold mb-2">Yangi Field Yaratish</h2>
-          <p className="text-sm text-muted-foreground mb-4 text-center">
-            Yangi field qo'shish uchun quyidagi tugmani bosing va ma'lumotlarni
-            kiriting.
+          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+            <Settings className="h-10 w-10 text-primary" />
+          </div>
+          <h2 className="text-2xl font-semibold mb-2">Collection Bo'sh</h2>
+          <p className="text-sm text-muted-foreground mb-6 text-center max-w-md">
+            Ushbu collection'da hali fieldlar yo'q. Collection sozlamalarini oching 
+            va fieldlarni qo'shing.
           </p>
 
-          <AddNewCollectionModal
+          <EditCollectionSheet
             collection={collection}
-            onSuccess={onSuccess ?? (() => {})}
             fields={[]}
             project_id={project}
+            onSuccess={onSuccess ?? (() => {})}
+            autoOpen={autoOpen}
           >
-            <Button className="flex items-center space-x-2">
-              <Plus className="h-5 w-5" />
-              <span>Field Qo'shish</span>
+            <Button size="lg" className="flex items-center space-x-2">
+              <Settings className="h-5 w-5" />
+              <span>Collection Sozlamalari</span>
             </Button>
-          </AddNewCollectionModal>
+          </EditCollectionSheet>
         </CardContent>
       </Card>
     </div>

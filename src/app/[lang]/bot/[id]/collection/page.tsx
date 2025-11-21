@@ -26,6 +26,22 @@ export default function Home() {
     }
   }, [data]);
 
+  // Handle collection deletion
+  const handleCollectionDeleted = () => {
+    // Refetch collections list
+    refetch();
+    
+    // Select first collection or clear selection
+    setSelectedCollection(undefined);
+  };
+
+  // Auto-select first collection when data changes and no selection
+  useEffect(() => {
+    if (data && data.data.results.length > 0 && !selectedCollection) {
+      setSelectedCollection(data.data.results[0]);
+    }
+  }, [data, selectedCollection]);
+
   return (
     <div className="flex h-screen bg-background text-foreground">
       {/* Sidebar */}
@@ -40,7 +56,11 @@ export default function Home() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Content Table */}
         {selectedCollection && (
-          <ContentTable project={id} collection={selectedCollection} />
+          <ContentTable 
+            project={id} 
+            collection={selectedCollection}
+            onCollectionDeleted={handleCollectionDeleted}
+          />
         )}
       </div>
     </div>
