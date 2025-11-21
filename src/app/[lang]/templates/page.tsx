@@ -2,7 +2,7 @@
 
 import { TemplateCard } from "@/features/templates/components/template-card";
 import { TemplateCardSkeleton } from "@/features/templates/components/template-card-skeletion";
-import { TemplateListType } from "@/features/templates/types/template";
+import { OrderListItem } from "@/features/templates/types/order";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
 import { Search } from "lucide-react";
@@ -11,22 +11,23 @@ import React from "react";
 
 type Props = {};
 
-function Page({}: Props) {
-  const { data: templates } = useReactQueryAction<
-    APIListResponse<TemplateListType[]>
+function Page({ }: Props) {
+  const { data: orders } = useReactQueryAction<
+    APIListResponse<OrderListItem[]>
   >({
-    url: "/template",
+    url: "/order",
   });
+
 
   return (
     <main>
-      {templates ? (
-        templates.data.results.length > 0 ? (
+      {orders ? (
+        orders.data.results.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {templates.data.results.map((template) => {
+            {orders.data.results.map(({ id, template }) => {
               return (
                 <div
-                  key={template.id}
+                  key={id}
                   className="scroll-animate"
                   style={{
                     animation: `slideInUp 0.5s ease-out forwards`,

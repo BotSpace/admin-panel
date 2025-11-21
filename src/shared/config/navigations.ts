@@ -1,5 +1,6 @@
 import { NavGroup } from "@/shared/components/app-sidebar";
 import {
+  BadgeDollarSignIcon,
   BarChart3,
   Database,
   LayoutDashboard,
@@ -20,6 +21,12 @@ export const HomePageNavigation: NavGroup[] = [
         title: "Shablonlarim",
         href: "/templates",
         icon: LayoutDashboard,
+        exact: true,
+      },
+      {
+        title: "To'lovlar",
+        href: "/billing",
+        icon: BadgeDollarSignIcon,
         exact: true,
       },
     ],
