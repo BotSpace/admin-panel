@@ -1,17 +1,14 @@
 import { withAuth } from "next-auth/middleware";
 import createIntlMiddleware from "next-intl/middleware";
+import { localeConfig } from "./shared/i18n/routing"
 
-const locales = ["en", "uz", "ru", "jp"];
 
-const intlMiddleware = createIntlMiddleware({
-  locales,
-  defaultLocale: "uz",
-});
+const intlMiddleware = createIntlMiddleware(localeConfig);
 
 // Public route’larni aniqlaymiz
 const publicPaths = [
   // new RegExp(`^\\/(${locales.join("|")})\\/website(\\/.*)?$`),
-  new RegExp(`^\\/(${locales.join("|")})\\/website(?:\\/.*)?$`),
+  new RegExp(`^\\/(${localeConfig.locales.join("|")})\\/website(?:\\/.*)?$`),
 ];
 
 const authMiddleware = withAuth(
