@@ -37,34 +37,22 @@ export default function DocumentsDashboard() {
           <MetricCard
             title="Foydalanuvchilar"
             value={data?.data.total_users.toString() ?? "0"}
-            trend={12.5}
-            trendDirection="up"
-            subtitle="Trending up this month"
-            description="Visitors for the last 6 months"
+            subtitle="Barcha davr ichida botga kirgan foydalanuvchilar soni"
           />
           <MetricCard
-            title="Yangi mijozlar"
+            title="Bugungi foydalanuvchilar"
             value="1,234"
-            trend={-20}
-            trendDirection="down"
-            subtitle="Down 20% this period"
-            description="Acquisition needs attention"
+            subtitle="Bugun botga tashrif buyurgan yangi foydalanuvchilar soni"
           />
           <MetricCard
-            title="Aktiv hisobotlar"
+            title="Bugun botdan foydalanganlar"
             value="45,678"
-            trend={12.5}
-            trendDirection="up"
-            subtitle="Strong user retention"
-            description="Engagement exceed targets"
+            subtitle="Bugun kun davomida botdan bir martta bo'lsa ham foydalangan foydalanuvchilar soni"
           />
           <MetricCard
-            title="O'sish tezligi"
-            value="4.5%"
-            trend={14.5}
-            trendDirection="up"
-            subtitle="Steady performance increase"
-            description="Meets growth projections"
+            title="Aktiv foydalanuvchilar soni"
+            value="121,121"
+            subtitle="Bot aktiv foydalanuvchilari soni"
           />
         </div>
 
@@ -72,9 +60,10 @@ export default function DocumentsDashboard() {
         <ChartLineInteractive chart={data?.data.chart.new_users ?? []} />
 
         {/* Documents Table */}
-        <Card className="bg-card p-6">
-          <DocumentsTable />
-        </Card>
+        {/* Vaqtincha o'chirib qo'yildi kerak bo'lsa yoqiladi */}
+        {/* <Card className="bg-card p-6"> */}
+        {/*   <DocumentsTable /> */}
+        {/* </Card> */}
       </div>
     </div>
   );
