@@ -4,6 +4,7 @@ import {
   BarChart3,
   Database,
   LayoutDashboard,
+  Library,
   MessageSquare,
 } from "lucide-react";
 
@@ -20,7 +21,7 @@ export const HomePageNavigation: NavGroup[] = [
       {
         title: "Shablonlarim",
         href: "/templates",
-        icon: LayoutDashboard,
+        icon: Library,
         exact: true,
       },
       {
