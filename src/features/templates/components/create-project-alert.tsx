@@ -64,7 +64,7 @@ export function NewProjectFromTemplateDialog({ id }: NewProjectDialogProps) {
         }
       );
 
-      route.push(`/bot/${data.id}`);
+      route.push(`/bot/${data.data.id}`);
 
       console.log("🚀 ~ file: create-project-alert.tsx:58 ~ response:", data);
 
