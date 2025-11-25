@@ -37,6 +37,7 @@ jobs:
             "CONSTRUCTOR_URL=${{ vars.CONSTRUCTOR_URL }}" \
             "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" \
             "NEXTAUTH_URL=${{ vars.NEXTAUTH_URL }}" \
+            "SALES_URL=${{ vars.SALES_URL }}" \
             "NODE_ENV=production"
 
 
@@ -128,6 +129,7 @@ jobs:
               "CONSTRUCTOR_URL=${{ vars.CONSTRUCTOR_URL }}" \
               "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" \
               "NEXTAUTH_URL=${{ vars.NEXTAUTH_URL }}" \
+              "SALES_URL=${{ vars.SALES_URL }}" \
               "NODE_ENV=production"
 
             export PORT=${{ vars.PORT }}
