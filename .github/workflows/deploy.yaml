@@ -21,6 +21,27 @@ jobs:
       - name: Copy env
         run: |
           cp .env.example .env
+      - name: update env
+        run: |
+          update_env() {
+              local env_file=".env"
+              cp .env.example "$env_file"
+
+              for kv in "$@"; do
+                  local key="${kv%%=*}"
+                  local value="${kv#*=}"
+                  sed -i "s|^$key=.*|$key=$value|" "$env_file"
+              done
+          }
+
+          update_env \
+            "DEBUG=true" \
+            "NEXT_PUBLIC_API=${{ vars.NEXT_PUBLIC_API }}" \
+            "CONSTRUCTOR_URL=${{ vars.CONSTRUCTOR_URL }}" \
+            "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" \
+            "NEXTAUTH_URL=${{ vars.NEXTAUTH_URL }}" \
+            "NODE_ENV=production"
+
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

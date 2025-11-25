@@ -50,6 +50,6 @@ export default withNextIntl({
     return [...constructor_rewrites, ...website_rewrites];
   },
   images: {
-    domains: ["localhost", "localhost:3002", "api.botmother.uz"], // SALES_URL domeni
+    domains: ["localhost", "localhost:3002", "api.botmother.uz", "192.168.3.1:3000"], // SALES_URL domeni
   },
 });
