@@ -2,6 +2,8 @@ version: "3.8"
 
 services:
   admin:
+    env_file:
+      - .env
     image: jscorptech/botmother-admin:28
     ports:
       - mode: ingress
