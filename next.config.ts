@@ -33,10 +33,6 @@ const website_rewrites = [
     source: "/:lang/website/:path*",
     destination: `${env.SALES_URL}/website/:lang/:path*`,
   },
-  {
-    source: "/api/:path*",
-    destination: `${env.SALES_URL}/website/api/:path*`,
-  },
 
   // media (static files, chunks, images)
   {
