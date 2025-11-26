@@ -1,21 +1,26 @@
 # Loyiha Tahlili Hisoboti
 
-Sana: 11/12/2025, 12:04:33 AM
+Sana: 11/26/2025, 12:11:13 PM
 
 ## 📁 Fayl Strukturasi
 
 ```
-constructor-manager
-├── .env.local
+admin-panel
+├── .env
+├── .env.example
+├── .github
+│   └── workflows
+│       └── deploy.yaml
 ├── .gitignore
 ├── Dockerfile
 ├── README.md
-├── example.env
+├── api.yaml
+├── components.json
 ├── just.json
 ├── next-env.d.ts
 ├── next.config.ts
 ├── package.json
-├── salom.py
+├── postcss.config.mjs
 ├── scripts
 │   └── analis_project.js
 ├── src
@@ -28,11 +33,31 @@ constructor-manager
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── register
 │   │   │   │       └── page.tsx
+│   │   │   ├── billing
+│   │   │   │   └── page.tsx
 │   │   │   ├── bot
 │   │   │   │   └── [id]
+│   │   │   │       ├── collection
+│   │   │   │       │   ├── components
+│   │   │   │       │   │   ├── add-collection-modal.tsx
+│   │   │   │       │   │   ├── add-item-sheet.tsx
+│   │   │   │       │   │   ├── collection-modal.tsx
+│   │   │   │       │   │   ├── content-table.tsx
+│   │   │   │       │   │   ├── data-rows.tsx
+│   │   │   │       │   │   ├── delete-collection-dialog.tsx
+│   │   │   │       │   │   ├── delete-item-dialog.tsx
+│   │   │   │       │   │   ├── edit-collection-sheet.tsx
+│   │   │   │       │   │   ├── edit-item-sheet.tsx
+│   │   │   │       │   │   ├── empty-state.tsx
+│   │   │   │       │   │   ├── new-item-row.tsx
+│   │   │   │       │   │   ├── sidebar.tsx
+│   │   │   │       │   │   ├── table-header.tsx
+│   │   │   │       │   │   └── utils.ts
+│   │   │   │       │   └── page.tsx
 │   │   │   │       ├── layout.tsx
 │   │   │   │       ├── page.tsx
 │   │   │   │       ├── release
+│   │   │   │       │   ├── bot-info.tsx
 │   │   │   │       │   ├── emty-release.tsx
 │   │   │   │       │   ├── page.tsx
 │   │   │   │       │   ├── staging-section.tsx
@@ -49,45 +74,64 @@ constructor-manager
 │   │   │   ├── market
 │   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
-│   │   │   └── remove-me.tsx
+│   │   │   ├── profile
+│   │   │   │   └── page.tsx
+│   │   │   ├── remove-me.tsx
+│   │   │   └── templates
+│   │   │       └── page.tsx
 │   │   ├── api
 │   │   │   └── auth
 │   │   │       ├── [...nextauth]
 │   │   │       │   ├── option.ts
 │   │   │       │   └── route.ts
 │   │   │       └── next-auth.d.ts
+│   │   ├── globals copy.css
 │   │   └── globals.css
-│   ├── components.json
+│   ├── components
+│   │   └── ui
+│   │       └── button.tsx
 │   ├── features
 │   │   ├── auth
 │   │   │   ├── components
-│   │   │   ├── hooks
-│   │   │   ├── pages
-│   │   │   ├── services
+│   │   │   │   ├── appearance-section.tsx
+│   │   │   │   ├── danger-section.tsx
+│   │   │   │   ├── language-section.tsx
+│   │   │   │   ├── notification-section.tsx
+│   │   │   │   ├── password-section.tsx
+│   │   │   │   ├── profile-form.tsx
+│   │   │   │   └── profile-info-section.tsx
 │   │   │   └── types
 │   │   │       ├── get-me.ts
-│   │   │       └── login.tsx
+│   │   │       ├── login.ts
+│   │   │       └── profile.ts
+│   │   ├── billing
+│   │   │   ├── add-funds-modal.tsx
+│   │   │   ├── balance-card.tsx
+│   │   │   ├── billing-settings.tsx
+│   │   │   ├── expense-details-table.tsx
+│   │   │   ├── invoices-section.tsx
+│   │   │   ├── payment-methods-section.tsx
+│   │   │   ├── topup-history-table.tsx
+│   │   │   └── usage-overview.tsx
 │   │   ├── bot
 │   │   │   ├── botSchema.ts
-│   │   │   ├── components
-│   │   │   │   ├── bot-card.tsx
-│   │   │   │   ├── bot-settings.tsx
-│   │   │   │   ├── create-new-bot.tsx
-│   │   │   │   ├── files.tsx
-│   │   │   │   ├── message-preview.tsx
-│   │   │   │   └── send-message.tsx
-│   │   │   ├── hooks
-│   │   │   ├── pages
-│   │   │   ├── services
-│   │   │   └── types
-│   │   └── market
+│   │   │   └── components
+│   │   │       ├── bot-card.tsx
+│   │   │       ├── bot-settings.tsx
+│   │   │       ├── create-new-bot.tsx
+│   │   │       ├── files.tsx
+│   │   │       ├── inline-buttons.tsx
+│   │   │       ├── message-preview.tsx
+│   │   │       └── send-message.tsx
+│   │   └── templates
 │   │       ├── components
-│   │       ├── hooks
-│   │       ├── pages
-│   │       ├── services
+│   │       │   ├── create-project-alert.tsx
+│   │       │   ├── template-card-skeletion.tsx
+│   │       │   └── template-card.tsx
 │   │       └── types
+│   │           ├── order.ts
+│   │           └── template.ts
 │   ├── middleware.ts
-│   ├── next-env.d.ts
 │   ├── postcss.config.mjs
 │   └── shared
 │       ├── components
@@ -95,7 +139,7 @@ constructor-manager
 │       │   ├── app-sidebar.tsx
 │       │   ├── common
 │       │   │   ├── badge
-│       │   │   │   └── badge.tsx
+│       │   │   │   └── container-badge.tsx
 │       │   │   └── delete-modal
 │       │   │       └── delete-modal.tsx
 │       │   ├── dashboard-header.tsx
@@ -123,6 +167,7 @@ constructor-manager
 │       │   │   ├── input-otp.tsx
 │       │   │   ├── input.tsx
 │       │   │   ├── label.tsx
+│       │   │   ├── pagination.tsx
 │       │   │   ├── popover.tsx
 │       │   │   ├── progress.tsx
 │       │   │   ├── radio-group.tsx
@@ -154,6 +199,8 @@ constructor-manager
 │       │   ├── constants.ts
 │       │   ├── env.ts
 │       │   ├── error-handler.ts
+│       │   ├── format-currency.ts
+│       │   ├── input-validators.ts
 │       │   ├── query-generator.ts
 │       │   └── utils.ts
 │       ├── messages
@@ -168,15 +215,19 @@ constructor-manager
 │       │   │   ├── use-react-query-action.ts
 │       │   │   └── use-scroll-query-action.ts
 │       │   └── requests
-│       │       └── auth.ts
+│       │       ├── auth.ts
+│       │       └── message.ts
 │       ├── store
 │       │   ├── chat-message.ts
 │       │   └── count.ts
 │       └── types
 │           ├── bot.ts
+│           ├── collection.ts
 │           ├── http.ts
+│           ├── message.ts
 │           ├── project.ts
 │           └── release.ts
+├── stack.yaml
 └── tsconfig.json
 ```
 

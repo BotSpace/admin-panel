@@ -29,6 +29,20 @@ const constructor_rewrites = [
 
 const website_rewrites = [
   // Barcha website sahifalarini proksi qilish
+
+  // SEO Section
+  // sitemap.xml 
+  {
+    source: "/website/sitemap.xml",
+    destination: `${env.SALES_URL}/website/sitemap.xml`,
+  },
+  // robots.txt
+  {
+    source: "/website/robots.txt",
+    destination: `${env.SALES_URL}/website/robots.txt`,
+  },
+
+  // Main website path
   {
     source: "/:lang/website/:path*",
     destination: `${env.SALES_URL}/website/:lang/:path*`,
