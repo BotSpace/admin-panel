@@ -10,7 +10,7 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export const TemplateCardSkeleton = () => {
   return (
-    <Card className="flex h-full flex-col overflow-hidden bg-card">
+    <Card className="flex h-full flex-col overflow-hidden bg-card py-0">
       {/* Preview area */}
       <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-lg border-b border-border/50 bg-muted">
         <Skeleton className="absolute right-3 top-3 h-5 w-12 rounded-full" />

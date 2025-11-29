@@ -21,6 +21,17 @@ export const HomePageNavigation: NavGroup[] = [
         exact: true,
       },
       {
+        title: "Fayllar",
+        href: "/files",
+        icon: File,
+        exact: true,
+      },
+    ],
+  },
+  {
+    title: "Qo'shimchalar",
+    items: [
+      {
         title: "Shablonlarim",
         href: "/templates",
         icon: Library,
@@ -36,12 +47,6 @@ export const HomePageNavigation: NavGroup[] = [
         title: "Ticketlar",
         href: "/tickets",
         icon: Ticket,
-        exact: true,
-      },
-      {
-        title: "Fayllar",
-        href: "/files",
-        icon: File,
         exact: true,
       },
     ],

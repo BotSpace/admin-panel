@@ -25,9 +25,11 @@ export default function FilesPage() {
   const queryClient = useQueryClient();
 
   // Fetch all files
-  const { data: allFiles, isLoading, refetch } = useReactQueryAction<
-    APIListResponse<FileListItem[]>
-  >({
+  const {
+    data: allFiles,
+    isLoading,
+    refetch,
+  } = useReactQueryAction<APIListResponse<FileListItem[]>>({
     url: "/file",
     query: { page_size: 1000 }, // Get all files for now
   });
@@ -50,10 +52,6 @@ export default function FilesPage() {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      });
-      // Invalidate and refetch files
-      queryClient.invalidateQueries({ 
-        predicate: (query) => query.queryKey[0]?.toString().includes("/file")
       });
       await refetch();
       toast.success("Fayl muvaffaqiyatli yuklandi");
@@ -83,10 +81,7 @@ export default function FilesPage() {
 
     try {
       await instanceAuth.delete(`/file/${file.uuid}/`);
-      // Invalidate and refetch files
-      queryClient.invalidateQueries({ 
-        predicate: (query) => query.queryKey[0]?.toString().includes("/file")
-      });
+
       await refetch();
       toast.success("Fayl muvaffaqiyatli o'chirildi");
     } catch (error) {
@@ -122,7 +117,10 @@ export default function FilesPage() {
         </div>
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FileType)}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as FileType)}
+        >
           <TabsList className="mb-6">
             <TabsTrigger value="photo" className="flex items-center gap-2">
               <Image className="h-4 w-4" />
@@ -214,4 +212,3 @@ export default function FilesPage() {
     </main>
   );
 }
-

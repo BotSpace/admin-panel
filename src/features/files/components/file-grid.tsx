@@ -26,7 +26,7 @@ export function FileGrid({
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-          <Card key={i} className="animate-pulse">
+          <Card key={i} className="animate-pulse py-0">
             <div className="aspect-video bg-muted rounded-t-lg" />
             <CardContent className="p-4">
               <div className="h-4 bg-muted rounded w-3/4 mb-2" />
@@ -51,7 +51,7 @@ export function FileGrid({
       {files.map((file) => (
         <Card
           key={file.uuid}
-          className="group overflow-hidden hover:shadow-lg transition-shadow"
+          className="group overflow-hidden hover:shadow-lg transition-shadow py-0"
         >
           <div className="relative aspect-video bg-muted overflow-hidden">
             {file.filetype === "photo" ? (
@@ -59,7 +59,7 @@ export function FileGrid({
                 src={file.file}
                 alt={file.uuid}
                 fill
-                className="object-cover"
+                className="object-cover rounded-lg"
                 unoptimized
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               />
@@ -127,4 +127,3 @@ export function FileGrid({
     </div>
   );
 }
-
