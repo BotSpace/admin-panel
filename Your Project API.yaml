@@ -4,6 +4,96 @@ info:
   version: 1.0.0
   description: Your project description
 paths:
+  /api/bot-webhook/{method}/{uuid}/:
+    post:
+      operationId: apiBotWebhookCreate
+      parameters:
+      - in: path
+        name: method
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: uuid
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/category/:
+    get:
+      operationId: apiCategoryList
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - template
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/PaginatedListTemplateCategoryList'
+                required:
+                - status
+                - data
+          description: ''
+  /api/category/{id}/:
+    get:
+      operationId: apiCategoryRetrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this TemplateCategoryModel.
+        required: true
+      tags:
+      - template
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/RetrieveTemplateCategory'
+                required:
+                - status
+                - data
+          description: ''
   /api/collection/:
     get:
       operationId: apiCollectionList
@@ -430,6 +520,267 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/feature/:
+    get:
+      operationId: apiFeatureList
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - template
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/PaginatedListTemplateFeatureList'
+                required:
+                - status
+                - data
+          description: ''
+  /api/feature/{id}/:
+    get:
+      operationId: apiFeatureRetrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this TemplateFeatureModel.
+        required: true
+      tags:
+      - template
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/RetrieveTemplateFeature'
+                required:
+                - status
+                - data
+          description: ''
+  /api/file/:
+    get:
+      operationId: apiFileList
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - file
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/PaginatedListFileList'
+                required:
+                - status
+                - data
+          description: ''
+    post:
+      operationId: apiFileCreate
+      tags:
+      - file
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateFile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateFile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/CreateFile'
+                required:
+                - status
+                - data
+          description: ''
+  /api/file/{uuid}/:
+    get:
+      operationId: apiFileRetrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+        required: true
+      tags:
+      - file
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/RetrieveFile'
+                required:
+                - status
+                - data
+          description: ''
+    put:
+      operationId: apiFileUpdate
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+        required: true
+      tags:
+      - file
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListFile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ListFile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ListFile'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ListFile'
+                required:
+                - status
+                - data
+          description: ''
+    patch:
+      operationId: apiFilePartialUpdate
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+        required: true
+      tags:
+      - file
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedListFile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedListFile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedListFile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ListFile'
+                required:
+                - status
+                - data
+          description: ''
+    delete:
+      operationId: apiFileDestroy
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+        required: true
+      tags:
+      - file
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/message/:
     get:
       operationId: apiMessageList
@@ -627,6 +978,150 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/order/:
+    get:
+      operationId: apiOrderList
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - order
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/PaginatedListTemplateOrderList'
+                required:
+                - status
+                - data
+          description: ''
+    post:
+      operationId: apiOrderCreate
+      tags:
+      - order
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTemplateOrder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateTemplateOrder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateTemplateOrder'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/CreateTemplateOrder'
+                required:
+                - status
+                - data
+          description: ''
+  /api/order/{id}/:
+    get:
+      operationId: apiOrderRetrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - order
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/RetrieveTemplateOrder'
+                required:
+                - status
+                - data
+          description: ''
+  /api/payment/create-transaction/:
+    post:
+      operationId: apiPaymentCreateTransactionCreate
+      tags:
+      - order
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentLink'
+            examples:
+              Create:
+                value:
+                  method: click
+                  order: 10
+                summary: create
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentLink'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentLink'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      link:
+                        type: string
+                        example: https://google.com
+                required:
+                - status
+                - data
+          description: ''
   /api/project/:
     get:
       operationId: apiProjectList
@@ -827,6 +1322,7 @@ paths:
   /api/project/{id}/dashboard/:
     get:
       operationId: apiProjectDashboardRetrieve
+      summary: Dashboard api
       parameters:
       - in: path
         name: id
@@ -849,7 +1345,28 @@ paths:
                     type: boolean
                     example: true
                   data:
-                    $ref: '#/components/schemas/ListProject'
+                    type: object
+                    properties:
+                      total_users:
+                        type: integer
+                        example: 100
+                      daily_users:
+                        type: integer
+                        example: 50
+                      chart:
+                        type: object
+                        properties:
+                          new_users:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                date:
+                                  type: string
+                                  example: '2025-11-22'
+                                value:
+                                  type: integer
+                                  example: 100
                 required:
                 - status
                 - data
@@ -940,6 +1457,41 @@ paths:
                     example: true
                   data:
                     $ref: '#/components/schemas/ListProject'
+                required:
+                - status
+                - data
+          description: ''
+  /api/project/create-from-template/:
+    post:
+      operationId: apiProjectCreateFromTemplateCreate
+      tags:
+      - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectFromTemplate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateProjectFromTemplate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateProjectFromTemplate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/CreateProjectFromTemplate'
                 required:
                 - status
                 - data
@@ -1141,6 +1693,22 @@ paths:
     get:
       operationId: apiTemplateList
       parameters:
+      - in: query
+        name: categories
+        schema:
+          type: array
+          items:
+            type: integer
+        explode: true
+        style: form
+      - in: query
+        name: features
+        schema:
+          type: array
+          items:
+            type: integer
+        explode: true
+        style: form
       - name: page
         required: false
         in: query
@@ -1153,6 +1721,24 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
+      - in: query
+        name: price_max
+        schema:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+          title: Price
+      - in: query
+        name: price_min
+        schema:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+          title: Price
+      - in: query
+        name: search
+        schema:
+          type: string
       tags:
       - template
       security:
@@ -1174,15 +1760,14 @@ paths:
                 - status
                 - data
           description: ''
-  /api/template/{id}/:
+  /api/template/{slug}/:
     get:
       operationId: apiTemplateRetrieve
       parameters:
       - in: path
-        name: id
+        name: slug
         schema:
-          type: integer
-        description: A unique integer value identifying this TemplateModel.
+          type: string
         required: true
       tags:
       - template
@@ -1269,74 +1854,6 @@ paths:
                     example: true
                   data:
                     $ref: '#/components/schemas/RetrieveTransaction'
-                required:
-                - status
-                - data
-          description: ''
-  /api/usertemplate/:
-    get:
-      operationId: apiUsertemplateList
-      parameters:
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - name: page_size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      tags:
-      - usertemplate
-      security:
-      - jwtAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  data:
-                    $ref: '#/components/schemas/PaginatedListUsertemplateList'
-                required:
-                - status
-                - data
-          description: ''
-  /api/usertemplate/{id}/:
-    get:
-      operationId: apiUsertemplateRetrieve
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this UsertemplateModel.
-        required: true
-      tags:
-      - usertemplate
-      security:
-      - jwtAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  data:
-                    $ref: '#/components/schemas/RetrieveUsertemplate'
                 required:
                 - status
                 - data
@@ -1830,6 +2347,18 @@ paths:
                 - status
                 - data
           description: ''
+  /authbot/webhook/:
+    post:
+      operationId: authbotWebhookCreate
+      description: Telegram webhook view to handle incoming updates
+      tags:
+      - authbot
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
 components:
   schemas:
     Button:
@@ -1958,12 +2487,22 @@ components:
           - text
           - number
           - bool
+          - datetime
+          - file
+          - audio
+          - video
+          - photo
           type: string
           description: |-
             * `text` - Text
             * `number` - Number
             * `bool` - bool
-          x-spec-enum-id: e3a0186080590fe7
+            * `datetime` - datetime
+            * `file` - file
+            * `audio` - audio
+            * `video` - video
+            * `photo` - photo
+          x-spec-enum-id: 3984315ce3706032
           title: Name
         required:
           type: boolean
@@ -1974,6 +2513,58 @@ components:
       required:
       - id
       - name
+    CreateFile:
+      type: object
+      properties:
+        file:
+          type: string
+          format: uri
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        filesize:
+          type: integer
+          readOnly: true
+          nullable: true
+        filetype:
+          enum:
+          - file
+          - photo
+          - video
+          - audio
+          type: string
+          description: |-
+            * `file` - File
+            * `photo` - Photo
+            * `video` - Video
+            * `audio` - Audio
+          x-spec-enum-id: ee69fa0c75a08251
+      required:
+      - file
+      - filesize
+      - uuid
+    CreatePaymentLink:
+      type: object
+      properties:
+        method:
+          enum:
+          - click
+          - payme
+          - paynet
+          - uzum
+          type: string
+          description: |-
+            * `click` - Click
+            * `payme` - Payme
+            * `paynet` - Paynet
+            * `uzum` - Uzum
+          x-spec-enum-id: 3240330cf906b6e3
+        order:
+          type: integer
+      required:
+      - method
+      - order
     CreateProject:
       type: object
       properties:
@@ -1989,6 +2580,21 @@ components:
       required:
       - id
       - name
+    CreateProjectFromTemplate:
+      type: object
+      properties:
+        template:
+          type: integer
+        name:
+          type: string
+          maxLength: 255
+        token:
+          type: string
+          maxLength: 255
+      required:
+      - name
+      - template
+      - token
     CreateRelase:
       type: object
       properties:
@@ -2004,6 +2610,39 @@ components:
       - id
       - project
       - version
+    CreateTemplateOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        template:
+          type: integer
+          nullable: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+          readOnly: true
+        status:
+          enum:
+          - pending
+          - confirm
+          - cancel
+          type: string
+          description: |-
+            * `pending` - Pending
+            * `confirm` - Confirm
+            * `cancel` - Cancel
+          x-spec-enum-id: 488bbac6099d3352
+          readOnly: true
+        payment_status:
+          type: boolean
+      required:
+      - amount
+      - id
+      - status
+      - template
     ListCollection:
       type: object
       properties:
@@ -2064,6 +2703,36 @@ components:
       - id
       - key
       - value
+    ListFile:
+      type: object
+      properties:
+        file:
+          type: string
+          format: uri
+        uuid:
+          type: string
+          format: uuid
+        filesize:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+        filetype:
+          enum:
+          - file
+          - photo
+          - video
+          - audio
+          type: string
+          description: |-
+            * `file` - File
+            * `photo` - Photo
+            * `video` - Video
+            * `audio` - Audio
+          x-spec-enum-id: ee69fa0c75a08251
+      required:
+      - file
     ListLanguage:
       type: object
       properties:
@@ -2090,12 +2759,24 @@ components:
         name:
           type: string
           maxLength: 255
+        users:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+          maxLength: 255
+        avatar:
+          type: string
+          format: uri
+          nullable: true
         release:
           $ref: '#/components/schemas/ListRelase'
       required:
       - id
       - name
       - release
+      - users
     ListRelase:
       type: object
       properties:
@@ -2141,9 +2822,126 @@ components:
         name:
           type: string
           maxLength: 255
+        slug:
+          type: string
+          nullable: true
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        image:
+          type: string
+          format: uri
+        price:
+          type: string
+          readOnly: true
+        views:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        likes:
+          type: integer
+          readOnly: true
+        original_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+          title: Price
+        discount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+        discount_type:
+          enum:
+          - percent
+          - amount
+          type: string
+          description: |-
+            * `percent` - Percent
+            * `amount` - Amount
+          x-spec-enum-id: ca237514cb6f605e
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListTemplateCategory'
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/MiniTemplateFeature'
+      required:
+      - categories
+      - features
+      - id
+      - image
+      - likes
+      - name
+      - original_price
+      - price
+    ListTemplateCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
       required:
       - id
       - name
+    ListTemplateFeature:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        value:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+    ListTemplateOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        template:
+          $ref: '#/components/schemas/RetrieveTemplate'
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+        status:
+          enum:
+          - pending
+          - confirm
+          - cancel
+          type: string
+          description: |-
+            * `pending` - Pending
+            * `confirm` - Confirm
+            * `cancel` - Cancel
+          x-spec-enum-id: 488bbac6099d3352
+        payment_status:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - amount
+      - created_at
+      - id
+      - template
+      - updated_at
     ListTransaction:
       type: object
       properties:
@@ -2156,14 +2954,6 @@ components:
       required:
       - id
       - name
-    ListUsertemplate:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-      required:
-      - id
     Login:
       type: object
       properties:
@@ -2210,6 +3000,18 @@ components:
       required:
       - caption
       - id
+    MiniTemplateFeature:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - name
     PaginatedListCollectionList:
       type: object
       properties:
@@ -2291,6 +3093,50 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ListEnviroment'
+      required:
+      - links
+      - total_items
+      - total_pages
+      - page_size
+      - current_page
+      - results
+    PaginatedListFileList:
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            previous:
+              type:
+              - string
+              - 'null'
+              format: uri
+              example: http://api.example.org/accounts/?page=2
+            next:
+              type:
+              - string
+              - 'null'
+              format: uri
+              example: http://api.example.org/accounts/?page=4
+          required:
+          - previous
+          - next
+        total_items:
+          type: integer
+          example: 100
+        total_pages:
+          type: integer
+          example: 10
+        page_size:
+          type: integer
+          example: 10
+        current_page:
+          type: integer
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListFile'
       required:
       - links
       - total_items
@@ -2430,6 +3276,94 @@ components:
       - page_size
       - current_page
       - results
+    PaginatedListTemplateCategoryList:
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            previous:
+              type:
+              - string
+              - 'null'
+              format: uri
+              example: http://api.example.org/accounts/?page=2
+            next:
+              type:
+              - string
+              - 'null'
+              format: uri
+              example: http://api.example.org/accounts/?page=4
+          required:
+          - previous
+          - next
+        total_items:
+          type: integer
+          example: 100
+        total_pages:
+          type: integer
+          example: 10
+        page_size:
+          type: integer
+          example: 10
+        current_page:
+          type: integer
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListTemplateCategory'
+      required:
+      - links
+      - total_items
+      - total_pages
+      - page_size
+      - current_page
+      - results
+    PaginatedListTemplateFeatureList:
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            previous:
+              type:
+              - string
+              - 'null'
+              format: uri
+              example: http://api.example.org/accounts/?page=2
+            next:
+              type:
+              - string
+              - 'null'
+              format: uri
+              example: http://api.example.org/accounts/?page=4
+          required:
+          - previous
+          - next
+        total_items:
+          type: integer
+          example: 100
+        total_pages:
+          type: integer
+          example: 10
+        page_size:
+          type: integer
+          example: 10
+        current_page:
+          type: integer
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListTemplateFeature'
+      required:
+      - links
+      - total_items
+      - total_pages
+      - page_size
+      - current_page
+      - results
     PaginatedListTemplateList:
       type: object
       properties:
@@ -2474,6 +3408,50 @@ components:
       - page_size
       - current_page
       - results
+    PaginatedListTemplateOrderList:
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            previous:
+              type:
+              - string
+              - 'null'
+              format: uri
+              example: http://api.example.org/accounts/?page=2
+            next:
+              type:
+              - string
+              - 'null'
+              format: uri
+              example: http://api.example.org/accounts/?page=4
+          required:
+          - previous
+          - next
+        total_items:
+          type: integer
+          example: 100
+        total_pages:
+          type: integer
+          example: 10
+        page_size:
+          type: integer
+          example: 10
+        current_page:
+          type: integer
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListTemplateOrder'
+      required:
+      - links
+      - total_items
+      - total_pages
+      - page_size
+      - current_page
+      - results
     PaginatedListTransactionList:
       type: object
       properties:
@@ -2511,50 +3489,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ListTransaction'
-      required:
-      - links
-      - total_items
-      - total_pages
-      - page_size
-      - current_page
-      - results
-    PaginatedListUsertemplateList:
-      type: object
-      properties:
-        links:
-          type: object
-          properties:
-            previous:
-              type:
-              - string
-              - 'null'
-              format: uri
-              example: http://api.example.org/accounts/?page=2
-            next:
-              type:
-              - string
-              - 'null'
-              format: uri
-              example: http://api.example.org/accounts/?page=4
-          required:
-          - previous
-          - next
-        total_items:
-          type: integer
-          example: 100
-        total_pages:
-          type: integer
-          example: 10
-        page_size:
-          type: integer
-          example: 10
-        current_page:
-          type: integer
-          example: 1
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/ListUsertemplate'
       required:
       - links
       - total_items
@@ -2631,6 +3565,34 @@ components:
         value:
           type: string
           maxLength: 255
+    PatchedListFile:
+      type: object
+      properties:
+        file:
+          type: string
+          format: uri
+        uuid:
+          type: string
+          format: uuid
+        filesize:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+        filetype:
+          enum:
+          - file
+          - photo
+          - video
+          - audio
+          type: string
+          description: |-
+            * `file` - File
+            * `photo` - Photo
+            * `video` - Video
+            * `audio` - Audio
+          x-spec-enum-id: ee69fa0c75a08251
     PatchedSendMessage:
       type: object
       properties:
@@ -2821,12 +3783,22 @@ components:
           - text
           - number
           - bool
+          - datetime
+          - file
+          - audio
+          - video
+          - photo
           type: string
           description: |-
             * `text` - Text
             * `number` - Number
             * `bool` - bool
-          x-spec-enum-id: e3a0186080590fe7
+            * `datetime` - datetime
+            * `file` - file
+            * `audio` - audio
+            * `video` - video
+            * `photo` - photo
+          x-spec-enum-id: 3984315ce3706032
           title: Name
         required:
           type: boolean
@@ -2837,6 +3809,36 @@ components:
       required:
       - id
       - name
+    RetrieveFile:
+      type: object
+      properties:
+        file:
+          type: string
+          format: uri
+        uuid:
+          type: string
+          format: uuid
+        filesize:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+        filetype:
+          enum:
+          - file
+          - photo
+          - video
+          - audio
+          type: string
+          description: |-
+            * `file` - File
+            * `photo` - Photo
+            * `video` - Video
+            * `audio` - Audio
+          x-spec-enum-id: ee69fa0c75a08251
+      required:
+      - file
     RetrieveProject:
       type: object
       properties:
@@ -2846,6 +3848,17 @@ components:
         name:
           type: string
           maxLength: 255
+        users:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+          maxLength: 255
+        avatar:
+          type: string
+          format: uri
+          nullable: true
         debug:
           $ref: '#/components/schemas/RetrieveDebug'
         release:
@@ -2864,6 +3877,7 @@ components:
       - name
       - release
       - release_bot
+      - users
     RetrieveRelase:
       type: object
       properties:
@@ -2913,9 +3927,136 @@ components:
         name:
           type: string
           maxLength: 255
+        slug:
+          type: string
+          nullable: true
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        image:
+          type: string
+          format: uri
+        video:
+          type: string
+          format: uri
+          nullable: true
+        short_description:
+          type: string
+        description:
+          type: string
+        price:
+          type: string
+          readOnly: true
+        views:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        likes:
+          type: integer
+          readOnly: true
+        original_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+          title: Price
+        discount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+        discount_type:
+          enum:
+          - percent
+          - amount
+          type: string
+          description: |-
+            * `percent` - Percent
+            * `amount` - Amount
+          x-spec-enum-id: ca237514cb6f605e
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListTemplateCategory'
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListTemplateFeature'
+      required:
+      - categories
+      - description
+      - features
+      - id
+      - image
+      - likes
+      - name
+      - original_price
+      - price
+      - short_description
+    RetrieveTemplateCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
       required:
       - id
       - name
+    RetrieveTemplateFeature:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        value:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+    RetrieveTemplateOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        template:
+          $ref: '#/components/schemas/RetrieveTemplate'
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,18}(?:\.\d{0,2})?$
+        status:
+          enum:
+          - pending
+          - confirm
+          - cancel
+          type: string
+          description: |-
+            * `pending` - Pending
+            * `confirm` - Confirm
+            * `cancel` - Cancel
+          x-spec-enum-id: 488bbac6099d3352
+        payment_status:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - amount
+      - created_at
+      - id
+      - template
+      - updated_at
     RetrieveTransaction:
       type: object
       properties:
@@ -2928,14 +4069,6 @@ components:
       required:
       - id
       - name
-    RetrieveUsertemplate:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-      required:
-      - id
     SendMessage:
       type: object
       properties:
@@ -2983,7 +4116,6 @@ components:
           items:
             $ref: '#/components/schemas/Button'
       required:
-      - buttons
       - caption
       - id
       - project

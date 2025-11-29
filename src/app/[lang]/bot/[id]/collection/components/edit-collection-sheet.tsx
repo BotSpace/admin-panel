@@ -137,7 +137,9 @@ export function EditCollectionSheet({
 
     // Check for duplicate names
     const names = editableFields.map((f) => f.name);
-    const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
+    const duplicates = names.filter(
+      (name, index) => names.indexOf(name) !== index
+    );
     if (duplicates.length > 0) {
       toast.error(`Takroriy nom: ${duplicates[0]}`);
       return false;
@@ -183,7 +185,8 @@ export function EditCollectionSheet({
     } catch (err: any) {
       console.error("Collection yangilashda xatolik:", err);
       toast.error(
-        err?.response?.data?.message || "Collection yangilashda xatolik yuz berdi"
+        err?.response?.data?.message ||
+          "Collection yangilashda xatolik yuz berdi"
       );
     } finally {
       setIsSubmitting(false);
@@ -261,20 +264,26 @@ export function EditCollectionSheet({
                               <Input
                                 value={field.name}
                                 onChange={(e) =>
-                                  handleFieldChange(index, "name", e.target.value)
+                                  handleFieldChange(
+                                    index,
+                                    "name",
+                                    e.target.value
+                                  )
                                 }
                                 placeholder="field_name"
                                 className={
-                                  field.name && !varibulNameValidator(field.name)
+                                  field.name &&
+                                  !varibulNameValidator(field.name)
                                     ? "border-red-500"
                                     : ""
                                 }
                               />
-                              {field.name && !varibulNameValidator(field.name) && (
-                                <p className="text-xs text-red-500">
-                                  Noto'g'ri format
-                                </p>
-                              )}
+                              {field.name &&
+                                !varibulNameValidator(field.name) && (
+                                  <p className="text-xs text-red-500">
+                                    Noto'g'ri format
+                                  </p>
+                                )}
                             </div>
 
                             {/* Field Type */}
@@ -297,11 +306,19 @@ export function EditCollectionSheet({
                                   <SelectGroup>
                                     <SelectLabel>Data types</SelectLabel>
                                     <SelectItem value="text">Text</SelectItem>
-                                    <SelectItem value="number">Number</SelectItem>
-                                    <SelectItem value="bool">Boolean</SelectItem>
+                                    <SelectItem value="number">
+                                      Number
+                                    </SelectItem>
+                                    <SelectItem value="bool">
+                                      Boolean
+                                    </SelectItem>
                                     <SelectItem value="datetime">
                                       DateTime
                                     </SelectItem>
+                                    <SelectItem value="file">File</SelectItem>
+                                    <SelectItem value="audio">Audio</SelectItem>
+                                    <SelectItem value="video">Video</SelectItem>
+                                    <SelectItem value="photo">Photo</SelectItem>
                                   </SelectGroup>
                                 </SelectContent>
                               </Select>

@@ -31,7 +31,7 @@ const website_rewrites = [
   // Barcha website sahifalarini proksi qilish
 
   // SEO Section
-  // sitemap.xml 
+  // sitemap.xml
   {
     source: "/website/sitemap.xml",
     destination: `${env.SALES_URL}/website/sitemap.xml`,
@@ -40,6 +40,11 @@ const website_rewrites = [
   {
     source: "/website/robots.txt",
     destination: `${env.SALES_URL}/website/robots.txt`,
+  },
+  // Favicon
+  {
+    source: "/website/favicon.ico",
+    destination: `${env.SALES_URL}/website/favicon.ico`,
   },
 
   // Main website path
@@ -60,6 +65,11 @@ export default withNextIntl({
     return [...constructor_rewrites, ...website_rewrites];
   },
   images: {
-    domains: ["localhost", "localhost:3002", "api.botmother.uz", "192.168.3.1:3000"], // SALES_URL domeni
+    domains: [
+      "localhost",
+      "localhost:3002",
+      "api.botmother.uz",
+      "192.168.3.1:3000",
+    ], // SALES_URL domeni
   },
 });

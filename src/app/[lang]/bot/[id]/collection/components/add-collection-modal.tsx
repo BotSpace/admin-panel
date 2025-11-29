@@ -107,6 +107,10 @@ export function AddNewCollectionModal({
                   <SelectItem value="number">Number</SelectItem>
                   <SelectItem value="bool">Boolean</SelectItem>
                   <SelectItem value="datetime">DateTime</SelectItem>
+                  <SelectItem value="file">File</SelectItem>
+                  <SelectItem value="audio">Audio</SelectItem>
+                  <SelectItem value="video">Video</SelectItem>
+                  <SelectItem value="photo">Photo</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

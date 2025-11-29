@@ -17,7 +17,16 @@ import { Label } from "@/shared/components/ui/label";
 import toast from "react-hot-toast";
 import { instanceAuth } from "@/shared/services/instance";
 import { CollectionDetail } from "@/shared/types/collection";
-import { Plus } from "lucide-react";
+import {
+  Plus,
+  Upload,
+  X,
+  File as FileIcon,
+  Image,
+  Video,
+  Music,
+} from "lucide-react";
+import { FileType } from "@/features/files/types/file";
 
 interface AddItemSheetProps {
   fields: CollectionDetail["fields"];
@@ -39,14 +48,21 @@ export default function AddItemSheet({
       if (type === "bool") {
         initialData[name] = defaultValue ?? true;
       } else if (type === "datetime") {
-        initialData[name] = defaultValue ?? new Date().toISOString().slice(0, 16);
+        initialData[name] =
+          defaultValue ?? new Date().toISOString().slice(0, 16);
       } else {
         initialData[name] = defaultValue ?? "";
       }
     });
     return initialData;
   });
+  const [fileUploads, setFileUploads] = useState<
+    Record<string, { file: File; preview?: string }>
+  >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState<Record<string, boolean>>(
+    {}
+  );
 
   const handleInputChange = (fieldName: string, value: any) => {
     setFormData((prev) => ({
@@ -67,6 +83,88 @@ export default function AddItemSheet({
       }
     });
     setFormData(resetData);
+    setFileUploads({});
+  };
+
+  const isFileType = (type: string): type is FileType => {
+    return ["file", "video", "audio", "photo"].includes(type);
+  };
+
+  const getFileTypeFromFieldType = (fieldType: string): FileType => {
+    if (fieldType === "photo") return "photo";
+    if (fieldType === "video") return "video";
+    if (fieldType === "audio") return "audio";
+    return "file";
+  };
+
+  const handleFileSelect = async (
+    fieldName: string,
+    file: File,
+    fieldType: string
+  ) => {
+    if (!isFileType(fieldType)) return;
+
+    const fileType = getFileTypeFromFieldType(fieldType);
+
+    // Create preview for images
+    let preview: string | undefined;
+    if (fieldType === "photo" && file.type.startsWith("image/")) {
+      preview = URL.createObjectURL(file);
+    }
+
+    setFileUploads((prev) => ({
+      ...prev,
+      [fieldName]: { file, preview },
+    }));
+
+    // Upload file immediately
+    setUploadingFiles((prev) => ({ ...prev, [fieldName]: true }));
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("filetype", fileType);
+
+      const response = await instanceAuth.post("/file/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // Store the file UUID in formData
+      if (response.data?.data?.uuid) {
+        handleInputChange(fieldName, response.data.data.uuid);
+        toast.success("Fayl muvaffaqiyatli yuklandi");
+      } else {
+        throw new Error("UUID topilmadi");
+      }
+    } catch (error: any) {
+      console.error("File upload error:", error);
+      toast.error("Fayl yuklashda xatolik yuz berdi");
+      // Remove the file from uploads on error
+      setFileUploads((prev) => {
+        const newUploads = { ...prev };
+        delete newUploads[fieldName];
+        return newUploads;
+      });
+    } finally {
+      setUploadingFiles((prev) => {
+        const newUploads = { ...prev };
+        delete newUploads[fieldName];
+        return newUploads;
+      });
+    }
+  };
+
+  const handleFileRemove = (fieldName: string) => {
+    setFileUploads((prev) => {
+      const newUploads = { ...prev };
+      if (newUploads[fieldName]?.preview) {
+        URL.revokeObjectURL(newUploads[fieldName].preview!);
+      }
+      delete newUploads[fieldName];
+      return newUploads;
+    });
+    handleInputChange(fieldName, "");
   };
 
   async function handleSubmit(e: React.FormEvent) {
@@ -77,10 +175,20 @@ export default function AddItemSheet({
       return;
     }
 
+    // Check if any files are still uploading
+    const stillUploading = Object.keys(uploadingFiles).length > 0;
+    if (stillUploading) {
+      toast.error("Iltimos, fayllar yuklanishini kutib turing");
+      return;
+    }
+
     // Validate required fields
     const missing = fields.filter((field) => {
       if (!field.required) return false;
       const val = formData[field.name];
+      if (isFileType(field.type)) {
+        return !val || (typeof val === "string" && val.trim() === "");
+      }
       return (
         val === undefined ||
         val === null ||
@@ -104,7 +212,9 @@ export default function AddItemSheet({
       const submitData: Record<string, any> = {};
       fields.forEach((field) => {
         const value = formData[field.name];
-        
+
+        if (!value) return;
+
         // Convert datetime to MongoDB ISODate format
         if (field.type === "datetime" && value) {
           submitData[field.name] = new Date(value).toISOString();
@@ -149,7 +259,10 @@ export default function AddItemSheet({
           <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
             {fields.map((field) => (
               <div key={field.id} className="space-y-2">
-                <Label htmlFor={`field-${field.id}`} className="text-sm font-medium">
+                <Label
+                  htmlFor={`field-${field.id}`}
+                  className="text-sm font-medium"
+                >
                   {field.name}
                   {field.required && (
                     <span className="text-red-500 ml-1">*</span>
@@ -186,6 +299,109 @@ export default function AddItemSheet({
                     required={field.required}
                     className="w-full"
                   />
+                ) : isFileType(field.type) ? (
+                  <div className="space-y-2">
+                    <input
+                      id={`file-input-${field.id}`}
+                      type="file"
+                      accept={
+                        field.type === "photo"
+                          ? "image/*"
+                          : field.type === "video"
+                          ? "video/*"
+                          : field.type === "audio"
+                          ? "audio/*"
+                          : "*/*"
+                      }
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          handleFileSelect(field.name, file, field.type);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                    {uploadingFiles[field.name] ? (
+                      <div className="flex items-center justify-center p-4 border rounded-lg bg-muted">
+                        <div className="text-sm text-muted-foreground">
+                          Fayl yuklanmoqda...
+                        </div>
+                      </div>
+                    ) : fileUploads[field.name] || formData[field.name] ? (
+                      <div className="border rounded-lg p-4 space-y-2">
+                        {fileUploads[field.name]?.preview ? (
+                          <div className="relative">
+                            <img
+                              src={fileUploads[field.name].preview}
+                              alt="Preview"
+                              className="w-full h-32 object-cover rounded"
+                            />
+                          </div>
+                        ) : formData[field.name] ? (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            {field.type === "photo" && (
+                              <Image className="h-4 w-4" />
+                            )}
+                            {field.type === "video" && (
+                              <Video className="h-4 w-4" />
+                            )}
+                            {field.type === "audio" && (
+                              <Music className="h-4 w-4" />
+                            )}
+                            {field.type === "file" && (
+                              <FileIcon className="h-4 w-4" />
+                            )}
+                            <span className="truncate">
+                              {formData[field.name] || "Fayl yuklangan"}
+                            </span>
+                          </div>
+                        ) : null}
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              document
+                                .getElementById(`file-input-${field.id}`)
+                                ?.click()
+                            }
+                            className="flex-1"
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            {fileUploads[field.name] || formData[field.name]
+                              ? "O'zgartirish"
+                              : "Fayl tanlash"}
+                          </Button>
+                          {(fileUploads[field.name] ||
+                            formData[field.name]) && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleFileRemove(field.name)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() =>
+                          document
+                            .getElementById(`file-input-${field.id}`)
+                            ?.click()
+                        }
+                        className="w-full"
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Fayl tanlash
+                      </Button>
+                    )}
+                  </div>
                 ) : (
                   <Input
                     id={`field-${field.id}`}

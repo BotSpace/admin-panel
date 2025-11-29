@@ -3,9 +3,11 @@ import {
   BadgeDollarSignIcon,
   BarChart3,
   Database,
+  File,
   LayoutDashboard,
   Library,
   MessageSquare,
+  Ticket,
 } from "lucide-react";
 
 export const HomePageNavigation: NavGroup[] = [
@@ -28,6 +30,18 @@ export const HomePageNavigation: NavGroup[] = [
         title: "To'lovlar",
         href: "/billing",
         icon: BadgeDollarSignIcon,
+        exact: true,
+      },
+      {
+        title: "Ticketlar",
+        href: "/tickets",
+        icon: Ticket,
+        exact: true,
+      },
+      {
+        title: "Fayllar",
+        href: "/files",
+        icon: File,
         exact: true,
       },
     ],
