@@ -1,11 +1,25 @@
 "use client";
 
+import React, { useState } from "react";
 import { FileListItem } from "../types/file";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-import { Download, Eye, Trash2 } from "lucide-react";
+import { Download, Eye, Trash2, MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import { formatFileSize } from "@/shared/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/shared/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/shared/components/ui/dropdown-menu";
 
 interface FileGridProps {
   files: FileListItem[];
@@ -22,6 +36,19 @@ export function FileGrid({
   onDownload,
   onDelete,
 }: FileGridProps) {
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewFile, setPreviewFile] = useState<FileListItem | null>(null);
+
+  const openPreview = (file: FileListItem) => {
+    setPreviewFile(file);
+    setPreviewOpen(true);
+  };
+
+  const closePreview = () => {
+    setPreviewOpen(false);
+    setPreviewFile(null);
+  };
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -84,34 +111,31 @@ export function FileGrid({
                 </div>
               </>
             ) : null}
-            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-              {onView && (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => onView(file)}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-              )}
-              {onDownload && (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => onDownload(file)}
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-              )}
-              {onDelete && (
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => onDelete(file)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
+            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-start justify-end p-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="ghost" className="p-1">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {onView && (
+                    <DropdownMenuItem onClick={() => openPreview(file)}>
+                      <Eye className="mr-2 h-4 w-4" /> Ko'rsatish
+                    </DropdownMenuItem>
+                  )}
+                  {onDownload && (
+                    <DropdownMenuItem onClick={() => onDownload(file)}>
+                      <Download className="mr-2 h-4 w-4" /> Yuklab olish
+                    </DropdownMenuItem>
+                  )}
+                  {onDelete && (
+                    <DropdownMenuItem onClick={() => onDelete(file)}>
+                      <Trash2 className="mr-2 h-4 w-4" /> O'chirish
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
           <CardContent className="p-4">
@@ -124,6 +148,28 @@ export function FileGrid({
           </CardContent>
         </Card>
       ))}
+
+      {/* Preview Dialog */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle>{previewFile?.uuid}</DialogTitle>
+            <DialogDescription>
+              Faylni to'liq ko'rish
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-4">
+            {previewFile?.filetype === "photo" && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={previewFile.file} alt={previewFile.uuid} className="w-full h-auto max-h-[70vh] object-contain" />
+            )}
+            {previewFile?.filetype === "video" && (
+              <video src={previewFile.file} controls className="w-full max-h-[70vh]" />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

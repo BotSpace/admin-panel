@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
+import BotSidebarProvider from "./sidebar";
 
 export const metadata: Metadata = {
   title: "Bot Hissoboti | Botmother",
-  description: "Botingizning statistikasini ko'rib chiqing. Foydalanuvchilar, aktivlik va boshqa ko'rsatkichlarni kuzatib boring.",
+  description:
+    "Botingizning statistikasini ko'rib chiqing. Foydalanuvchilar, aktivlik va boshqa ko'rsatkichlarni kuzatib boring.",
 };
 
-export default function BotLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return children;
+export default function BotLayout({ children }: { children: React.ReactNode }) {
+  return <BotSidebarProvider>{children}</BotSidebarProvider>;
 }
