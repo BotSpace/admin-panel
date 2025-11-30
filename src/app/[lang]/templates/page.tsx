@@ -11,13 +11,12 @@ import React from "react";
 
 type Props = {};
 
-function Page({ }: Props) {
+function Page({}: Props) {
   const { data: orders } = useReactQueryAction<
     APIListResponse<OrderListItem[]>
   >({
     url: "/order",
   });
-
 
   return (
     <main>
