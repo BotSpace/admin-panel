@@ -2,12 +2,15 @@ import { NavGroup } from "@/shared/components/app-sidebar";
 import {
   BadgeDollarSignIcon,
   BarChart3,
+  BookOpenText,
   Database,
   File,
   LayoutDashboard,
   Library,
   MessageSquare,
+  Radical,
   Ticket,
+  Users,
 } from "lucide-react";
 
 export const HomePageNavigation: NavGroup[] = [
@@ -24,6 +27,12 @@ export const HomePageNavigation: NavGroup[] = [
         title: "Fayllar",
         href: "/files",
         icon: File,
+        exact: true,
+      },
+      {
+        title: "Monitoring",
+        href: "/monitoring",
+        icon: Radical,
         exact: true,
       },
     ],
@@ -47,6 +56,24 @@ export const HomePageNavigation: NavGroup[] = [
         title: "Ticketlar",
         href: "/tickets",
         icon: Ticket,
+        exact: true,
+      },
+    ],
+  },
+
+  {
+    title: "Bilimlar bazasi",
+    items: [
+      {
+        title: "Curslar",
+        href: "https://t.me/botmother_community/61",
+        icon: BookOpenText,
+        exact: true,
+      },
+      {
+        title: "Hamjamiyat",
+        href: "https://t.me/botmother_community",
+        icon: Users,
         exact: true,
       },
     ],

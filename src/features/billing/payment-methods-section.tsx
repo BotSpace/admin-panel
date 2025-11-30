@@ -2,6 +2,12 @@
 
 import { CreditCard, Smartphone, Building2, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+
+import Click from "../../../public/click.svg";
+import Payme from "../../../public/payme.png";
+import Paynet from "../../../public/paynet.svg";
+import Uzum from "../../../public/uzum.svg";
 
 export function PaymentMethodsSection() {
   const paymentMethods = [
@@ -9,33 +15,29 @@ export function PaymentMethodsSection() {
       id: "click",
       name: "Click",
       description: "Mobil to'lovlar",
-      icon: Smartphone,
-      color: "from-blue-500 to-blue-600",
-      badge: "Tez",
+      icon: Click,
+      color: "from-blue-500/50 to-blue-600",
     },
     {
       id: "payme",
       name: "Payme",
       description: "Raqamli hamyon",
-      icon: Wallet,
-      color: "from-purple-500 to-purple-600",
-      badge: "Mashhur",
+      icon: Payme,
+      color: "from-cyan-500/50 to-cyan-600",
     },
     {
       id: "uzum",
-      name: "Uzum Pay",
+      name: "Uzum Bank",
       description: "Uzum hamyoni",
-      icon: Building2,
-      color: "from-orange-500 to-orange-600",
-      badge: "Yangi",
+      icon: Uzum,
+      color: "from-violet-500/20 to-violet-600/70",
     },
     {
       id: "card",
       name: "Bank Kartasi",
       description: "UZCARD, HUMO",
-      icon: CreditCard,
-      color: "from-emerald-500 to-emerald-600",
-      badge: "Xavfsiz",
+      icon: Paynet,
+      color: "from-emerald-500/50 to-emerald-600",
     },
   ];
 
@@ -52,9 +54,8 @@ export function PaymentMethodsSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {paymentMethods.map((method) => {
-          const Icon = method.icon;
           return (
-            <button
+            <div
               key={method.id}
               className="group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-card to-card hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 p-4"
             >
@@ -66,7 +67,7 @@ export function PaymentMethodsSection() {
               {/* Badge */}
               <div className="absolute top-3 right-3">
                 <span className="text-xs font-semibold px-2 py-1 rounded-full bg-primary/10 text-primary">
-                  {method.badge}
+                  Tez kunda
                 </span>
               </div>
 
@@ -75,7 +76,11 @@ export function PaymentMethodsSection() {
                 <div
                   className={`p-3 rounded-lg bg-gradient-to-br ${method.color} text-white mb-3 group-hover:scale-110 transition-transform duration-300`}
                 >
-                  <Icon className="w-6 h-6" />
+                  <Image
+                    className="w-full h-[200px] object-contain"
+                    src={method.icon}
+                    alt={method.name}
+                  />
                 </div>
 
                 <h4 className="font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
@@ -86,7 +91,7 @@ export function PaymentMethodsSection() {
                 </p>
 
                 {/* Hidden button revealed on hover */}
-                <div className="w-full pt-2 border-t border-border/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-auto">
+                <div className="w-full pt-2 border-t border-border/50 transition-opacity duration-300 mt-auto">
                   <Button
                     variant="outline"
                     size="sm"
@@ -96,7 +101,7 @@ export function PaymentMethodsSection() {
                   </Button>
                 </div>
               </div>
-            </button>
+            </div>
           );
         })}
       </div>

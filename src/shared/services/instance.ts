@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 import { RefreshAccessToken } from "./requests/auth";
 
 import env from "@/shared/lib/env";
@@ -47,7 +47,7 @@ instanceAuth.interceptors.response.use(
     }
 
     // log out if user is not authenticated
-    // await signOut();
+    // if (env.NODE_ENV === "production") await signOut();
 
     return Promise.reject(error);
   }

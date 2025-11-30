@@ -58,6 +58,12 @@ const website_rewrites = [
     source: "/website/_next/:path*",
     destination: `${env.SALES_URL}/website/_next/:path*`,
   },
+
+  // constructor (existing child)
+  {
+    source: "/share/:path*",
+    destination: `${env.CONSTRUCTOR_URL}/share/:path*`,
+  },
 ];
 
 export default withNextIntl({
