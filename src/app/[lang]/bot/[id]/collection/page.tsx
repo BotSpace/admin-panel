@@ -30,7 +30,7 @@ export default function Home() {
   const handleCollectionDeleted = () => {
     // Refetch collections list
     refetch();
-    
+
     // Select first collection or clear selection
     setSelectedCollection(undefined);
   };
@@ -56,8 +56,8 @@ export default function Home() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Content Table */}
         {selectedCollection && (
-          <ContentTable 
-            project={id} 
+          <ContentTable
+            project={id}
             collection={selectedCollection}
             onCollectionDeleted={handleCollectionDeleted}
           />

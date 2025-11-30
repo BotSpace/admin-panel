@@ -8,6 +8,8 @@ import {
   LogOut,
   Bot as DefaultBrandIcon,
   BadgeDollarSignIcon,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import {
   Sidebar,
@@ -21,6 +23,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/shared/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -105,8 +108,11 @@ export function ReusableSidebar({
       .slice(0, 2) ||
     (data?.user?.email?.[0]?.toUpperCase() ?? "U");
 
+  const { state, toggleSidebar } = useSidebar();
+  const CollapseIcon = state === "collapsed" ? ChevronsRight : ChevronsLeft;
+
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar variant="inset" collapsible="icon" {...props}>
       {/* Brand header (optional) */}
       {brand && (
         <SidebarHeader>
@@ -140,6 +146,25 @@ export function ReusableSidebar({
 
       {/* Nav */}
       <SidebarContent>
+        {/* Collapse/Uncollapse Button */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={toggleSidebar}
+                  tooltip={state === "collapsed" ? "Kengaytirish" : "Yig'ish"}
+                >
+                  <CollapseIcon className="size-4" />
+                  <span>
+                    {state === "collapsed" ? "Kengaytirish" : "Yig'ish"}
+                  </span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {nav.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel>{group.title}</SidebarGroupLabel>

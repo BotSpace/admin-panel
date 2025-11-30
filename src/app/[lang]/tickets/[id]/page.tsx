@@ -3,7 +3,12 @@
 import { useParams } from "next/navigation";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { TicketDetail } from "@/features/tickets/types/ticket";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -28,7 +33,9 @@ export default function TicketDetailPage() {
   const params = useParams();
   const ticketId = params?.id as string;
 
-  const { data: ticket, isLoading } = useReactQueryAction<{ data: TicketDetail }>({
+  const { data: ticket, isLoading } = useReactQueryAction<{
+    data: TicketDetail;
+  }>({
     url: `/ticket/${ticketId}`,
   });
 
@@ -85,26 +92,42 @@ export default function TicketDetailPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <CardTitle className="text-2xl">#{ticketData.id}</CardTitle>
-                  <Badge className={statusColors[ticketData.status]} variant="outline">
+                  <Badge
+                    className={statusColors[ticketData.status]}
+                    variant="outline"
+                  >
                     {ticketData.status === "open" && "Ochilgan"}
                     {ticketData.status === "in_progress" && "Jarayonda"}
                     {ticketData.status === "resolved" && "Hal qilingan"}
                     {ticketData.status === "closed" && "Yopilgan"}
                   </Badge>
-                  <Badge className={priorityColors[ticketData.priority]} variant="outline">
+                  <Badge
+                    className={priorityColors[ticketData.priority]}
+                    variant="outline"
+                  >
                     {ticketData.priority === "low" && "Past"}
                     {ticketData.priority === "medium" && "O'rtacha"}
                     {ticketData.priority === "high" && "Yuqori"}
                     {ticketData.priority === "urgent" && "Shoshilinch"}
                   </Badge>
                 </div>
-                <h1 className="text-xl font-semibold mb-4">{ticketData.subject}</h1>
+                <h1 className="text-xl font-semibold mb-4">
+                  {ticketData.subject}
+                </h1>
                 <div className="flex gap-4 text-sm text-muted-foreground">
                   <span>
-                    Yaratilgan: {format(new Date(ticketData.created_at), "dd.MM.yyyy HH:mm")}
+                    Yaratilgan:{" "}
+                    {format(
+                      new Date(ticketData.created_at),
+                      "dd.MM.yyyy HH:mm"
+                    )}
                   </span>
                   <span>
-                    Yangilangan: {format(new Date(ticketData.updated_at), "dd.MM.yyyy HH:mm")}
+                    Yangilangan:{" "}
+                    {format(
+                      new Date(ticketData.updated_at),
+                      "dd.MM.yyyy HH:mm"
+                    )}
                   </span>
                 </div>
               </div>
@@ -139,10 +162,15 @@ export default function TicketDetailPage() {
                         {message.is_from_user ? "Siz" : "Support"}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        {format(new Date(message.created_at), "dd.MM.yyyy HH:mm")}
+                        {format(
+                          new Date(message.created_at),
+                          "dd.MM.yyyy HH:mm"
+                        )}
                       </span>
                     </div>
-                    <p className="text-sm whitespace-pre-wrap">{message.message}</p>
+                    <p className="text-sm whitespace-pre-wrap">
+                      {message.message}
+                    </p>
                     {message.attachments && message.attachments.length > 0 && (
                       <div className="mt-3 space-y-2">
                         {message.attachments.map((attachment) => (
@@ -153,7 +181,8 @@ export default function TicketDetailPage() {
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
                           >
-                            {attachment.file_name} ({(attachment.file_size / 1024).toFixed(2)} KB)
+                            {attachment.file_name} (
+                            {(attachment.file_size / 1024).toFixed(2)} KB)
                           </a>
                         ))}
                       </div>
@@ -168,4 +197,3 @@ export default function TicketDetailPage() {
     </main>
   );
 }
-

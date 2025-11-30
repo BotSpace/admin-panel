@@ -1,28 +1,14 @@
-"use client";
+import type { Metadata } from "next";
 
-import { ReusableSidebar } from "@/shared/components/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/shared/components/ui/sidebar";
-import { BotPageNavigation } from "@/shared/config/navigations";
-import { useParams } from "next/navigation";
-import React from "react";
-
-type Props = {
-  children: React.ReactNode;
+export const metadata: Metadata = {
+  title: "Bot Hissoboti | Botmother",
+  description: "Botingizning statistikasini ko'rib chiqing. Foydalanuvchilar, aktivlik va boshqa ko'rsatkichlarni kuzatib boring.",
 };
 
-function Layout({ children }: Props) {
-  const { id }: { id: string } = useParams();
-
-  const nav = BotPageNavigation(id);
-
-  return (
-    <SidebarProvider>
-      <ReusableSidebar nav={nav} />
-      <SidebarInset>
-        <div className="flex flex-1 flex-col gap-4 p-8 pt-6">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+export default function BotLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return children;
 }
-
-export default Layout;
