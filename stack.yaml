@@ -4,7 +4,7 @@ services:
   admin:
     env_file:
       - .env
-    image: jscorptech/botmother-admin:39
+    image: jscorptech/botmother-admin:40
     ports:
       - mode: ingress
         target: 3000
