@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import BotSidebarProvider from "./sidebar";
 
 export const metadata: Metadata = {
   title: "Bot Hissoboti | Botmother",
@@ -8,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function BotLayout({ children }: { children: React.ReactNode }) {
-  return <BotSidebarProvider>{children}</BotSidebarProvider>;
+  return children;
 }

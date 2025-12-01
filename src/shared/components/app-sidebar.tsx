@@ -146,25 +146,6 @@ export function ReusableSidebar({
 
       {/* Nav */}
       <SidebarContent>
-        {/* Collapse/Uncollapse Button */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={toggleSidebar}
-                  tooltip={state === "collapsed" ? "Kengaytirish" : "Yig'ish"}
-                >
-                  <CollapseIcon className="size-4" />
-                  <span>
-                    {state === "collapsed" ? "Kengaytirish" : "Yig'ish"}
-                  </span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
         {nav.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel>{group.title}</SidebarGroupLabel>

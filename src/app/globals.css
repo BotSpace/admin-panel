@@ -163,3 +163,19 @@
 
   --ring: 265 100% 60%;
 }
+
+/* Step content animation for CreateBotModal */
+@keyframes step-fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-animate {
+  animation: step-fade-slide-in 220ms ease-out;
+}

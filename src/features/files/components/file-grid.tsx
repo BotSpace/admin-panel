@@ -20,6 +20,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/shared/components/ui/dropdown-menu";
+import FilesEmpty from "./files-empty";
 
 interface FileGridProps {
   files: FileListItem[];
@@ -44,11 +45,6 @@ export function FileGrid({
     setPreviewOpen(true);
   };
 
-  const closePreview = () => {
-    setPreviewOpen(false);
-    setPreviewFile(null);
-  };
-
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -66,11 +62,7 @@ export function FileGrid({
   }
 
   if (files.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">Fayllar mavjud emas</p>
-      </div>
-    );
+    return <FilesEmpty />;
   }
 
   return (
@@ -154,18 +146,24 @@ export function FileGrid({
         <DialogContent className="max-w-4xl max-h-[90vh]">
           <DialogHeader>
             <DialogTitle>{previewFile?.uuid}</DialogTitle>
-            <DialogDescription>
-              Faylni to'liq ko'rish
-            </DialogDescription>
+            <DialogDescription>Faylni to'liq ko'rish</DialogDescription>
           </DialogHeader>
 
           <div className="mt-4">
             {previewFile?.filetype === "photo" && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={previewFile.file} alt={previewFile.uuid} className="w-full h-auto max-h-[70vh] object-contain" />
+              <img
+                src={previewFile.file}
+                alt={previewFile.uuid}
+                className="w-full h-auto max-h-[70vh] object-contain"
+              />
             )}
             {previewFile?.filetype === "video" && (
-              <video src={previewFile.file} controls className="w-full max-h-[70vh]" />
+              <video
+                src={previewFile.file}
+                controls
+                className="w-full max-h-[70vh]"
+              />
             )}
           </div>
         </DialogContent>

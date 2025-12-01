@@ -97,15 +97,12 @@ export default function FilesPage() {
   };
 
   return (
-    <main className="min-h-screen bg-background font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main className="">
+      <div className="">
         {/* Header */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-              <File className="h-8 w-8" />
-              Fayllar
-            </h1>
+            <h1 className="text-3xl font-bold tracking-tight">Fayllar</h1>
             <p className="text-muted-foreground mt-2">
               Barcha fayllaringizni boshqaring
             </p>

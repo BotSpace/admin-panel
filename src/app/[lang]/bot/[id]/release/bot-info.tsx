@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import toast from "react-hot-toast";
 import { instance, instanceAuth } from "@/shared/services/instance";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import { useParams } from "next/navigation";
 import {
   Card,

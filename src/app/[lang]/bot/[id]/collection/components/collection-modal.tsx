@@ -14,7 +14,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Plus } from "lucide-react";
 import { instanceAuth } from "@/shared/services/instance";
 import toast from "react-hot-toast";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 import { APIDetailCreateResponse } from "@/shared/types/http";
 
@@ -23,6 +23,8 @@ type Props = {
 };
 
 function CollectionModal({ refetch }: Props) {
+  const router = useRouter();
+
   const { id }: { id: string } = useParams();
 
   const [name, setName] = useState("");
@@ -35,8 +37,9 @@ function CollectionModal({ refetch }: Props) {
         name,
         project: id,
       })
-      .then(() => {
+      .then(({ data }) => {
         toast.success("Collection yaratildi", { id: toastId });
+        router.push(`?collection=${data.data.id}`);
         refetch();
       })
       .catch((error: AxiosError<APIDetailCreateResponse<any>>) => {

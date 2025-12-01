@@ -21,8 +21,8 @@ export default function DocumentsDashboard() {
   });
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <main className="">
+      <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-foreground">Hissobot</h1>
@@ -65,6 +65,6 @@ export default function DocumentsDashboard() {
         {/*   <DocumentsTable /> */}
         {/* </Card> */}
       </div>
-    </div>
+    </main>
   );
 }

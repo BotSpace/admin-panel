@@ -11,6 +11,9 @@ import {
   Radical,
   Ticket,
   Users,
+  Settings,
+  ArrowBigUpDash,
+  RadicalIcon,
 } from "lucide-react";
 
 export const HomePageNavigation: NavGroup[] = [
@@ -91,6 +94,11 @@ export const BotPageNavigation = (id: string): NavGroup[] => {
           icon: MessageSquare,
         },
         {
+          title: "Monitoring",
+          href: `/bot/${id}/monitoring`,
+          icon: RadicalIcon,
+        },
+        {
           title: "Xabar yuborish",
           href: `/bot/${id}/send-message`,
           icon: MessageSquare,
@@ -105,6 +113,12 @@ export const BotPageNavigation = (id: string): NavGroup[] => {
           title: "Collection",
           href: `/bot/${id}/collection`,
           icon: Database,
+          disabled: false,
+        },
+        {
+          title: "Tariflarni o'zgartirish",
+          href: `/bot/${id}/plans`,
+          icon: ArrowBigUpDash,
           disabled: false,
         },
       ],

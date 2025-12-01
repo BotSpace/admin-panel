@@ -5,11 +5,13 @@ import Sidebar from "./components/sidebar";
 import ContentTable from "./components/content-table";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { CollectionListItem } from "@/shared/types/collection";
 
 export default function Home() {
   const { id }: { id: string } = useParams();
+  const searchParams = useSearchParams();
+  const collection = searchParams.get("collection"); // ?q=hello → "hello"
 
   const { data, refetch } = useReactQueryAction<
     APIListResponse<CollectionListItem[]>
@@ -19,12 +21,6 @@ export default function Home() {
 
   const [selectedCollection, setSelectedCollection] =
     useState<CollectionListItem>();
-
-  useEffect(() => {
-    if (data && data.data.results.length > 0 && !selectedCollection) {
-      setSelectedCollection(data.data.results[0]);
-    }
-  }, [data]);
 
   // Handle collection deletion
   const handleCollectionDeleted = () => {
@@ -41,6 +37,19 @@ export default function Home() {
       setSelectedCollection(data.data.results[0]);
     }
   }, [data, selectedCollection]);
+
+  useEffect(() => {
+    if (data && data.data.results.length > 0 && !selectedCollection) {
+      setSelectedCollection(data.data.results[0]);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (data && collection)
+      data.data.results.map((item) => {
+        item.id === +collection && setSelectedCollection(item);
+      });
+  }, [collection, data]);
 
   return (
     <div className="flex h-screen bg-background text-foreground">

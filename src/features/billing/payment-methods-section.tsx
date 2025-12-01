@@ -1,7 +1,6 @@
 "use client";
 
-import { CreditCard, Smartphone, Building2, Wallet } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import Image from "next/image";
 
 import Click from "../../../public/click.svg";
