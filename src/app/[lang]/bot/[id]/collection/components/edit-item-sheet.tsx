@@ -163,6 +163,7 @@ export default function EditItemSheet({
       const formData = new FormData();
       formData.append("file", file);
       formData.append("filetype", fileType);
+      formData.append("project", project);
 
       const response = await instanceAuth.post("/file/", formData, {
         headers: {

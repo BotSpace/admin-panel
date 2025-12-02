@@ -69,7 +69,7 @@ export default function Page() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-col md:flex-row gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             Boshqaruv Paneli
@@ -80,7 +80,7 @@ export default function Page() {
         </div>
         <CreateBotModal
           dialogOpenButton={
-            <Button>
+            <Button className="hidden md:flex">
               <Bot className="mr-2 h-4 w-4" />
               Yangi Bot Yaratish
             </Button>

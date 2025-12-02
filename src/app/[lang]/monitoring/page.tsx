@@ -199,7 +199,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 col-span-1 md:grid-cols-2 lg:grid-cols-3">
         <RamCard
           used={data.ram.used}
           hourlyHistory={data.ram.hourlyHistory}

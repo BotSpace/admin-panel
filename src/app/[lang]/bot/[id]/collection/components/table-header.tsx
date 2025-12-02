@@ -27,7 +27,7 @@ export default function TableHeader({
     <thead>
       <tr className="border-b border-border">
         {/* Selection checkbox */}
-        <th className="px-4 py-3 w-12">
+        <th className="px-2 md:px-4 py-2 md:py-3 w-10 md:w-12">
           <Checkbox
             checked={allSelected}
             onCheckedChange={(checked) => onSelectAll?.(checked as boolean)}
@@ -38,14 +38,14 @@ export default function TableHeader({
         {fields.map((item) => (
           <th
             key={`table-head-${item.id}`}
-            className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider"
+            className="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap"
           >
             {item.name}
           </th>
         ))}
 
         {/* Actions header */}
-        <th className="px-4 py-3 text-right w-24">
+        <th className="px-2 md:px-4 py-2 md:py-3 text-right w-20 md:w-24">
           <AddNewCollectionModal
             collection={collection}
             onSuccess={onSuccess ?? (() => {})}

@@ -86,9 +86,6 @@ export default function BotInfo({ className }: BotInfoProps) {
               ID: {botData.id}
             </p>
           </div>
-          <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
-            Active
-          </Badge>
         </div>
       </CardHeader>
 
@@ -144,7 +141,7 @@ export default function BotInfo({ className }: BotInfoProps) {
           <label className="block text-sm font-semibold mb-2">
             Permissions
           </label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid col-span-1 md:grid-cols-2 gap-3">
             <PermissionItem
               title="Join Groups"
               value={botData.can_join_groups}

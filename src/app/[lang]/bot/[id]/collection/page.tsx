@@ -7,11 +7,21 @@ import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
 import { useParams, useSearchParams } from "next/navigation";
 import { CollectionListItem } from "@/shared/types/collection";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
+import { Button } from "@/shared/components/ui/button";
+import { Menu } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/shared/components/ui/sheet";
 
 export default function Home() {
   const { id }: { id: string } = useParams();
   const searchParams = useSearchParams();
   const collection = searchParams.get("collection"); // ?q=hello → "hello"
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { data, refetch } = useReactQueryAction<
     APIListResponse<CollectionListItem[]>
@@ -51,18 +61,49 @@ export default function Home() {
       });
   }, [collection, data]);
 
+  const sidebarContent = (
+    <Sidebar
+      refetch={refetch}
+      collections={data?.data.results || "loading"}
+      selectedCollection={selectedCollection}
+      onSelectCollection={(collection) => {
+        setSelectedCollection(collection);
+        if (isMobile) {
+          setSidebarOpen(false);
+        }
+      }}
+    />
+  );
+
   return (
     <div className="flex h-screen bg-background text-foreground">
-      {/* Sidebar */}
-      <Sidebar
-        refetch={refetch}
-        collections={data?.data.results || "loading"}
-        selectedCollection={selectedCollection}
-        onSelectCollection={setSelectedCollection}
-      />
+      {/* Desktop Sidebar */}
+      {!isMobile && <div className="hidden md:block">{sidebarContent}</div>}
+
+      {/* Mobile Sidebar */}
+      {isMobile && (
+        <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <SheetContent side="left" className="w-[280px] p-0">
+            {sidebarContent}
+          </SheetContent>
+        </Sheet>
+      )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden w-full md:w-auto">
+        {/* Mobile Menu Button */}
+        {isMobile && (
+          <div className="md:hidden p-4 border-b">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </div>
+        )}
+
         {/* Content Table */}
         {selectedCollection && (
           <ContentTable

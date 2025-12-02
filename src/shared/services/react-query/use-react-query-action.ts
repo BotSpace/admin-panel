@@ -14,6 +14,8 @@ export const useReactQueryAction = <T>({
   enabled = true,
   method = "GET",
   data,
+  refetchInterval,
+  refetchIntervalInBackground,
 }: {
   url: string;
   query?: Record<string, any>;
@@ -21,6 +23,8 @@ export const useReactQueryAction = <T>({
   enabled?: boolean;
   method?: "GET" | "POST" | "PUT" | "DELETE";
   data?: any;
+  refetchInterval?: number | false;
+  refetchIntervalInBackground?: boolean;
 }) => {
   const params = useParams();
 
@@ -83,5 +87,8 @@ export const useReactQueryAction = <T>({
       return failureCount < 3;
     },
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
+    staleTime: 1000 * 60 * 5,
+    refetchInterval,
+    refetchIntervalInBackground,
   });
 };

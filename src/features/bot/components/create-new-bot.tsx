@@ -68,7 +68,6 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
     defaultValues: {
       name: "",
       token: "",
-      // plan_id formda card tanlanganda setValue orqali to'ldiriladi
     },
   });
 
@@ -91,6 +90,11 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
     }
   };
 
+  const skipToken = () => {
+    form.setValue("token", "", { shouldValidate: false });
+    setStep(3);
+  };
+
   const goBack = () => {
     if (step === 2) setStep(1);
     if (step === 3) setStep(2);
@@ -100,10 +104,14 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
   function onSubmit(values: z.infer<typeof botFormSchema>) {
     let toastId = toast.loading("Yaratilmoqda...");
 
+    // Agar token bo'sh bo'lsa, uni yubormaymiz
+    const payload = {
+      ...values,
+      ...(values.token === "" ? { token: undefined } : {}),
+    };
+
     instanceAuth
-      .post<APIDetailCreateResponse<Project>>("/project/", {
-        ...values,
-      })
+      .post<APIDetailCreateResponse<Project>>("/project/", payload)
       .then(({ data }) => {
         route.push(`/bot/${data.data.id}/constructor`);
         refetch();
@@ -251,7 +259,7 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
                         </FormControl>
                         <div className="space-y-1 text-xs text-muted-foreground">
                           <p className="font-medium">
-                            Bot tokenini olish uchun qisqacha qo‘llanma:
+                            Bot tokenini olish uchun qisqacha qo'llanma:
                           </p>
                           <ol className="list-decimal space-y-1 pl-5">
                             <li>
@@ -270,11 +278,11 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
                               <code className="rounded bg-muted px-1 py-0.5 text-[10px]">
                                 /newbot
                               </code>{" "}
-                              buyrug‘ini yuboring va ko‘rsatmalarga amal qiling.
+                              buyrug'ini yuboring va ko'rsatmalarga amal qiling.
                             </li>
                             <li>
                               Yakunda sizga yuborilgan uzun tokenni shu yerga
-                              nusxa ko‘chirib joylashtiring.
+                              nusxa ko'chirib joylashtiring.
                             </li>
                           </ol>
                         </div>
@@ -282,6 +290,17 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
                       </FormItem>
                     )}
                   />
+                  <div className="flex items-center justify-center pt-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={skipToken}
+                      className="text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      Bot tokensiz davom etish
+                    </Button>
+                  </div>
                 </div>
               )}
 

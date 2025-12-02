@@ -21,9 +21,9 @@ export default function Sidebar({
   refetch,
 }: SidebarProps) {
   return (
-    <div className="w-56 border-r">
+    <div className="w-full md:w-56 h-full border-r">
       {/* Collections */}
-      <ScrollArea className="flex-1 p-4">
+      <ScrollArea className="flex-1 p-4 h-full">
         <div className="mb-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Collections
         </div>

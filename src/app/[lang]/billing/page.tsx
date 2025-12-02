@@ -1,28 +1,30 @@
 "use client";
 
+import { Balance } from "@/features/auth/types/get-me";
 import { BalanceCard } from "@/features/billing/balance-card";
-import { ExpenseDetailsTable } from "@/features/billing/expense-details-table";
-import { InvoicesSection } from "@/features/billing/invoices-section";
+import { PaymentHistoryTable } from "@/features/billing/payment-history-table";
 import { PaymentMethodsSection } from "@/features/billing/payment-methods-section";
-import { TopUpHistoryTable } from "@/features/billing/topup-history-table";
+import { useReactQueryAction } from "@/shared/services/react-query";
+import { ApiRetrieveResponse } from "@/shared/types/http";
 
 export default function BillingPage() {
-  return (
-    <div className="py-2 space-y-8">
-      {/* Balance Card */}
-      <BalanceCard />
+  const { data } = useReactQueryAction<ApiRetrieveResponse<Balance>>({
+    url: "/user/balance",
+    refetchInterval: 15000, // Har 15 soniyada yangilash
+    refetchIntervalInBackground: true,
+  });
 
-      {/* Payment Methods Section */}
-      <PaymentMethodsSection />
+  if (data)
+    return (
+      <div className="py-2 space-y-8">
+        {/* Balance Card */}
+        <BalanceCard balance={data.data.balance} />
 
-      {/* Expense Details Table */}
-      <ExpenseDetailsTable />
+        {/* Payment Methods Section */}
+        <PaymentMethodsSection />
 
-      {/* Top-Up History Table */}
-      <TopUpHistoryTable />
-
-      {/* Invoices Section */}
-      <InvoicesSection />
-    </div>
-  );
+        {/* Expense Details Table */}
+        <PaymentHistoryTable />
+      </div>
+    );
 }

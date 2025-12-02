@@ -91,7 +91,7 @@ export default function DataRows({
             }`}
           >
             {/* Selection checkbox */}
-            <td className="px-4 py-4 w-12">
+            <td className="px-2 md:px-4 py-3 md:py-4 w-10 md:w-12">
               <Checkbox
                 checked={isSelected}
                 onCheckedChange={(checked) =>
@@ -109,7 +109,7 @@ export default function DataRows({
               return (
                 <td
                   key={cellKey}
-                  className="px-4 py-4 text-sm text-muted-foreground"
+                  className="px-2 md:px-4 py-3 md:py-4 text-xs md:text-sm text-muted-foreground whitespace-nowrap"
                 >
                   {formatCellValue(item[field.name], field.type)}
                 </td>
@@ -117,7 +117,7 @@ export default function DataRows({
             })}
 
             {/* Actions */}
-            <td className="px-4 py-4 w-24">
+            <td className="px-2 md:px-4 py-3 md:py-4 w-20 md:w-24">
               <div className="flex items-center gap-1">
                 <EditItemSheet
                   fields={fields}

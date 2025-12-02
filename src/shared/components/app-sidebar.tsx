@@ -108,8 +108,15 @@ export function ReusableSidebar({
       .slice(0, 2) ||
     (data?.user?.email?.[0]?.toUpperCase() ?? "U");
 
-  const { state, toggleSidebar } = useSidebar();
+  const { state, toggleSidebar, setOpenMobile, isMobile } = useSidebar();
   const CollapseIcon = state === "collapsed" ? ChevronsRight : ChevronsLeft;
+
+  // Close sidebar on mobile when link is clicked
+  const handleLinkClick = React.useCallback(() => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  }, [isMobile, setOpenMobile]);
 
   return (
     <Sidebar variant="inset" collapsible="icon" {...props}>
@@ -119,7 +126,7 @@ export function ReusableSidebar({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild>
-                <Link href={brand.href ?? "/"}>
+                <Link href={brand.href ?? "/"} onClick={handleLinkClick}>
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                     {brand.image ? (
                       <Image
@@ -162,6 +169,7 @@ export function ReusableSidebar({
                         <Link
                           href={item.href}
                           aria-disabled={item.disabled}
+                          onClick={handleLinkClick}
                           className={
                             item.disabled
                               ? "pointer-events-none opacity-50"
@@ -220,7 +228,7 @@ export function ReusableSidebar({
                   sideOffset={4}
                 >
                   <DropdownMenuItem asChild>
-                    <Link href="/profile" className="gap-2">
+                    <Link href="/profile" onClick={handleLinkClick} className="gap-2">
                       <Settings className="size-4" />
                       <span>Profil</span>
                     </Link>

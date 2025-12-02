@@ -139,11 +139,11 @@ export default function ContentTable({
       <div className="flex flex-col h-full overflow-hidden">
         {/* Header with Add Button */}
         {data?.data.fields.length > 0 && (
-          <div className="flex-shrink-0 flex justify-between items-center p-4 border-b">
-            <div className="flex items-center gap-4">
+          <div className="flex-shrink-0 flex flex-col md:flex-row md:justify-between md:items-center gap-4 p-4 border-b">
+            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
               <div>
-                <h2 className="text-2xl font-semibold">{collection.name}</h2>
-                <p className="text-sm text-muted-foreground">
+                <h2 className="text-xl md:text-2xl font-semibold">{collection.name}</h2>
+                <p className="text-xs md:text-sm text-muted-foreground">
                   Jami: {collectionData?.data?.length || 0} ta yozuv
                 </p>
               </div>
@@ -152,21 +152,22 @@ export default function ContentTable({
                   variant="destructive"
                   size="sm"
                   onClick={() => setShowDeleteDialog(true)}
+                  className="w-full md:w-auto"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   {selectedItems.length} ta o'chirish
                 </Button>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <DeleteCollectionDialog
                 collection={collection}
                 project_id={project}
                 onDeleted={onCollectionDeleted}
               >
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="flex-1 md:flex-none">
                   <Trash2 className="h-4 w-4 mr-2" />
-                  O'chirish
+                  <span className="hidden sm:inline">O'chirish</span>
                 </Button>
               </DeleteCollectionDialog>
               <EditCollectionSheet
@@ -175,9 +176,9 @@ export default function ContentTable({
                 project_id={project}
                 onSuccess={() => refetch()}
               >
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="flex-1 md:flex-none">
                   <Settings className="h-4 w-4 mr-2" />
-                  Sozlamalar
+                  <span className="hidden sm:inline">Sozlamalar</span>
                 </Button>
               </EditCollectionSheet>
               <AddItemSheet
@@ -193,7 +194,8 @@ export default function ContentTable({
         {/* Table Container with Scroll */}
         <div className="flex-1 overflow-auto">
           {data?.data.fields.length ? (
-            <table className="w-full">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[600px]">
               <TableHeader
                 fields={data.data.fields}
                 collection={collection}
@@ -219,51 +221,52 @@ export default function ContentTable({
                 ) : (
                   <>
                     <tr>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[130px] h-[15px]" />
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
                       </td>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[210px] h-[15px]" />
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[120px] md:w-[210px] h-[15px]" />
                       </td>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[100px] h-[15px]" />
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[60px] md:w-[100px] h-[15px]" />
                       </td>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[200px] h-[15px]" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[160px] h-[15px]" />
-                      </td>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[130px] h-[15px]" />
-                      </td>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[130px] h-[15px]" />
-                      </td>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[100px] h-[15px]" />
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[120px] md:w-[200px] h-[15px]" />
                       </td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[80px] h-[15px]" />
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[100px] md:w-[160px] h-[15px]" />
                       </td>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[200px] h-[15px]" />
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
                       </td>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[170px] h-[15px]" />
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
                       </td>
-                      <td className="px-4 py-4">
-                        <Skeleton className="w-[140px] h-[15px]" />
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[60px] md:w-[100px] h-[15px]" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[50px] md:w-[80px] h-[15px]" />
+                      </td>
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[120px] md:w-[200px] h-[15px]" />
+                      </td>
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[100px] md:w-[170px] h-[15px]" />
+                      </td>
+                      <td className="px-2 md:px-4 py-3 md:py-4">
+                        <Skeleton className="w-[90px] md:w-[140px] h-[15px]" />
                       </td>
                     </tr>
                   </>
                 )}
               </tbody>
             </table>
+            </div>
           ) : (
             <EmptyState
               collection={collection}
@@ -300,24 +303,24 @@ export default function ContentTable({
 
         {/* Pagination - Fixed at Bottom */}
         {collectionData?.data && collectionData.data.length > 0 && (
-          <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-t bg-background">
-            <div className="flex-1 text-sm text-muted-foreground">
+          <div className="flex-shrink-0 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 py-3 border-t bg-background">
+            <div className="flex-1 text-xs md:text-sm text-muted-foreground">
               {selectedItems.length > 0 && (
                 <span>
                   {selectedItems.length} ta tanlangan
                 </span>
               )}
             </div>
-            <div className="flex items-center space-x-6 lg:space-x-8">
+            <div className="flex flex-col md:flex-row md:items-center gap-3 md:space-x-6 lg:space-x-8">
               <div className="flex items-center space-x-2">
-                <p className="text-sm font-medium">Sahifadagi ma'lumotlar:</p>
+                <p className="text-xs md:text-sm font-medium">Sahifadagi ma'lumotlar:</p>
                 <select
                   value={pageSize}
                   onChange={(e) => {
                     setPageSize(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="h-8 w-[70px] rounded-md border border-input bg-background px-3 py-1 text-sm"
+                  className="h-8 w-[70px] rounded-md border border-input bg-background px-2 md:px-3 py-1 text-xs md:text-sm"
                 >
                   <option value={10}>10</option>
                   <option value={20}>20</option>
@@ -331,19 +334,23 @@ export default function ContentTable({
                   size="sm"
                   onClick={() => setCurrentPage(1)}
                   disabled={currentPage === 1}
+                  className="text-xs md:text-sm"
                 >
-                  Birinchi
+                  <span className="hidden sm:inline">Birinchi</span>
+                  <span className="sm:hidden">1</span>
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
+                  className="text-xs md:text-sm"
                 >
-                  Oldingi
+                  <span className="hidden sm:inline">Oldingi</span>
+                  <span className="sm:hidden">‹</span>
                 </Button>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm font-medium">
+                <div className="flex items-center gap-1 px-2">
+                  <span className="text-xs md:text-sm font-medium">
                     {currentPage}
                   </span>
                 </div>
@@ -352,8 +359,10 @@ export default function ContentTable({
                   size="sm"
                   onClick={() => setCurrentPage((prev) => prev + 1)}
                   disabled={!collectionData?.data || collectionData.data.length < pageSize}
+                  className="text-xs md:text-sm"
                 >
-                  Keyingi
+                  <span className="hidden sm:inline">Keyingi</span>
+                  <span className="sm:hidden">›</span>
                 </Button>
               </div>
             </div>

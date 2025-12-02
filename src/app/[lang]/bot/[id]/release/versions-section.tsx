@@ -24,7 +24,7 @@ export function VersionsSection() {
     return (
       <>
         <BotInfo />
-        <div className="rounded-lg border border-border bg-card">
+        <div className="">
           <div className="border-b border-border p-6">
             <h2 className="text-2xl font-semibold text-foreground">Versions</h2>
           </div>

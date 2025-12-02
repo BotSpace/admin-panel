@@ -54,7 +54,7 @@ export function TrafficCard({
       icon={Activity}
       description="Trafik cheksiz. Faqat chiquvchi (egress) trafik uchun haq olinadi"
       cost={`$${cost.toFixed(2)}`}
-      className="md:col-span-2"
+      className="col-span-1"
     >
       <div className="h-40 w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -102,7 +102,7 @@ export function TrafficCard({
         </ResponsiveContainer>
       </div>
       <div className="flex flex-wrap justify-between gap-4 rounded-lg bg-muted/30 p-3 text-xs">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-6 flex-wrap">
           <div className="flex items-center gap-2">
             <div
               className="h-2.5 w-2.5 rounded-full"

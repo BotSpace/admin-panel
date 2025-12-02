@@ -18,3 +18,7 @@ export interface GetMeResponse {
   status: boolean;
   data: AuthData;
 }
+
+export interface Balance {
+  balance: number;
+}

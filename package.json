@@ -11,6 +11,7 @@
   "dependencies": {
     "@fancyapps/ui": "^6.0.34",
     "@hookform/resolvers": "^5.1.1",
+    "@lottiefiles/react-lottie-player": "^3.6.0",
     "@module-federation/nextjs-mf": "^8.8.41",
     "@monaco-editor/react": "^4.7.0",
     "@radix-ui/react-alert-dialog": "^1.1.14",

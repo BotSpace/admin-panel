@@ -118,8 +118,11 @@ export default function FilesPage() {
           value={activeTab}
           onValueChange={(v) => setActiveTab(v as FileType)}
         >
-          <TabsList className="mb-6">
-            <TabsTrigger value="photo" className="flex items-center gap-2">
+          <TabsList className="mb-6 overflow-auto w-full">
+            <TabsTrigger
+              value="photo"
+              className="ml-10 flex items-center gap-2"
+            >
               <Image className="h-4 w-4" />
               Rasmlar
               {totalCounts.photo > 0 && (

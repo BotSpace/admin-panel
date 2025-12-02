@@ -14,9 +14,7 @@ import { useReactQueryAction } from "@/shared/services/react-query";
 
 export default function DocumentsDashboard() {
   const { id }: { id: string } = useParams();
-  const { data, isLoading, refetch } = useReactQueryAction<
-    ApiRetrieveResponse<Dashboard>
-  >({
+  const { data } = useReactQueryAction<ApiRetrieveResponse<Dashboard>>({
     url: "project/[id]/dashboard/",
   });
 
@@ -24,8 +22,15 @@ export default function DocumentsDashboard() {
     <main className="">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-foreground">Hissobot</h1>
+        <div className="flex flex-col gap-2.5 md:flex-row justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-semibold text-foreground">Hissobot</h1>
+            <p>
+              Telegram botingizni hissobotlarni shuyerda ko'rib turishingiz
+              mumkin!
+            </p>
+          </div>
+
           <Link href={`/bot/${id}/constructor`} className={buttonVariants()}>
             Telegram bot konstructoriga o'tish
             <ArrowRight />

@@ -1,44 +1,104 @@
 "use client";
 
 import { Button } from "@/shared/components/ui/button";
-import Image from "next/image";
+import { cn } from "@/shared/lib/utils";
 
 import Click from "../../../public/click.svg";
 import Payme from "../../../public/payme.png";
 import Paynet from "../../../public/paynet.svg";
 import Uzum from "../../../public/uzum.svg";
+import { PaymentMethodCard } from "./payment-card";
+import { useState } from "react";
+import { Input } from "@/shared/components/ui/input";
+import { ArrowRight } from "lucide-react";
+import { instanceAuth } from "@/shared/services/instance";
+import toast from "react-hot-toast";
 
-export function PaymentMethodsSection() {
+// Format number with thousand separators for UZS
+function formatUZSAmount(amount: number): string {
+  return new Intl.NumberFormat("uz-UZ", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+// Parse formatted string back to number
+function parseUZSAmount(value: string): number {
+  // Remove all spaces and non-digit characters
+  const cleaned = value.replace(/\s/g, "").replace(/[^\d]/g, "");
+  if (!cleaned) return 0;
+  const parsed = parseInt(cleaned, 10);
+  return isNaN(parsed) ? 0 : Math.max(0, parsed); // Ensure non-negative
+}
+
+export function PaymentMethodsSection({
+  initialAmmount,
+  min,
+}: {
+  initialAmmount?: number;
+  min?: number;
+}) {
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<string>("click");
+  const minAmount = min || 10000; // Default minimum is 50000 if not provided
+  const initialAmount = initialAmmount
+    ? Math.max(initialAmmount, minAmount)
+    : minAmount;
+  const [ammount, setAmmount] = useState<number>(initialAmount);
+  const [error, setError] = useState<string>("");
+
   const paymentMethods = [
     {
       id: "click",
       name: "Click",
-      description: "Mobil to'lovlar",
-      icon: Click,
+      logo: Click,
       color: "from-blue-500/50 to-blue-600",
+      isSoon: false,
     },
     {
       id: "payme",
       name: "Payme",
-      description: "Raqamli hamyon",
-      icon: Payme,
+      logo: Payme,
       color: "from-cyan-500/50 to-cyan-600",
+      isSoon: true,
     },
     {
       id: "uzum",
       name: "Uzum Bank",
-      description: "Uzum hamyoni",
-      icon: Uzum,
+      logo: Uzum,
       color: "from-violet-500/20 to-violet-600/70",
+      isSoon: true,
     },
     {
       id: "card",
       name: "Bank Kartasi",
-      description: "UZCARD, HUMO",
-      icon: Paynet,
+      logo: Paynet,
       color: "from-emerald-500/50 to-emerald-600",
+      isSoon: true,
     },
   ];
+
+  function handleCreateTransaction() {
+    if (ammount < minAmount) {
+      toast.error(`Minimal summa: ${formatUZSAmount(minAmount)} UZS`);
+      return;
+    }
+
+    const toastId = toast.loading("Loading...");
+
+    instanceAuth
+      .post("/payment/create-transaction/", {
+        method: selectedPaymentMethod,
+        amount: ammount,
+      })
+      .then(({ data }) => {
+        toast.success("Yaratilindi", { id: toastId });
+        window.open(data.data.link, "_blank");
+      })
+      .catch(() => {
+        toast.error("Xatolik yuz berdi", { id: toastId });
+      });
+  }
 
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
@@ -51,59 +111,65 @@ export function PaymentMethodsSection() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {paymentMethods.map((method) => {
           return (
-            <div
+            <PaymentMethodCard
+              onSelect={setSelectedPaymentMethod}
+              isSelected={method.id === selectedPaymentMethod}
               key={method.id}
-              className="group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-card to-card hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 p-4"
-            >
-              {/* Gradient background */}
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${method.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
-              />
-
-              {/* Badge */}
-              <div className="absolute top-3 right-3">
-                <span className="text-xs font-semibold px-2 py-1 rounded-full bg-primary/10 text-primary">
-                  Tez kunda
-                </span>
-              </div>
-
-              {/* Content */}
-              <div className="relative z-10 flex flex-col items-center text-center h-full">
-                <div
-                  className={`p-3 rounded-lg bg-gradient-to-br ${method.color} text-white mb-3 group-hover:scale-110 transition-transform duration-300`}
-                >
-                  <Image
-                    className="w-full h-[200px] object-contain"
-                    src={method.icon}
-                    alt={method.name}
-                  />
-                </div>
-
-                <h4 className="font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
-                  {method.name}
-                </h4>
-                <p className="text-xs text-muted-foreground mb-4">
-                  {method.description}
-                </p>
-
-                {/* Hidden button revealed on hover */}
-                <div className="w-full pt-2 border-t border-border/50 transition-opacity duration-300 mt-auto">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full rounded-lg text-xs font-medium border-primary/20 hover:border-primary hover:bg-primary/5 mt-2"
-                  >
-                    Tanlash
-                  </Button>
-                </div>
-              </div>
-            </div>
+              color={method.color}
+              id={method.id}
+              logo={method.logo}
+              name={method.name}
+              isSoon={method.isSoon}
+            />
           );
         })}
       </div>
+
+      <div className="flex mt-4 gap-2">
+        <div className="relative flex-1">
+          <Input
+            className={cn(
+              "pr-16",
+              error && "border-destructive focus-visible:ring-destructive"
+            )}
+            value={formatUZSAmount(ammount)}
+            onChange={(e) => {
+              const parsed = parseUZSAmount(e.target.value);
+              setAmmount(parsed);
+
+              if (parsed > 0 && parsed < minAmount) {
+                setError(`Minimal summa: ${formatUZSAmount(minAmount)} UZS`);
+              } else {
+                setError("");
+              }
+            }}
+            type="text"
+            inputMode="numeric"
+            placeholder="0"
+          />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">
+            UZS
+          </span>
+        </div>
+        <Button
+          onClick={handleCreateTransaction}
+          disabled={ammount < minAmount || ammount === 0}
+        >
+          To'ldirish
+          <ArrowRight />
+        </Button>
+      </div>
+
+      {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
+
+      {!error && minAmount && (
+        <p className="mt-2 text-sm text-muted-foreground">
+          Minimal summa: {formatUZSAmount(minAmount)} UZS
+        </p>
+      )}
 
       {/* Info message */}
       <div className="mt-6 p-4 rounded-lg bg-muted/50 border border-border">
