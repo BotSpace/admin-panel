@@ -10,11 +10,7 @@ import { CollectionListItem } from "@/shared/types/collection";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { Button } from "@/shared/components/ui/button";
 import { Menu } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/shared/components/ui/sheet";
+import { Sheet, SheetContent } from "@/shared/components/ui/sheet";
 
 export default function Home() {
   const { id }: { id: string } = useParams();

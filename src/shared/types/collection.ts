@@ -17,7 +17,9 @@ export interface CollectionDetail {
       | "file"
       | "audio"
       | "video"
-      | "photo";
+      | "photo"
+      | "relation";
+    relation_collection: number;
     required: boolean;
     default: any;
   }[];

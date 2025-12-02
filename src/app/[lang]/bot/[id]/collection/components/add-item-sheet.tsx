@@ -212,6 +212,7 @@ export default function AddItemSheet({
       // Prepare data for submission
       const submitData: Record<string, any> = {};
       fields.forEach((field) => {
+        console.log("🚀 ~ file: add-item-sheet.tsx:215 ~ field:", field);
         const value = formData[field.name];
 
         if (!value) return;
@@ -219,6 +220,8 @@ export default function AddItemSheet({
         // Convert datetime to MongoDB ISODate format
         if (field.type === "datetime" && value) {
           submitData[field.name] = new Date(value).toISOString();
+        } else if (field.type === "relation") {
+          submitData[field.name] = Number(value);
         } else {
           submitData[field.name] = value;
         }

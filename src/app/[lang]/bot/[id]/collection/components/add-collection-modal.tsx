@@ -25,6 +25,8 @@ import {
 } from "@/shared/types/collection";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useReactQueryAction } from "@/shared/services/react-query";
+import { APIListResponse } from "@/shared/types/http";
 
 interface AddNewCollectionModalProps {
   onSuccess: () => void;
@@ -44,28 +46,56 @@ export function AddNewCollectionModal({
   const [fieldName, setFieldName] = useState("");
   const [fieldType, setFieldType] =
     useState<CollectionDetail["fields"][number]["type"]>("text");
+  const [relationCollection, setRelationCollection] = useState<number>(0);
   const [open, setOpen] = useState(false);
 
+  // Fetch collections list for relation field
+  const { data: collectionsData } = useReactQueryAction<
+    APIListResponse<CollectionListItem[]>
+  >({
+    url: `collection/?project=${project_id}`,
+    enabled: open, // Only fetch when dialog is open
+  });
+
   const isValidFieldName = varibulNameValidator(fieldName);
-  const isFormValid = fieldName && fieldType && isValidFieldName;
+  const isRelationFieldValid =
+    fieldType !== "relation" || relationCollection !== 0;
+  const isFormValid =
+    fieldName && fieldType && isValidFieldName && isRelationFieldValid;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!isFormValid) {
-      toast.error("Iltimos field nomini va turini to'g'ri tanlang.");
+      if (fieldType === "relation" && !relationCollection) {
+        toast.error("Relation field uchun collection tanlash majburiy");
+      } else {
+        toast.error("Iltimos field nomini va turini to'g'ri tanlang.");
+      }
       return;
+    }
+
+    // Prepare field data
+    const newField: any = {
+      name: fieldName,
+      type: fieldType,
+    };
+
+    // Only include relation_collection if type is relation
+    if (fieldType === "relation" && relationCollection) {
+      newField.relation_collection = relationCollection;
     }
 
     instanceAuth
       .patch(`collection/${collection.name}/?project=${project_id}`, {
-        fields: [...fields, { name: fieldName, type: fieldType }],
+        fields: [...fields, newField],
       })
       .then(() => {
         onSuccess();
         toast.success("Yangi field muvaffaqiyatli qo'shildi!");
         setFieldName("");
         setFieldType("text");
+        setRelationCollection(0);
         setOpen(false);
       })
       .catch((err) => {
@@ -91,11 +121,15 @@ export function AddNewCollectionModal({
             />
             <Select
               value={fieldType}
-              onValueChange={(value) =>
+              onValueChange={(value) => {
                 setFieldType(
                   value as CollectionDetail["fields"][number]["type"]
-                )
-              }
+                );
+                // Clear relation_collection if type is changed from relation
+                if (value !== "relation") {
+                  setRelationCollection(0);
+                }
+              }}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select a data type" />
@@ -111,10 +145,57 @@ export function AddNewCollectionModal({
                   <SelectItem value="audio">Audio</SelectItem>
                   <SelectItem value="video">Video</SelectItem>
                   <SelectItem value="photo">Photo</SelectItem>
+                  <SelectItem value="relation">Relation</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
+
+          {/* Relation Collection Selector */}
+          {fieldType === "relation" && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Relation Collection
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <Select
+                value={relationCollection.toString()}
+                onValueChange={(value) => setRelationCollection(Number(value))}
+              >
+                <SelectTrigger
+                  className={
+                    fieldType === "relation" && !relationCollection
+                      ? "border-red-500"
+                      : ""
+                  }
+                >
+                  <SelectValue placeholder="Collection tanlang">
+                    {relationCollection &&
+                      collectionsData?.data.results.find(
+                        (c) => c.id === relationCollection
+                      )?.name}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Collections</SelectLabel>
+                    {collectionsData?.data.results
+                      .filter((c) => c.name !== collection.name)
+                      .map((c) => (
+                        <SelectItem key={c.id} value={c.id.toString()}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {fieldType === "relation" && !relationCollection && (
+                <p className="text-xs text-red-500">
+                  Collection tanlash majburiy
+                </p>
+              )}
+            </div>
+          )}
 
           <p className="text-xs text-muted-foreground">
             Nom o'zgaruvchi nomlash qoidalariga muvofiq bo'lishi kerak: harf

@@ -29,6 +29,8 @@ import {
   CollectionListItem,
 } from "@/shared/types/collection";
 import toast from "react-hot-toast";
+import { useReactQueryAction } from "@/shared/services/react-query";
+import { APIListResponse } from "@/shared/types/http";
 import { Settings, Trash2, Plus } from "lucide-react";
 import {
   AlertDialog,
@@ -56,6 +58,7 @@ interface FieldItem {
   type: CollectionDetail["fields"][number]["type"];
   required: boolean;
   default: any;
+  relation_collection?: number;
   isNew?: boolean;
 }
 
@@ -73,15 +76,37 @@ export function EditCollectionSheet({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [fieldToDelete, setFieldToDelete] = useState<number | null>(null);
 
+  // Fetch collections list for relation field
+  const { data: collectionsData } = useReactQueryAction<
+    APIListResponse<CollectionListItem[]>
+  >({
+    url: `collection/?project=${project_id}`,
+    enabled: open, // Only fetch when sheet is open
+  });
+
   useEffect(() => {
     // Initialize with existing fields
     setEditableFields(
-      fields.map((f) => ({
-        ...f,
-        isNew: false,
-      }))
+      fields.map((f) => {
+        let relationCollection = f.relation_collection || 0;
+        // If relation_collection is a name (not a number), convert it to id
+        if (relationCollection && collectionsData?.data.results) {
+          // It's a name, not an id - convert to id
+          const foundCollection = collectionsData.data.results.find(
+            (c) => c.id === relationCollection
+          );
+          if (foundCollection) {
+            relationCollection = foundCollection.id;
+          }
+        }
+        return {
+          ...f,
+          relation_collection: relationCollection,
+          isNew: false,
+        };
+      })
     );
-  }, [fields, open]);
+  }, [fields, open, collectionsData]);
 
   // Auto-open effect
   useEffect(() => {
@@ -98,6 +123,7 @@ export function EditCollectionSheet({
         type: "text",
         required: false,
         default: null,
+        relation_collection: 0,
         isNew: true,
       },
       ...editableFields,
@@ -156,6 +182,15 @@ export function EditCollectionSheet({
       return false;
     }
 
+    // Check for relation fields without relation_collection
+    const relationFieldsWithoutCollection = editableFields.filter(
+      (f) => f.type === "relation" && !f.relation_collection
+    );
+    if (relationFieldsWithoutCollection.length > 0) {
+      toast.error("Relation field uchun collection tanlash majburiy");
+      return false;
+    }
+
     return true;
   };
 
@@ -170,7 +205,14 @@ export function EditCollectionSheet({
 
     try {
       // Send ALL fields (including removed ones will be excluded automatically)
-      const fieldsToSend = editableFields.map(({ isNew, ...field }) => field);
+      const fieldsToSend = editableFields.map(({ isNew, ...field }) => {
+        // Only include relation_collection if type is relation
+        if (field.type !== "relation") {
+          const { relation_collection, ...rest } = field;
+          return rest;
+        }
+        return field;
+      });
 
       await instanceAuth.patch(
         `collection/${collection.name}/?project=${project_id}`,
@@ -291,13 +333,21 @@ export function EditCollectionSheet({
                               <Label className="text-xs">Type</Label>
                               <Select
                                 value={field.type}
-                                onValueChange={(value) =>
+                                onValueChange={(value) => {
                                   handleFieldChange(
                                     index,
                                     "type",
                                     value as CollectionDetail["fields"][number]["type"]
-                                  )
-                                }
+                                  );
+                                  // Clear relation_collection if type is changed from relation
+                                  if (value !== "relation") {
+                                    handleFieldChange(
+                                      index,
+                                      "relation_collection",
+                                      ""
+                                    );
+                                  }
+                                }}
                               >
                                 <SelectTrigger>
                                   <SelectValue />
@@ -319,10 +369,73 @@ export function EditCollectionSheet({
                                     <SelectItem value="audio">Audio</SelectItem>
                                     <SelectItem value="video">Video</SelectItem>
                                     <SelectItem value="photo">Photo</SelectItem>
+                                    <SelectItem value="relation">
+                                      Relation
+                                    </SelectItem>
                                   </SelectGroup>
                                 </SelectContent>
                               </Select>
                             </div>
+
+                            {/* Relation Collection Selector */}
+                            {field.type === "relation" && (
+                              <div className="space-y-1">
+                                <Label className="text-xs">
+                                  Relation Collection
+                                  <span className="text-red-500 ml-1">*</span>
+                                </Label>
+                                <Select
+                                  onValueChange={(value) => {
+                                    console.log(Number(value));
+                                    return handleFieldChange(
+                                      index,
+                                      "relation_collection",
+                                      Number(value)
+                                    );
+                                  }}
+                                >
+                                  <SelectTrigger
+                                    className={
+                                      field.type === "relation" &&
+                                      !field.relation_collection
+                                        ? "border-red-500"
+                                        : ""
+                                    }
+                                  >
+                                    <SelectValue placeholder="Collection tanlang">
+                                      {field.relation_collection &&
+                                        collectionsData?.data.results.find(
+                                          (c) =>
+                                            c.id === field.relation_collection
+                                        )?.name}
+                                    </SelectValue>
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      <SelectLabel>Collections</SelectLabel>
+                                      {collectionsData?.data.results
+                                        .filter(
+                                          (c) => c.name !== collection.name
+                                        )
+                                        .map((c) => (
+                                          <SelectItem
+                                            key={c.id}
+                                            value={c.id.toString()}
+                                          >
+                                            {c.name}
+                                          </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                                {field.type === "relation" &&
+                                  !field.relation_collection && (
+                                    <p className="text-xs text-red-500">
+                                      Collection tanlash majburiy
+                                    </p>
+                                  )}
+                              </div>
+                            )}
                           </div>
 
                           {/* Delete button */}

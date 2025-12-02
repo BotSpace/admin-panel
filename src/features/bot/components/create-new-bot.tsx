@@ -39,6 +39,7 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import { Plan } from "@/shared/types/plan";
+import { PlanCard } from "@/app/[lang]/bot/[id]/plans/components/plan-card";
 
 type Props = {
   dialogOpenButton: React.ReactNode;
@@ -135,7 +136,7 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{dialogOpenButton}</DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Yangi bot yaratish</DialogTitle>
           <DialogDescription>
@@ -337,66 +338,19 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
                       const isPopular = plan.id === mostPopularPlanId;
 
                       return (
-                        <Card
+                        <PlanCard
                           key={plan.id}
-                          className={`relative cursor-pointer border transition-all hover:border-primary hover:shadow-md ${
-                            isSelected
-                              ? "border-primary ring-2 ring-primary/30"
-                              : ""
-                          }`}
-                          onClick={() =>
+                          plan={plan}
+                          isCurrent={isSelected}
+                          isPopular={isPopular}
+                          isProcessing={false}
+                          onUpgrade={(plan) => {
                             form.setValue("plan_id", plan.id, {
                               shouldDirty: true,
                               shouldValidate: true,
-                            })
-                          }
-                        >
-                          <CardHeader className="space-y-1 pb-3">
-                            <div className="flex items-center justify-between gap-2">
-                              <CardTitle className="text-base">
-                                {plan.name_display}
-                              </CardTitle>
-                              {isPopular && (
-                                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">
-                                  Eng mashhur
-                                </span>
-                              )}
-                            </div>
-                            <CardDescription className="text-xs">
-                              {plan.description ||
-                                "Kichik va o‘rta loyihalar uchun qulay tarif."}
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent className="space-y-2">
-                            <div className="flex items-baseline gap-1">
-                              <span className="text-xl font-bold">
-                                {plan.price}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                / oy
-                              </span>
-                            </div>
-                            <ul className="space-y-1 text-xs text-muted-foreground">
-                              {typeof plan.max_users === "number" && (
-                                <li>
-                                  👥 Maks. foydalanuvchilar:{" "}
-                                  <span className="font-medium">
-                                    {plan.max_users}
-                                  </span>
-                                </li>
-                              )}
-                              {plan.custom_domain && (
-                                <li>🌐 Shaxsiy domen ulash imkoniyati</li>
-                              )}
-                              {plan.priority_support && (
-                                <li>⚡ Ustuvor texnik yordam</li>
-                              )}
-                              {plan.powered_by_botmother === false && (
-                                <li>🚫 Powered by BotMother yozuvisiz</li>
-                              )}
-                            </ul>
-                          </CardContent>
-                        </Card>
+                            });
+                          }}
+                        />
                       );
                     })}
                   </div>

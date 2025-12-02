@@ -3,7 +3,6 @@ import { Card } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Plan } from "@/shared/types/plan";
 import { formatCurrency } from "@/shared/lib/format-currency";
-import { parsePlanPrice } from "./utils";
 
 type PlanCardProps = {
   plan: Plan;
@@ -91,9 +90,7 @@ export function PlanCard({
         {plan.powered_by_botmother === false && (
           <li className="flex items-start gap-2">
             <Check className="mt-[2px] h-3 w-3 text-primary" />
-            <span>
-              Botda &quot;Powered by BotMother&quot; yozuvisiz
-            </span>
+            <span>Botda &quot;Powered by BotMother&quot; yozuvisiz</span>
           </li>
         )}
         <li className="flex items-start gap-2">
@@ -110,9 +107,7 @@ export function PlanCard({
           disabled={isCurrent || isProcessing}
           onClick={() => onUpgrade(plan)}
         >
-          {isProcessing && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          )}
+          {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isCurrent
             ? "Aktiv tarif"
             : plan.name === "free"
@@ -123,4 +118,3 @@ export function PlanCard({
     </Card>
   );
 }
-

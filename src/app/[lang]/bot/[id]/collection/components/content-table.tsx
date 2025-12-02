@@ -44,7 +44,7 @@ export default function ContentTable({
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -59,15 +59,15 @@ export default function ContentTable({
     useReactQueryAction<APIDetailCreateResponse<[]>>({
       url: `collection/${collection.name}/query/`,
       method: "POST",
-      query: { 
-        action: "find", 
+      query: {
+        action: "find",
         project: project,
         page: currentPage.toString(),
-        size: pageSize.toString()
+        size: pageSize.toString(),
       },
-      data: { 
-        limit: pageSize, 
-        skip: (currentPage - 1) * pageSize 
+      data: {
+        limit: pageSize,
+        skip: (currentPage - 1) * pageSize,
       },
       enabled: !!data,
     });
@@ -142,7 +142,9 @@ export default function ContentTable({
           <div className="flex-shrink-0 flex flex-col md:flex-row md:justify-between md:items-center gap-4 p-4 border-b">
             <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
               <div>
-                <h2 className="text-xl md:text-2xl font-semibold">{collection.name}</h2>
+                <h2 className="text-xl md:text-2xl font-semibold">
+                  {collection.name}
+                </h2>
                 <p className="text-xs md:text-sm text-muted-foreground">
                   Jami: {collectionData?.data?.length || 0} ta yozuv
                 </p>
@@ -165,7 +167,11 @@ export default function ContentTable({
                 project_id={project}
                 onDeleted={onCollectionDeleted}
               >
-                <Button variant="outline" size="sm" className="flex-1 md:flex-none">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 md:flex-none"
+                >
                   <Trash2 className="h-4 w-4 mr-2" />
                   <span className="hidden sm:inline">O'chirish</span>
                 </Button>
@@ -176,7 +182,11 @@ export default function ContentTable({
                 project_id={project}
                 onSuccess={() => refetch()}
               >
-                <Button variant="outline" size="sm" className="flex-1 md:flex-none">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 md:flex-none"
+                >
                   <Settings className="h-4 w-4 mr-2" />
                   <span className="hidden sm:inline">Sozlamalar</span>
                 </Button>
@@ -196,76 +206,76 @@ export default function ContentTable({
           {data?.data.fields.length ? (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[600px]">
-              <TableHeader
-                fields={data.data.fields}
-                collection={collection}
-                project={project}
-                onSuccess={() => {
-                  refetch();
-                }}
-                allSelected={allSelected}
-                onSelectAll={handleSelectAll}
-              />
+                <TableHeader
+                  fields={data.data.fields}
+                  collection={collection}
+                  project={project}
+                  onSuccess={() => {
+                    refetch();
+                  }}
+                  allSelected={allSelected}
+                  onSelectAll={handleSelectAll}
+                />
 
-              <tbody>
-                {collectionData?.data ? (
-                  <DataRows
-                    fields={data.data.fields}
-                    collectionName={collection.name}
-                    collectionData={collectionData?.data}
-                    project={project}
-                    onDataChanged={() => refetchCollectionData()}
-                    selectedItems={selectedItems}
-                    onSelectionChange={handleSelectionChange}
-                  />
-                ) : (
-                  <>
-                    <tr>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
-                      </td>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[120px] md:w-[210px] h-[15px]" />
-                      </td>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[60px] md:w-[100px] h-[15px]" />
-                      </td>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[120px] md:w-[200px] h-[15px]" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[100px] md:w-[160px] h-[15px]" />
-                      </td>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
-                      </td>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
-                      </td>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[60px] md:w-[100px] h-[15px]" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[50px] md:w-[80px] h-[15px]" />
-                      </td>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[120px] md:w-[200px] h-[15px]" />
-                      </td>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[100px] md:w-[170px] h-[15px]" />
-                      </td>
-                      <td className="px-2 md:px-4 py-3 md:py-4">
-                        <Skeleton className="w-[90px] md:w-[140px] h-[15px]" />
-                      </td>
-                    </tr>
-                  </>
-                )}
-              </tbody>
-            </table>
+                <tbody>
+                  {collectionData?.data ? (
+                    <DataRows
+                      fields={data.data.fields}
+                      collectionName={collection.name}
+                      collectionData={collectionData?.data}
+                      project={project}
+                      onDataChanged={() => refetchCollectionData()}
+                      selectedItems={selectedItems}
+                      onSelectionChange={handleSelectionChange}
+                    />
+                  ) : (
+                    <>
+                      <tr>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
+                        </td>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[120px] md:w-[210px] h-[15px]" />
+                        </td>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[60px] md:w-[100px] h-[15px]" />
+                        </td>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[120px] md:w-[200px] h-[15px]" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[100px] md:w-[160px] h-[15px]" />
+                        </td>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
+                        </td>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
+                        </td>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[60px] md:w-[100px] h-[15px]" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[50px] md:w-[80px] h-[15px]" />
+                        </td>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[120px] md:w-[200px] h-[15px]" />
+                        </td>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[100px] md:w-[170px] h-[15px]" />
+                        </td>
+                        <td className="px-2 md:px-4 py-3 md:py-4">
+                          <Skeleton className="w-[90px] md:w-[140px] h-[15px]" />
+                        </td>
+                      </tr>
+                    </>
+                  )}
+                </tbody>
+              </table>
             </div>
           ) : (
             <EmptyState
@@ -306,14 +316,14 @@ export default function ContentTable({
           <div className="flex-shrink-0 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 py-3 border-t bg-background">
             <div className="flex-1 text-xs md:text-sm text-muted-foreground">
               {selectedItems.length > 0 && (
-                <span>
-                  {selectedItems.length} ta tanlangan
-                </span>
+                <span>{selectedItems.length} ta tanlangan</span>
               )}
             </div>
             <div className="flex flex-col md:flex-row md:items-center gap-3 md:space-x-6 lg:space-x-8">
               <div className="flex items-center space-x-2">
-                <p className="text-xs md:text-sm font-medium">Sahifadagi ma'lumotlar:</p>
+                <p className="text-xs md:text-sm font-medium">
+                  Sahifadagi ma'lumotlar:
+                </p>
                 <select
                   value={pageSize}
                   onChange={(e) => {
@@ -342,7 +352,9 @@ export default function ContentTable({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
                   disabled={currentPage === 1}
                   className="text-xs md:text-sm"
                 >
@@ -358,7 +370,10 @@ export default function ContentTable({
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentPage((prev) => prev + 1)}
-                  disabled={!collectionData?.data || collectionData.data.length < pageSize}
+                  disabled={
+                    !collectionData?.data ||
+                    collectionData.data.length < pageSize
+                  }
                   className="text-xs md:text-sm"
                 >
                   <span className="hidden sm:inline">Keyingi</span>
