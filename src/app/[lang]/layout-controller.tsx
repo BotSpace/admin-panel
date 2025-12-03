@@ -29,7 +29,9 @@ export default function LayoutController({ children }: Props) {
     <>
       <SidebarProvider>
         <ReusableSidebar
-          isBackActive={true}
+          isBackActive={
+            !!/^\/([a-z]{2})\/bot\/([a-zA-Z0-9_-]+)(?:\/.*)?$/.test(pathname)
+          }
           brand={{ name: "Botmother", version: "v1.0", image: LogoImage }}
           nav={nav}
         />

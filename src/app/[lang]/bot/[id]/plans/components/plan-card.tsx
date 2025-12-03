@@ -10,6 +10,7 @@ type PlanCardProps = {
   isPopular: boolean;
   isProcessing: boolean;
   onUpgrade: (plan: Plan) => void;
+  buttonText: string;
 };
 
 export function PlanCard({
@@ -18,6 +19,7 @@ export function PlanCard({
   isPopular,
   isProcessing,
   onUpgrade,
+  buttonText,
 }: PlanCardProps) {
   return (
     <Card
@@ -108,11 +110,7 @@ export function PlanCard({
           onClick={() => onUpgrade(plan)}
         >
           {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isCurrent
-            ? "Aktiv tarif"
-            : plan.name === "free"
-            ? "Bepul boshlash"
-            : "Tarifga o'tish"}
+          {buttonText}
         </Button>
       </div>
     </Card>

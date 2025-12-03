@@ -8,7 +8,7 @@ import Payme from "../../../public/payme.png";
 import Paynet from "../../../public/paynet.svg";
 import Uzum from "../../../public/uzum.svg";
 import { PaymentMethodCard } from "./payment-card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/shared/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { instanceAuth } from "@/shared/services/instance";
@@ -41,10 +41,8 @@ export function PaymentMethodsSection({
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("click");
   const minAmount = min || 10000; // Default minimum is 50000 if not provided
-  const initialAmount = initialAmmount
-    ? Math.max(initialAmmount, minAmount)
-    : minAmount;
-  const [ammount, setAmmount] = useState<number>(initialAmount);
+
+  const [amount, setAmount] = useState<number>(0);
   const [error, setError] = useState<string>("");
 
   const paymentMethods = [
@@ -79,7 +77,7 @@ export function PaymentMethodsSection({
   ];
 
   function handleCreateTransaction() {
-    if (ammount < minAmount) {
+    if (amount < minAmount) {
       toast.error(`Minimal summa: ${formatUZSAmount(minAmount)} UZS`);
       return;
     }
@@ -89,7 +87,7 @@ export function PaymentMethodsSection({
     instanceAuth
       .post("/payment/create-transaction/", {
         method: selectedPaymentMethod,
-        amount: ammount,
+        amount: amount,
       })
       .then(({ data }) => {
         toast.success("Yaratilindi", { id: toastId });
@@ -99,6 +97,13 @@ export function PaymentMethodsSection({
         toast.error("Xatolik yuz berdi", { id: toastId });
       });
   }
+
+  useEffect(() => {
+    const initialAmount = initialAmmount
+      ? Math.max(initialAmmount, minAmount)
+      : minAmount;
+    setAmount(initialAmount);
+  }, [initialAmmount]);
 
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
@@ -135,10 +140,10 @@ export function PaymentMethodsSection({
               "pr-16",
               error && "border-destructive focus-visible:ring-destructive"
             )}
-            value={formatUZSAmount(ammount)}
+            value={formatUZSAmount(amount)}
             onChange={(e) => {
               const parsed = parseUZSAmount(e.target.value);
-              setAmmount(parsed);
+              setAmount(parsed);
 
               if (parsed > 0 && parsed < minAmount) {
                 setError(`Minimal summa: ${formatUZSAmount(minAmount)} UZS`);
@@ -156,7 +161,7 @@ export function PaymentMethodsSection({
         </div>
         <Button
           onClick={handleCreateTransaction}
-          disabled={ammount < minAmount || ammount === 0}
+          disabled={amount < minAmount || amount === 0}
         >
           To'ldirish
           <ArrowRight />

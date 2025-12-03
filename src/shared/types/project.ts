@@ -13,13 +13,14 @@ export interface Project {
 }
 
 export interface ChartItem {
-  date: string,
-  value: number,
+  date: string;
+  value: number;
 }
 
 export interface Dashboard {
   chart: {
-    new_users: ChartItem[],
-  },
-  total_users: number,
+    new_users: ChartItem[];
+  };
+  total_users: number;
+  daily_users: number;
 }

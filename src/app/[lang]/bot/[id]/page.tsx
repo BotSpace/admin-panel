@@ -1,10 +1,8 @@
 "use client";
 
 import { buttonVariants } from "@/shared/components/ui/button";
-import { Card } from "@/shared/components/ui/card";
 import { MetricCard } from "@/shared/components/metric-card";
 import { ChartLineInteractive } from "@/shared/components/visitor-chart";
-import { DocumentsTable } from "@/shared/components/documents-table";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/shared/i18n/routing";
 import { useParams } from "next/navigation";
@@ -12,7 +10,7 @@ import { ApiRetrieveResponse } from "@/shared/types/http";
 import { Dashboard } from "@/shared/types/project";
 import { useReactQueryAction } from "@/shared/services/react-query";
 
-export default function DocumentsDashboard() {
+export default function BotDashboard() {
   const { id }: { id: string } = useParams();
   const { data } = useReactQueryAction<ApiRetrieveResponse<Dashboard>>({
     url: "project/[id]/dashboard/",
@@ -38,7 +36,7 @@ export default function DocumentsDashboard() {
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2">
           <MetricCard
             title="Foydalanuvchilar"
             value={data?.data.total_users.toString() ?? "0"}
@@ -46,18 +44,8 @@ export default function DocumentsDashboard() {
           />
           <MetricCard
             title="Bugungi foydalanuvchilar"
-            value="1,234"
+            value={data?.data.daily_users.toString() ?? "0"}
             subtitle="Bugun botga tashrif buyurgan yangi foydalanuvchilar soni"
-          />
-          <MetricCard
-            title="Bugun botdan foydalanganlar"
-            value="45,678"
-            subtitle="Bugun kun davomida botdan bir martta bo'lsa ham foydalangan foydalanuvchilar soni"
-          />
-          <MetricCard
-            title="Aktiv foydalanuvchilar soni"
-            value="121,121"
-            subtitle="Bot aktiv foydalanuvchilari soni"
           />
         </div>
 
@@ -65,7 +53,7 @@ export default function DocumentsDashboard() {
         <ChartLineInteractive chart={data?.data.chart.new_users ?? []} />
 
         {/* Documents Table */}
-        {/* Vaqtincha o'chirib qo'yildi kerak bo'lsa yoqiladi */}
+        {/* TODO: Vaqtincha o'chirib qo'yildi kerak bo'lsa yoqiladi */}
         {/* <Card className="bg-card p-6"> */}
         {/*   <DocumentsTable /> */}
         {/* </Card> */}

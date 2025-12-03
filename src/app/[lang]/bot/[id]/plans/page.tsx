@@ -158,6 +158,13 @@ function BotPlanSettingsPage() {
                   isPopular={isPopular}
                   isProcessing={isProcessing}
                   onUpgrade={handleUpgrade}
+                  buttonText={
+                    isCurrent
+                      ? "Aktiv tarif"
+                      : plan.name === "free"
+                      ? "Bepul boshlash"
+                      : "Tarifga o'tish"
+                  }
                 />
               );
             })}

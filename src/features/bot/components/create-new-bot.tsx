@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -28,18 +28,18 @@ import { botFormSchema } from "@/features/bot/botSchema"; // Sxema faylini impor
 import { instanceAuth } from "@/shared/services/instance";
 import toast from "react-hot-toast";
 import { useRouter } from "@/shared/i18n/routing";
-import { APIDetailCreateResponse, APIListResponse } from "@/shared/types/http";
+import {
+  APIDetailCreateResponse,
+  APIListResponse,
+  ApiRetrieveResponse,
+} from "@/shared/types/http";
 import { Project } from "@/shared/types/project";
 import { useReactQueryAction } from "@/shared/services/react-query";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card";
 import { Plan } from "@/shared/types/plan";
 import { PlanCard } from "@/app/[lang]/bot/[id]/plans/components/plan-card";
+import { PaymentMethodsSection } from "@/features/billing/payment-methods-section";
+import { Balance } from "@/features/auth/types/get-me";
+import { parsePriceToInteger } from "@/shared/lib/parce-pice";
 
 type Props = {
   dialogOpenButton: React.ReactNode;
@@ -51,11 +51,18 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [amountNeeded, setAmountNeeded] = useState<number>(0);
 
   const { data: plansResponse, isLoading: plansLoading } = useReactQueryAction<
     APIListResponse<Plan[]>
   >({
     url: "plans/",
+  });
+
+  const { data: balance } = useReactQueryAction<ApiRetrieveResponse<Balance>>({
+    url: "/user/balance",
+    refetchInterval: 5000, // Har 15 soniyada yangilash
+    refetchIntervalInBackground: true,
   });
 
   const plans = plansResponse?.data?.results ?? [];
@@ -132,6 +139,19 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
         setStep(1);
       });
   }
+
+  useEffect(() => {
+    if (balance) {
+      const plan_id = form.getValues("plan_id");
+
+      plans.map((plan) => {
+        plan.id == plan_id &&
+          setAmountNeeded(
+            parsePriceToInteger(plan.price) - balance.data.balance
+          );
+      });
+    }
+  }, [balance]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -332,29 +352,42 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
                     </p>
                   )}
 
-                  <div className="grid gap-3 md:grid-cols-2">
-                    {plans.map((plan) => {
-                      const isSelected = selectedPlanId === plan.id;
-                      const isPopular = plan.id === mostPopularPlanId;
+                  {balance && (
+                    <div className="grid gap-3 md:grid-cols-2">
+                      {plans.map((plan) => {
+                        const isSelected = selectedPlanId === plan.id;
+                        const isPopular = plan.id === mostPopularPlanId;
 
-                      return (
-                        <PlanCard
-                          key={plan.id}
-                          plan={plan}
-                          isCurrent={isSelected}
-                          isPopular={isPopular}
-                          isProcessing={false}
-                          onUpgrade={(plan) => {
-                            form.setValue("plan_id", plan.id, {
-                              shouldDirty: true,
-                              shouldValidate: true,
-                            });
-                          }}
-                        />
-                      );
-                    })}
-                  </div>
+                        return (
+                          <PlanCard
+                            key={plan.id}
+                            plan={plan}
+                            isCurrent={isSelected}
+                            isPopular={isPopular}
+                            isProcessing={false}
+                            buttonText="Tanlash"
+                            onUpgrade={(plan) => {
+                              setAmountNeeded(
+                                parsePriceToInteger(plan.price) -
+                                  balance.data.balance
+                              );
+                              form.setValue("plan_id", plan.id, {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              });
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
                   <FormMessage />
+                  {amountNeeded > 0 && (
+                    <PaymentMethodsSection
+                      initialAmmount={amountNeeded}
+                      min={amountNeeded}
+                    />
+                  )}
                 </div>
               )}
             </div>

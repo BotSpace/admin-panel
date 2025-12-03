@@ -85,7 +85,7 @@ export type ReusableSidebarProps = React.ComponentProps<typeof Sidebar> & {
 // Component
 // ------------------------------
 export function ReusableSidebar({
-  isBackActive,
+  isBackActive = false,
   nav,
   brand = { name: "App", version: "", href: "/", image: "" },
   showUserFooter = true,
