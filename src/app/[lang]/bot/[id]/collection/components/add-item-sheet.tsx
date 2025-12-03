@@ -28,6 +28,8 @@ import {
 } from "lucide-react";
 import { FileType } from "@/features/files/types/file";
 
+import { CollectionItemCombobox } from "./collection-item-combobox";
+
 interface AddItemSheetProps {
   fields: CollectionDetail["fields"];
   collectionName: string;
@@ -406,6 +408,8 @@ export default function AddItemSheet({
                       </Button>
                     )}
                   </div>
+                ) : field.type === "relation" ? (
+                  <CollectionItemCombobox collection_name={field.name} />
                 ) : (
                   <Input
                     id={`field-${field.id}`}

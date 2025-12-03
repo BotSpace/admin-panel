@@ -86,7 +86,7 @@ export default function Page() {
             </Button>
           }
           refetch={refetch}
-        ></CreateBotModal>
+        />
       </div>
 
       {isLoading ? (

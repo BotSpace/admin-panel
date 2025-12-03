@@ -15,7 +15,7 @@ import { Sheet, SheetContent } from "@/shared/components/ui/sheet";
 export default function Home() {
   const { id }: { id: string } = useParams();
   const searchParams = useSearchParams();
-  const collection = searchParams.get("collection"); // ?q=hello → "hello"
+  const collection = searchParams.get("collection");
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

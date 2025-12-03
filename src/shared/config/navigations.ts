@@ -11,7 +11,6 @@ import {
   Radical,
   Ticket,
   Users,
-  Settings,
   ArrowBigUpDash,
   RadicalIcon,
 } from "lucide-react";
@@ -107,6 +106,12 @@ export const BotPageNavigation = (id: string): NavGroup[] => {
           title: "Release",
           href: `/bot/${id}/release`,
           icon: BarChart3,
+          disabled: false,
+        },
+        {
+          title: "Files",
+          href: `/bot/${id}/files`,
+          icon: File,
           disabled: false,
         },
         {

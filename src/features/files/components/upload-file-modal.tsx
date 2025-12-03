@@ -16,20 +16,40 @@ import { FileType } from "../types/file";
 import { Loader2, Upload, X, File as FileIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/shared/lib/utils";
+import { BotType } from "@/shared/types/bot";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select";
 
 interface UploadFileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: (data: { file: File; filetype: FileType }) => Promise<void>;
+  onSubmit?: (data: {
+    file: File;
+    filetype: FileType;
+    project_id: number;
+  }) => Promise<void>;
+  projects: BotType[];
 }
 
 export function UploadFileModal({
   isOpen,
   onClose,
   onSubmit,
+  projects,
 }: UploadFileModalProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [detectedFileType, setDetectedFileType] = useState<FileType | null>(null);
+  const [detectedFileType, setDetectedFileType] = useState<FileType | null>(
+    null
+  );
+  const [projectId, setProjectId] = useState<number>(0);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -50,8 +70,26 @@ export function UploadFileModal({
     }
 
     // Fallback to extension check
-    const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp", "svg", "bmp", "ico"];
-    const videoExtensions = ["mp4", "avi", "mov", "webm", "mkv", "flv", "wmv", "3gp"];
+    const imageExtensions = [
+      "jpg",
+      "jpeg",
+      "png",
+      "gif",
+      "webp",
+      "svg",
+      "bmp",
+      "ico",
+    ];
+    const videoExtensions = [
+      "mp4",
+      "avi",
+      "mov",
+      "webm",
+      "mkv",
+      "flv",
+      "wmv",
+      "3gp",
+    ];
     const audioExtensions = ["mp3", "wav", "ogg", "m4a", "aac", "flac", "wma"];
 
     if (imageExtensions.includes(extension)) {
@@ -67,13 +105,16 @@ export function UploadFileModal({
     return "file";
   }, []);
 
-  const handleFileSelect = useCallback((selectedFile: File) => {
-    if (selectedFile) {
-      const detectedType = detectFileType(selectedFile);
-      setDetectedFileType(detectedType);
-      setFile(selectedFile);
-    }
-  }, [detectFileType]);
+  const handleFileSelect = useCallback(
+    (selectedFile: File) => {
+      if (selectedFile) {
+        const detectedType = detectFileType(selectedFile);
+        setDetectedFileType(detectedType);
+        setFile(selectedFile);
+      }
+    },
+    [detectFileType]
+  );
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -99,16 +140,19 @@ export function UploadFileModal({
     e.stopPropagation();
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(false);
 
-    const droppedFile = e.dataTransfer.files?.[0];
-    if (droppedFile) {
-      handleFileSelect(droppedFile);
-    }
-  }, [handleFileSelect]);
+      const droppedFile = e.dataTransfer.files?.[0];
+      if (droppedFile) {
+        handleFileSelect(droppedFile);
+      }
+    },
+    [handleFileSelect]
+  );
 
   const resetForm = useCallback(() => {
     setFile(null);
@@ -129,14 +173,18 @@ export function UploadFileModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file || !detectedFileType) {
+    if (!file || !detectedFileType || projectId) {
       toast.error("Iltimos, fayl tanlang");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await onSubmit?.({ file, filetype: detectedFileType });
+      await onSubmit?.({
+        file,
+        filetype: detectedFileType,
+        project_id: projectId,
+      });
       resetForm();
       onClose();
       toast.success("Fayl muvaffaqiyatli yuklandi");
@@ -160,14 +208,15 @@ export function UploadFileModal({
         <DialogHeader>
           <DialogTitle>Fayl Yuklash</DialogTitle>
           <DialogDescription>
-            Yangi fayl yuklash uchun faylni tanlang yoki sudrab tashlang. Fayl turi avtomatik aniqlanadi.
+            Yangi fayl yuklash uchun faylni tanlang yoki sudrab tashlang. Fayl
+            turi avtomatik aniqlanadi.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="file">Fayl *</Label>
-            
+
             {/* Drag and Drop Zone */}
             <div
               onDragEnter={handleDragEnter}
@@ -188,7 +237,7 @@ export function UploadFileModal({
                 onChange={handleFileChange}
                 className="hidden"
               />
-              
+
               {file ? (
                 <div className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -196,14 +245,18 @@ export function UploadFileModal({
                       <FileIcon className="h-5 w-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{file.name}</p>
+                      <p className="text-sm font-medium truncate">
+                        {file.name}
+                      </p>
                       <div className="flex items-center gap-2 mt-1">
                         <p className="text-xs text-muted-foreground">
                           {(file.size / 1024).toFixed(2)} KB
                         </p>
                         {detectedFileType && (
                           <>
-                            <span className="text-xs text-muted-foreground">•</span>
+                            <span className="text-xs text-muted-foreground">
+                              •
+                            </span>
                             <span className="text-xs text-primary font-medium">
                               {getFileTypeLabel(detectedFileType)}
                             </span>
@@ -233,9 +286,7 @@ export function UploadFileModal({
                   <div
                     className={cn(
                       "w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-colors",
-                      isDragging
-                        ? "bg-primary/20"
-                        : "bg-muted"
+                      isDragging ? "bg-primary/20" : "bg-muted"
                     )}
                   >
                     <Upload
@@ -269,6 +320,22 @@ export function UploadFileModal({
                 </div>
               )}
             </div>
+
+            <Select onValueChange={(e) => setProjectId(+e)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a project" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Fruits</SelectLabel>
+                  {projects.map((item) => (
+                    <SelectItem value={item.id.toString()}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
 
           <DialogFooter>
@@ -280,7 +347,10 @@ export function UploadFileModal({
             >
               Bekor qilish
             </Button>
-            <Button type="submit" disabled={isSubmitting || !file}>
+            <Button
+              type="submit"
+              disabled={isSubmitting || !file || !projectId}
+            >
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

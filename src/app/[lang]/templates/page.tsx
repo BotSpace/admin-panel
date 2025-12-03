@@ -22,21 +22,23 @@ function Page({}: Props) {
     <main>
       {orders ? (
         orders.data.results.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {orders.data.results.map(({ id, template }) => {
-              return (
-                <div
-                  key={id}
-                  className="scroll-animate"
-                  style={{
-                    animation: `slideInUp 0.5s ease-out forwards`,
-                  }}
-                >
-                  <TemplateCard {...template} />
-                </div>
-              );
-            })}
-          </div>
+          <>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {orders.data.results.map(({ id, template }) => {
+                return (
+                  <div
+                    key={id}
+                    className="scroll-animate"
+                    style={{
+                      animation: `slideInUp 0.5s ease-out forwards`,
+                    }}
+                  >
+                    <TemplateCard {...template} />
+                  </div>
+                );
+              })}
+            </div>
+          </>
         ) : (
           <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-border/50 bg-muted/20 p-12 text-center">
             <Search className="mb-4 h-12 w-12 text-muted-foreground/50" />
