@@ -75,7 +75,11 @@ export default function MessagePreview() {
 
   // Group images for grid display
   const imageFiles = files.filter((f) => f.type.startsWith("image/"));
-  const otherFiles = files.filter((f) => !f.type.startsWith("image/"));
+  const videoFiles = files.filter((f) => f.type.startsWith("video/"));
+  const otherFiles = files.filter((f) => !f.type.startsWith("image/") && !f.type.startsWith("video/"));
+  
+  // Check if we have media (image or video)
+  const hasMedia = imageFiles.length > 0 || videoFiles.length > 0;
 
   return (
     <div className="space-y-3">
@@ -88,8 +92,8 @@ export default function MessagePreview() {
         </Avatar>
 
         <div className="flex-1 space-y-2 min-w-0">
-          {/* Text content */}
-          {text_content.trim() && (
+          {/* Text content (only if no media) */}
+          {!hasMedia && text_content.trim() && (
             <div className="inline-block max-w-[85%] rounded-2xl rounded-tl-sm bg-primary/10 border border-primary/20 p-3">
               <p className="text-sm whitespace-pre-wrap break-words text-foreground">
                 {text_content}
@@ -97,115 +101,157 @@ export default function MessagePreview() {
             </div>
           )}
 
-          {/* Image Grid (if multiple images) */}
+          {/* Image Grid (Telegram style) */}
           {imageFiles.length > 0 && (
-            <div
-              className={`grid gap-1 max-w-[85%] rounded-2xl rounded-tl-sm overflow-hidden ${
-                imageFiles.length === 1
-                  ? "grid-cols-1"
-                  : imageFiles.length === 2
-                  ? "grid-cols-2"
-                  : imageFiles.length === 3
-                  ? "grid-cols-2"
-                  : "grid-cols-2"
-              }`}
-            >
-              {imageFiles.slice(0, 4).map((file, index) => {
-                const fileIndex = files.indexOf(file);
-                const previewUrl = fileIndex >= 0 ? previews[fileIndex] : null;
-                const showMoreIndicator = imageFiles.length > 4 && index === 3;
-                return (
-                  <div
-                    key={index}
-                    className="relative group aspect-square overflow-hidden bg-muted"
-                  >
-                    {previewUrl ? (
-                      <>
-                        <img
-                          src={previewUrl}
-                          alt={file.name}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <div className="bg-black/60 backdrop-blur-sm rounded-full p-2">
-                              <Download className="h-4 w-4 text-white" />
+            <div className="max-w-[85%] rounded-2xl rounded-tl-sm overflow-hidden border border-border bg-card">
+              <div
+                className={`grid gap-1 ${
+                  imageFiles.length === 1
+                    ? "grid-cols-1"
+                    : imageFiles.length === 2
+                    ? "grid-cols-2"
+                    : imageFiles.length === 3
+                    ? "grid-cols-2"
+                    : "grid-cols-2"
+                }`}
+              >
+                {imageFiles.slice(0, 4).map((file, index) => {
+                  const fileIndex = files.indexOf(file);
+                  const previewUrl = fileIndex >= 0 ? previews[fileIndex] : null;
+                  const showMoreIndicator = imageFiles.length > 4 && index === 3;
+                  return (
+                    <div
+                      key={index}
+                      className="relative group aspect-square overflow-hidden bg-muted"
+                    >
+                      {previewUrl ? (
+                        <>
+                          <img
+                            src={previewUrl}
+                            alt={file.name}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="bg-black/60 backdrop-blur-sm rounded-full p-2">
+                                <Download className="h-4 w-4 text-white" />
+                              </div>
                             </div>
                           </div>
+                          {showMoreIndicator && (
+                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                              <span className="text-white font-semibold text-lg">
+                                +{imageFiles.length - 4}
+                              </span>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ImageIcon className="h-8 w-8 text-muted-foreground" />
                         </div>
-                        {showMoreIndicator && (
-                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                            <span className="text-white font-semibold text-lg">
-                              +{imageFiles.length - 4}
-                            </span>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Caption under image (Telegram style) */}
+              {text_content.trim() && (
+                <div className="p-3 bg-card border-t border-border">
+                  <p className="text-sm whitespace-pre-wrap break-words text-foreground">
+                    {text_content}
+                  </p>
+                </div>
+              )}
+              
+              {/* Inline Buttons under image */}
+              {inlineButtons.length > 0 && (
+                <div className="p-2 bg-card border-t border-border space-y-1">
+                  {inlineButtons.map((row, rowIndex) => (
+                    <div key={rowIndex} className="flex gap-1">
+                      {row.map((button, buttonIndex) => (
+                        <button
+                          key={buttonIndex}
+                          className="flex-1 px-3 py-2 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors text-center"
+                          type="button"
+                        >
+                          {button.text}
+                        </button>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
-          {/* Video files */}
-          {files
-            .filter((f) => f.type.startsWith("video/"))
-            .map((file, index) => {
-              const fileIndex = files.indexOf(file);
-              const previewUrl = fileIndex >= 0 ? previews[fileIndex] : null;
-              const FileIcon = getFileIcon(file);
-              return (
-                <div
-                  key={`video-${index}`}
-                  className="max-w-[85%] rounded-2xl rounded-tl-sm overflow-hidden bg-muted border border-border"
-                >
-                  <div className="relative aspect-video w-full bg-black group">
-                    {previewUrl ? (
-                      <>
-                        <video
-                          src={previewUrl}
-                          className="w-full h-full object-cover"
-                          controls={false}
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
-                          <div className="bg-white/20 backdrop-blur-sm rounded-full p-4 group-hover:scale-110 transition-transform">
-                            <Play className="h-8 w-8 text-white fill-white" />
-                          </div>
+          {/* Video files (Telegram style) */}
+          {videoFiles.map((file, index) => {
+            const fileIndex = files.indexOf(file);
+            const previewUrl = fileIndex >= 0 ? previews[fileIndex] : null;
+            const FileIcon = getFileIcon(file);
+            return (
+              <div
+                key={`video-${index}`}
+                className="max-w-[85%] rounded-2xl rounded-tl-sm overflow-hidden bg-card border border-border"
+              >
+                <div className="relative aspect-video w-full bg-black group">
+                  {previewUrl ? (
+                    <>
+                      <video
+                        src={previewUrl}
+                        className="w-full h-full object-cover"
+                        controls={false}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
+                        <div className="bg-white/20 backdrop-blur-sm rounded-full p-4 group-hover:scale-110 transition-transform">
+                          <Play className="h-8 w-8 text-white fill-white" />
                         </div>
-                        <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm rounded-full p-1.5 hover:bg-black/80 transition-colors cursor-pointer">
-                          <Download className="h-4 w-4 text-white" />
-                        </div>
-                        <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded px-2 py-1">
-                          <p className="text-xs text-white font-medium">
-                            {formatFileSize(file.size)}
-                          </p>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <FileIcon className="h-12 w-12 text-muted-foreground" />
                       </div>
-                    )}
-                  </div>
-                  <div className="p-3 bg-muted/50 border-t border-border">
-                    <div className="flex items-center gap-2 mb-1">
-                      <FileIcon className="h-4 w-4 text-muted-foreground" />
-                      <p className="text-sm font-medium truncate text-foreground">
-                        {file.name}
-                      </p>
+                      <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm rounded px-2 py-1">
+                        <p className="text-xs text-white font-medium">
+                          {formatFileSize(file.size)}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <FileIcon className="h-12 w-12 text-muted-foreground" />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {getFileTypeLabel(file)} • {formatFileSize(file.size)}
+                  )}
+                </div>
+                
+                {/* Caption under video (Telegram style) */}
+                {text_content.trim() && (
+                  <div className="p-3 bg-card border-t border-border">
+                    <p className="text-sm whitespace-pre-wrap break-words text-foreground">
+                      {text_content}
                     </p>
                   </div>
-                </div>
-              );
-            })}
+                )}
+                
+                {/* Inline Buttons under video */}
+                {inlineButtons.length > 0 && (
+                  <div className="p-2 bg-card border-t border-border space-y-1">
+                    {inlineButtons.map((row, rowIndex) => (
+                      <div key={rowIndex} className="flex gap-1">
+                        {row.map((button, buttonIndex) => (
+                          <button
+                            key={buttonIndex}
+                            className="flex-1 px-3 py-2 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors text-center"
+                            type="button"
+                          >
+                            {button.text}
+                          </button>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
 
           {/* Other files (PDF, RAR, etc.) */}
           {otherFiles.map((file, index) => {
@@ -302,15 +348,15 @@ export default function MessagePreview() {
             );
           })}
 
-          {/* Inline Buttons Preview */}
-          {inlineButtons.length > 0 && (
-            <div className="mt-3 space-y-1 max-w-[85%]">
+          {/* Inline Buttons for text-only messages */}
+          {!hasMedia && inlineButtons.length > 0 && (
+            <div className="space-y-1 max-w-[85%]">
               {inlineButtons.map((row, rowIndex) => (
-                <div key={rowIndex} className="flex flex-wrap gap-1">
+                <div key={rowIndex} className="flex gap-1">
                   {row.map((button, buttonIndex) => (
                     <button
                       key={buttonIndex}
-                      className="px-3 py-1.5 text-xs font-medium rounded-md bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 transition-colors"
+                      className="flex-1 px-3 py-2 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-colors text-center"
                       type="button"
                     >
                       {button.text}

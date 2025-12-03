@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Jo'natilgan Xabarlar | Botmother",
-  description: "Bot foydalanuvchilariga jo'natilgan xabarlarni ko'rib chiqing va kuzatib boring.",
+  title: "Xabar Yuborish | Botmother",
+  description: "Bot foydalanuvchilariga xabar yuborish va tarixni ko'rish.",
 };
 
 export default function SendMessageLayout({
