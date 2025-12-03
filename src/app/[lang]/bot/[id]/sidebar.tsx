@@ -22,6 +22,7 @@ function BotSidebarProvider({ children }: Props) {
   return (
     <SidebarProvider>
       <ReusableSidebar
+        isBackActive={true}
         brand={{ name: "Botmother", version: "v1.0", image: LogoImage }}
         nav={nav}
       />

@@ -29,6 +29,7 @@ export default function LayoutController({ children }: Props) {
     <>
       <SidebarProvider>
         <ReusableSidebar
+          isBackActive={true}
           brand={{ name: "Botmother", version: "v1.0", image: LogoImage }}
           nav={nav}
         />

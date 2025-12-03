@@ -10,6 +10,7 @@ import {
   BadgeDollarSignIcon,
   ChevronsLeft,
   ChevronsRight,
+  MoveLeft,
 } from "lucide-react";
 import {
   Sidebar,
@@ -73,19 +74,18 @@ type LinkLike = React.ElementType<{
 }>;
 
 export type ReusableSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  isBackActive: boolean;
   nav: NavGroup[];
   brand?: Brand;
   showUserFooter?: boolean;
   onSignOut?: () => void;
 };
 
-// Fallback <a> — agar LinkComponent berilmasa
-const AnchorLink: LinkLike = (props: any) => <a {...props} />;
-
 // ------------------------------
 // Component
 // ------------------------------
 export function ReusableSidebar({
+  isBackActive,
   nav,
   brand = { name: "App", version: "", href: "/", image: "" },
   showUserFooter = true,
@@ -108,8 +108,7 @@ export function ReusableSidebar({
       .slice(0, 2) ||
     (data?.user?.email?.[0]?.toUpperCase() ?? "U");
 
-  const { state, toggleSidebar, setOpenMobile, isMobile } = useSidebar();
-  const CollapseIcon = state === "collapsed" ? ChevronsRight : ChevronsLeft;
+  const { setOpenMobile, isMobile } = useSidebar();
 
   // Close sidebar on mobile when link is clicked
   const handleLinkClick = React.useCallback(() => {
@@ -147,6 +146,16 @@ export function ReusableSidebar({
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+
+            {isBackActive && (
+              <SidebarMenuItem className="mt-2">
+                <SidebarMenuButton asChild>
+                  <Link href={"/"}>
+                    <MoveLeft /> Ortga
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
           </SidebarMenu>
         </SidebarHeader>
       )}
@@ -228,7 +237,11 @@ export function ReusableSidebar({
                   sideOffset={4}
                 >
                   <DropdownMenuItem asChild>
-                    <Link href="/profile" onClick={handleLinkClick} className="gap-2">
+                    <Link
+                      href="/profile"
+                      onClick={handleLinkClick}
+                      className="gap-2"
+                    >
                       <Settings className="size-4" />
                       <span>Profil</span>
                     </Link>
@@ -246,7 +259,6 @@ export function ReusableSidebar({
           </SidebarMenu>
         </SidebarFooter>
       )}
-
       <SidebarRail />
     </Sidebar>
   );
