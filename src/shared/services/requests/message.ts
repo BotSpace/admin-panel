@@ -5,6 +5,12 @@ import {
   MessageListResponse,
   MessageResponse,
 } from "@/shared/types/message";
+import {
+  MarkAsReadRequest,
+  MarkAsReadResponse,
+  SendChatMessageRequest,
+  SendChatMessageResponse,
+} from "@/shared/types/messages";
 import { AxiosResponse } from "axios";
 
 // Xabar yuborish (JSON yoki FormData qabul qiladi)
@@ -67,4 +73,40 @@ export async function patchMessage(
 // Xabarni o'chirish
 export async function deleteMessage(id: number): Promise<AxiosResponse<void>> {
   return await instanceAuth.delete<void>(`/message/${id}/`);
+}
+
+// Xabarlarni o'qilgan deb belgilash
+export async function markMessagesAsRead(
+  projectId: string,
+  data: MarkAsReadRequest
+): Promise<AxiosResponse<MarkAsReadResponse>> {
+  return await instanceAuth.post<MarkAsReadResponse>(
+    `/chat/mark-read/${projectId}/`,
+    data
+  );
+}
+
+// Foydalanuvchiga xabar yuborish
+export async function sendChatMessage(
+  projectId: string,
+  data: SendChatMessageRequest | FormData
+): Promise<AxiosResponse<SendChatMessageResponse>> {
+  // FormData bo'lsa, Content-Type ni avtomatik o'rnatadi
+  if (data instanceof FormData) {
+    return await instanceAuth.post<SendChatMessageResponse>(
+      `/chat/send-message/${projectId}/`,
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+  }
+
+  // JSON data
+  return await instanceAuth.post<SendChatMessageResponse>(
+    `/chat/send-message/${projectId}/`,
+    data
+  );
 }

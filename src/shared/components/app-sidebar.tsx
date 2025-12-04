@@ -66,13 +66,6 @@ type Brand = {
   image?: string | StaticImageData;
 };
 
-type LinkLike = React.ElementType<{
-  href: string;
-  className?: string;
-  children?: React.ReactNode;
-  "aria-disabled"?: boolean;
-}>;
-
 export type ReusableSidebarProps = React.ComponentProps<typeof Sidebar> & {
   isBackActive: boolean;
   nav: NavGroup[];

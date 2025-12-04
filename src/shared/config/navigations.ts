@@ -13,6 +13,9 @@ import {
   Users,
   ArrowBigUpDash,
   RadicalIcon,
+  ChartSpline,
+  ChartPie,
+  Inbox,
 } from "lucide-react";
 
 export const HomePageNavigation: NavGroup[] = [
@@ -90,17 +93,22 @@ export const BotPageNavigation = (id: string): NavGroup[] => {
         {
           title: "Hissobot",
           href: `/bot/${id}`,
-          icon: MessageSquare,
+          icon: ChartSpline,
         },
         {
           title: "Monitoring",
           href: `/bot/${id}/monitoring`,
-          icon: RadicalIcon,
+          icon: ChartPie,
         },
         {
           title: "Xabar yuborish",
           href: `/bot/${id}/send-message`,
           icon: MessageSquare,
+        },
+        {
+          title: "Kelgan xabarlar",
+          href: `/bot/${id}/messages`,
+          icon: Inbox,
         },
         {
           title: "Release",
