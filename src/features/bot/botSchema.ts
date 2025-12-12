@@ -13,7 +13,6 @@ export const botFormSchema = z.object({
     z.literal(""),
   ]),
   plan_id: z.number({
-    required_error: "Tarif rejasini tanlang.",
-    invalid_type_error: "Tarif rejasini tanlang.",
+    error: "Tarif rejasini tanlang.",
   }),
 });

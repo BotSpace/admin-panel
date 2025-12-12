@@ -32,17 +32,19 @@ export function NotificationSection() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // Load saved settings from localStorage or API
-    const saved = localStorage.getItem("notificationSettings");
-    if (saved) {
-      try {
-        setSettings(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse notification settings", e);
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (window) {
+  //     // Load saved settings from localStorage or API
+  //     const saved = localStorage.getItem("notificationSettings");
+  //     if (saved) {
+  //       try {
+  //         setSettings(JSON.parse(saved));
+  //       } catch (e) {
+  //         console.error("Failed to parse notification settings", e);
+  //       }
+  //     }
+  //   }
+  // }, []);
 
   const handleSave = async () => {
     setIsLoading(true);

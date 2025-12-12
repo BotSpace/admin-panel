@@ -2,7 +2,15 @@
 
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
-import { X, Upload, File, ImageIcon, Video, Smile, FileType } from "lucide-react";
+import {
+  X,
+  Upload,
+  File,
+  ImageIcon,
+  Video,
+  Smile,
+  FileType,
+} from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import { useChatMessageStore } from "@/shared/store/chat-message";
@@ -43,28 +51,48 @@ export default function FilesView({}: {}) {
       const newFiles = Array.from(e.target.files);
       const validFiles: File[] = [];
       const errors: string[] = [];
-      
+
       // Telegram Bot API limits
       const MAX_PHOTO_SIZE = 10 * 1024 * 1024; // 10 MB
       const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50 MB
-      
-      newFiles.forEach(file => {
-        const isImage = file.type.startsWith('image/');
-        const isVideo = file.type.startsWith('video/');
-        
+
+      newFiles.forEach((file) => {
+        const isImage = file.type.startsWith("image/");
+        const isVideo = file.type.startsWith("video/");
+
         if (isImage && file.size > MAX_PHOTO_SIZE) {
-          errors.push(`${file.name}: Rasm hajmi 10 MB dan katta bo'lmasligi kerak (hozir: ${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+          errors.push(
+            `${
+              file.name
+            }: Rasm hajmi 10 MB dan katta bo'lmasligi kerak (hozir: ${(
+              file.size /
+              1024 /
+              1024
+            ).toFixed(2)} MB)`
+          );
         } else if (isVideo && file.size > MAX_VIDEO_SIZE) {
-          errors.push(`${file.name}: Video hajmi 50 MB dan katta bo'lmasligi kerak (hozir: ${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+          errors.push(
+            `${
+              file.name
+            }: Video hajmi 50 MB dan katta bo'lmasligi kerak (hozir: ${(
+              file.size /
+              1024 /
+              1024
+            ).toFixed(2)} MB)`
+          );
         } else {
           validFiles.push(file);
         }
       });
-      
+
       if (errors.length > 0) {
-        alert('Fayl hajmi oshib ketgan:\n\n' + errors.join('\n') + '\n\nTelegram Bot API limit:\n- Rasm: max 10 MB\n- Video: max 50 MB');
+        alert(
+          "Fayl hajmi oshib ketgan:\n\n" +
+            errors.join("\n") +
+            "\n\nTelegram Bot API limit:\n- Rasm: max 10 MB\n- Video: max 50 MB"
+        );
       }
-      
+
       if (validFiles.length > 0) {
         setFiles([...files, ...validFiles]);
       }
@@ -133,9 +161,7 @@ export default function FilesView({}: {}) {
         <div className="flex flex-1 items-center justify-between gap-2 p-3 bg-card">
           <div className="flex min-w-0 flex-1 items-center gap-2">
             {!isImage && !isVideo && (
-              <div className="flex-shrink-0">
-                {getFileIcon(file)}
-              </div>
+              <div className="flex-shrink-0">{getFileIcon(file)}</div>
             )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium leading-tight">
@@ -197,28 +223,48 @@ export default function FilesView({}: {}) {
       const newFiles = Array.from(e.dataTransfer.files);
       const validFiles: File[] = [];
       const errors: string[] = [];
-      
+
       // Telegram Bot API limits
       const MAX_PHOTO_SIZE = 10 * 1024 * 1024; // 10 MB
       const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50 MB
-      
-      newFiles.forEach(file => {
-        const isImage = file.type.startsWith('image/');
-        const isVideo = file.type.startsWith('video/');
-        
+
+      newFiles.forEach((file) => {
+        const isImage = file.type.startsWith("image/");
+        const isVideo = file.type.startsWith("video/");
+
         if (isImage && file.size > MAX_PHOTO_SIZE) {
-          errors.push(`${file.name}: Rasm hajmi 10 MB dan katta bo'lmasligi kerak (hozir: ${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+          errors.push(
+            `${
+              file.name
+            }: Rasm hajmi 10 MB dan katta bo'lmasligi kerak (hozir: ${(
+              file.size /
+              1024 /
+              1024
+            ).toFixed(2)} MB)`
+          );
         } else if (isVideo && file.size > MAX_VIDEO_SIZE) {
-          errors.push(`${file.name}: Video hajmi 50 MB dan katta bo'lmasligi kerak (hozir: ${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+          errors.push(
+            `${
+              file.name
+            }: Video hajmi 50 MB dan katta bo'lmasligi kerak (hozir: ${(
+              file.size /
+              1024 /
+              1024
+            ).toFixed(2)} MB)`
+          );
         } else {
           validFiles.push(file);
         }
       });
-      
+
       if (errors.length > 0) {
-        alert('Fayl hajmi oshib ketgan:\n\n' + errors.join('\n') + '\n\nTelegram Bot API limit:\n- Rasm: max 10 MB\n- Video: max 50 MB');
+        alert(
+          "Fayl hajmi oshib ketgan:\n\n" +
+            errors.join("\n") +
+            "\n\nTelegram Bot API limit:\n- Rasm: max 10 MB\n- Video: max 50 MB"
+        );
       }
-      
+
       if (validFiles.length > 0) {
         setFiles([...files, ...validFiles]);
       }
@@ -249,14 +295,18 @@ export default function FilesView({}: {}) {
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <div className={`rounded-full p-4 transition-all ${
-            isDragging 
-              ? "bg-primary/20 scale-110" 
-              : "bg-primary/10 group-hover:bg-primary/20"
-          }`}>
-            <Upload className={`h-8 w-8 transition-all ${
-              isDragging ? "text-primary animate-bounce" : "text-primary"
-            }`} />
+          <div
+            className={`rounded-full p-4 transition-all ${
+              isDragging
+                ? "bg-primary/20 scale-110"
+                : "bg-primary/10 group-hover:bg-primary/20"
+            }`}
+          >
+            <Upload
+              className={`h-8 w-8 transition-all ${
+                isDragging ? "text-primary animate-bounce" : "text-primary"
+              }`}
+            />
           </div>
           <div className="mt-4 text-center space-y-1">
             <p className="text-sm font-semibold">
@@ -279,9 +329,7 @@ export default function FilesView({}: {}) {
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium">
-                  Yuklangan fayllar
-                </Label>
+                <Label className="text-sm font-medium">Yuklangan fayllar</Label>
                 <Badge variant="secondary" className="h-5 px-2">
                   {files.length}
                 </Badge>
@@ -344,7 +392,9 @@ export default function FilesView({}: {}) {
         </div>
         <p className="text-xs text-muted-foreground">
           {text_content.length} belgi
-          {text_content.length > 0 && text_content.length < 10 && " (kamida 10 belgi tavsiya etiladi)"}
+          {text_content.length > 0 &&
+            text_content.length < 10 &&
+            " (kamida 10 belgi tavsiya etiladi)"}
         </p>
       </div>
     </div>

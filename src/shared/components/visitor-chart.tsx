@@ -28,11 +28,10 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface Props {
-  chart: ChartItem[],
+  chart: ChartItem[];
 }
 
 export function ChartLineInteractive({ chart }: Props) {
-
   return (
     <Card className="py-4 sm:py-0">
       <CardHeader className="flex flex-col items-stretch border-b py-6 !px-0 sm:flex-row">

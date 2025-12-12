@@ -1,7 +1,6 @@
 import { withAuth } from "next-auth/middleware";
 import createIntlMiddleware from "next-intl/middleware";
-import { localeConfig } from "./shared/i18n/routing"
-
+import { localeConfig } from "./shared/i18n/routing";
 
 const intlMiddleware = createIntlMiddleware(localeConfig);
 
@@ -26,21 +25,13 @@ const authMiddleware = withAuth(
       },
     },
     pages: {
-      signIn: "/uz/auth/login",
+      signIn: "/uz/website",
+      signOut: "/uz/website",
     },
   }
 );
 
 export default authMiddleware;
-
-// export default function middleware(req: NextRequest) {
-//   const { pathname } = req.nextUrl;
-
-//   // 1️⃣ Agar til yo'q bo'lsa, default til qo'shish
-//   const hasLocale = localeConfig.locales.some((locale) =>
-//     pathname.startsWith(`/${locale}`)
-//   );
-// }
 
 export const config = {
   matcher: ["/((?!api|_next|.*\\..*).*)"],

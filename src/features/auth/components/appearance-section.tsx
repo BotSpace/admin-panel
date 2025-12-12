@@ -43,10 +43,10 @@ export function AppearanceSection() {
 
   useEffect(() => {
     setCurrentTheme(theme || "system");
-    const savedLayout = localStorage.getItem("dashboardLayout");
-    if (savedLayout) {
-      setLayout(savedLayout);
-    }
+    // const savedLayout = localStorage.getItem("dashboardLayout");
+    // if (savedLayout) {
+    //   setLayout(savedLayout);
+    // }
   }, [theme]);
 
   const handleThemeChange = (newTheme: string) => {

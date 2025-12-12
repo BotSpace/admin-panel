@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/shared/i18n/routing";
-import Script from "next/script";
 
 import { ThemeProvider } from "@/shared/components/theme-provider";
 import LayoutController from "./layout-controller";
