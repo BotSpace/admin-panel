@@ -13,6 +13,9 @@ services:
     networks:
       - botmother
     deploy:
+      placement:
+        constraints:
+          - node.labels.name == my
       resources:
         limits:
           cpus: "1"
