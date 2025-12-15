@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+// 1. useLocale ni import qilamiz
+import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/shared/i18n/routing";
 import { Globe } from "lucide-react";
 import toast from "react-hot-toast";
 
-import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
@@ -26,32 +27,35 @@ const languages = [
   { value: "uz", label: "O'zbek" },
   { value: "en", label: "English" },
   { value: "ru", label: "Русский" },
-  { value: "jp", label: "日本語" },
+  { value: "cr", label: "Cyrilcha" },
 ];
 
 export function LanguageSection() {
   const router = useRouter();
   const pathname = usePathname();
-  const [isLoading, setIsLoading] = useState(false);
+  // 2. Hozirgi tilni URL'dan qirqib olish shart emas, hook bor:
+  const currentLocale = useLocale();
 
-  // Extract current language from pathname
-  const currentLang = pathname?.split("/")[1] || "uz";
+  // UI qotib qolmasligi uchun useTransition ishlatgan ma'qul
+  const [isPending, startTransition] = useTransition();
 
-  const handleLanguageChange = async (lang: string) => {
-    setIsLoading(true);
+  const handleLanguageChange = (lang: string) => {
+    // Agar tanlangan til hozirgisi bilan bir xil bo'lsa, to'xtatamiz
+    if (lang === currentLocale) return;
 
-    try {
-      // Get the path without language prefix
-      const pathWithoutLang = pathname?.replace(`/${currentLang}`, "") || "/";
-      const newPath = `/${lang}${pathWithoutLang}`;
+    startTransition(() => {
+      try {
+        // 3. next-intl routeri avtomatik ravishda to'g'ri prefiksni qo'yib beradi
+        // pathname - bu yerda toza path (masalan: "/about")
+        // { locale: lang } - bu yangi tilga o'tkazish buyrug'i
+        router.replace(pathname, { locale: lang });
 
-      router.push(newPath);
-      toast.success("Til muvaffaqiyatli o'zgartirildi!");
-    } catch (error) {
-      toast.error("Til o'zgartirishda xatolik yuz berdi");
-    } finally {
-      setIsLoading(false);
-    }
+        toast.success("Til muvaffaqiyatli o'zgartirildi!");
+      } catch (error) {
+        toast.error("Til o'zgartirishda xatolik yuz berdi");
+        console.error(error);
+      }
+    });
   };
 
   return (
@@ -68,9 +72,10 @@ export function LanguageSection() {
           <div className="space-y-2">
             <Label htmlFor="language">Til</Label>
             <Select
-              value={currentLang}
+              // 4. Value sifatida hookdan kelgan tilni beramiz
+              value={currentLocale}
               onValueChange={handleLanguageChange}
-              disabled={isLoading}
+              disabled={isPending}
             >
               <SelectTrigger id="language" className="w-full">
                 <SelectValue placeholder="Tilni tanlang" />

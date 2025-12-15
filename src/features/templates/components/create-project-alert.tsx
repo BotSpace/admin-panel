@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -12,14 +11,30 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/shared/components/ui/alert-dialog";
-import { Button } from "@/shared/components/ui/button"; // agar yo'q bo'lsa o'zingiz qo'shing
+import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { Label } from "@/shared/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/shared/components/ui/form"; // Form komponentlari qo'shildi
 import toast from "react-hot-toast";
-import { Plus } from "lucide-react"; // ixtiyoriy ikonka
+import { Plus } from "lucide-react";
 import { instanceAuth } from "@/shared/services/instance";
 import { useRouter } from "@/shared/i18n/routing";
 import { useSearchParams } from "next/navigation";
+import SelectPlan from "@/shared/components/select-plan";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { botFormSchema } from "@/features/bot/botSchema";
+import z from "zod";
+import { useReactQueryAction } from "@/shared/services/react-query/use-react-query-action";
+import { APIDetailCreateResponse, APIListResponse } from "@/shared/types/http";
+import { Plan } from "@/shared/types/plan";
+import { Project } from "@/shared/types/project";
 
 interface NewProjectDialogProps {
   id: number;
@@ -27,85 +42,104 @@ interface NewProjectDialogProps {
 
 export function NewProjectFromTemplateDialog({ id }: NewProjectDialogProps) {
   const searchParams = useSearchParams();
-
   const route = useRouter();
 
-  // Ichki state — tashqaridan boshqarilmaydi
+  // Bosqichlar: 'project' (nom va token) -> 'payment' (tarif)
+  const [currentStep, setCurrentStep] = useState<"project" | "payment">(
+    "project"
+  );
   const [open, setOpen] = useState(false);
-  const [projectName, setProjectName] = useState("");
-  const [botToken, setBotToken] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!projectName.trim()) {
-      toast.error("Loyiha nomini kiritish kerak");
-      return;
-    }
+  // Tariflar ro'yxatini olish
+  const { data: plansResponse } = useReactQueryAction<APIListResponse<Plan[]>>({
+    url: "plans/",
+  });
+  const plans = plansResponse?.data?.results ?? [];
+  const mostPopularPlanId =
+    plans.find((plan) => plan.is_top)?.id ?? plans[0]?.id;
 
-    if (!botToken.trim()) {
-      toast.error("Bot tokenini kiritish kerak");
-      return;
-    }
+  // 1. Formani initsializatsiya qilish
+  const form = useForm<z.infer<typeof botFormSchema>>({
+    resolver: zodResolver(botFormSchema),
+    defaultValues: {
+      name: "",
+      token: "",
+      // plan_id default qiymati yo'q bo'lsa undefined qoladi yoki birinchi rejani berasiz
+    },
+  });
 
-    if (botToken.length < 10) {
-      toast.error("Bot tokeni juda qisqa ko‘rinadi");
-      return;
-    }
+  const selectedPlanId = form.watch("plan_id");
 
-    setIsLoading(true);
-
-    try {
-      const { data } = await instanceAuth.post(
-        "/project/create-from-template/",
-        {
-          template: id,
-          name: projectName,
-          token: botToken,
-        }
-      );
-
-      route.push(`/bot/${data.data.id}`);
-
-      console.log("🚀 ~ file: create-project-alert.tsx:58 ~ response:", data);
-
-      // Muvaffaqiyatli bo'lsa — formani tozalab, dialogni yopamiz
-      setProjectName("");
-      setBotToken("");
-      setOpen(false);
-      toast.success("Yangi loyiha yaratildi");
-    } catch (error) {
-      toast.error("Loyihani yaratishda xatolik yuz berdi");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Dialog yopilganda inputlarni tozalash (bekor qilinsa ham)
-  const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen);
-    if (!newOpen) {
-      setProjectName("");
-      setBotToken("");
-    }
-  };
-
+  // URL orqali modalni ochish logikasi
   useEffect(() => {
     const show = searchParams.get("show");
     const template_id = searchParams.get("template_id");
-    console.log(
-      "🚀 ~ file: create-project-alert.tsx:95 ~ template_id:",
-      template_id,
-      id
-    );
-
     if (template_id && show === "true" && id == +template_id) {
       setOpen(true);
     }
-  }, [searchParams]);
+  }, [searchParams, id]);
+
+  // Modal yopilganda formani tozalash
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen) {
+      form.reset();
+      setCurrentStep("project");
+    }
+  };
+
+  // "Keyingi qadam" tugmasi bosilganda validatsiya
+  const handleNextStep = async () => {
+    // Faqat 'name' va 'token' maydonlarini tekshiramiz
+    const isValid = await form.trigger(["name", "token"]);
+    if (isValid) {
+      setCurrentStep("payment");
+    }
+  };
+
+  // Orqaga qaytish
+  const handleBackStep = () => {
+    setCurrentStep("project");
+  };
+
+  // 2. Submit uchun funksiya.
+  function onSubmit(values: z.infer<typeof botFormSchema>) {
+    let toastId = toast.loading("Yaratilmoqda...");
+
+    // Agar token bo'sh bo'lsa, uni yubormaymiz
+    const payload = {
+      ...values,
+      ...(values.token === "" ? { token: undefined } : {}),
+    };
+
+    instanceAuth
+      .post<APIDetailCreateResponse<Project>>("/project/", payload)
+      .then(({ data }) => {
+        route.push(`/bot/${data.data.id}/constructor`);
+        toast.success("Bot yaratildi!", {
+          id: toastId,
+        });
+      })
+      .catch((err) => {
+        const { data } = err.response.data;
+        console.log(
+          "🔍 ~ NewProjectFromTemplateDialog ~ src/features/templates/components/create-project-alert.tsx:124 ~ data:",
+          data
+        );
+
+        toast.dismiss(toastId);
+
+        // IF error is plan_id
+        data?.plan_id.map((msg: string) => {
+          toast.error(msg, {
+            id: toastId,
+          });
+        });
+      });
+  }
 
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
-      {/* Trigger — faqat shu tugma bosilganda dialog ochiladi */}
       <AlertDialogTrigger asChild>
         <Button className="gap-2 w-full">
           <Plus className="w-4 h-4" />
@@ -113,65 +147,107 @@ export function NewProjectFromTemplateDialog({ id }: NewProjectDialogProps) {
         </Button>
       </AlertDialogTrigger>
 
-      <AlertDialogContent className="w-full max-w-md">
+      <AlertDialogContent className="sm:max-w-[900px] max-w-[90%] max-h-[90vh] overflow-y-auto">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-xl">
             Yangi Loyiha Yaratish
           </AlertDialogTitle>
           <AlertDialogDescription className="text-sm">
-            Yangi bot loyihasi uchun nomi va API tokenini kiriting
+            Andoza asosida yangi bot yaratish uchun ma'lumotlarni to'ldiring.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="projectName" className="text-sm font-medium">
-              Loyiha nomi
-            </Label>
-            <Input
-              id="projectName"
-              placeholder="Masalan: Telegrambot Pro"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              disabled={isLoading}
-              className="h-9"
-            />
-            <p className="text-xs text-muted-foreground">
-              Loyihani identifikatsiya qilish uchun ishlatiladi
-            </p>
-          </div>
+        {/* Form boshlanishi */}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* 1-BOSQICH: Nomi va Token */}
+            {currentStep === "project" && (
+              <div className="space-y-4 py-2">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Loyiha nomi</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Masalan: Telegrambot Pro"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-          <div className="space-y-2">
-            <Label htmlFor="botToken" className="text-sm font-medium">
-              Bot Token
-            </Label>
-            <Input
-              id="botToken"
-              type="password"
-              placeholder="123456789:ABCdefGHIjklmnoPQRstuvWXYZ"
-              value={botToken}
-              onChange={(e) => setBotToken(e.target.value)}
-              disabled={isLoading}
-              className="h-9 font-mono text-xs"
-            />
-            <p className="text-xs text-muted-foreground">
-              Bot tokeningiz xavfsiz saqlanadi
-            </p>
-          </div>
-        </div>
+                <FormField
+                  control={form.control}
+                  name="token"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bot Token</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          className="font-mono text-xs"
+                          placeholder="123456789:ABCdefGHIjklmnoPQRstuvWXYZ"
+                          {...field}
+                        />
+                      </FormControl>
+                      <p className="text-[10px] text-muted-foreground">
+                        BotFather orqali olingan tokenni kiriting.
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
 
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>
-            Bekor qilish
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            {isLoading ? "Yaratilmoqda..." : "Loyiha Yaratish"}
-          </AlertDialogAction>
-        </AlertDialogFooter>
+            {/* 2-BOSQICH: Tarif tanlash */}
+            {currentStep === "payment" && (
+              <SelectPlan
+                selectedPlanId={selectedPlanId}
+                mostPopularPlanId={mostPopularPlanId}
+                onSelectPlan={(plan: Plan) =>
+                  form.setValue("plan_id", plan.id, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              />
+            )}
+
+            <AlertDialogFooter className="mt-4 flex flex-row justify-between gap-2 sm:justify-between">
+              {/* Bekor qilish yoki Orqaga tugmasi */}
+              {currentStep === "project" ? (
+                <AlertDialogCancel>Bekor qilish</AlertDialogCancel>
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleBackStep}
+                >
+                  Orqaga
+                </Button>
+              )}
+
+              {/* Keyingi yoki Yaratish tugmasi */}
+              {currentStep === "project" ? (
+                <Button type="button" onClick={handleNextStep}>
+                  Keyingi qadam
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting || !selectedPlanId}
+                >
+                  {form.formState.isSubmitting ? "Yaratilmoqda..." : "Yaratish"}
+                </Button>
+              )}
+            </AlertDialogFooter>
+          </form>
+        </Form>
       </AlertDialogContent>
     </AlertDialog>
   );

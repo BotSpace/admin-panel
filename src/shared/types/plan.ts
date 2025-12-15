@@ -8,4 +8,5 @@ export interface Plan {
   custom_domain?: boolean;
   priority_support?: boolean;
   description?: string | null;
+  is_top: boolean;
 }
