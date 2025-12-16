@@ -47,7 +47,7 @@ instanceAuth.interceptors.response.use(
     }
 
     // log out if user is not authenticated
-    if (env.NODE_ENV === "production") await signOut();
+    // if (env.NODE_ENV === "production") await signOut();
 
     return Promise.reject(error);
   }
