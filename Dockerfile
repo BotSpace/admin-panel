@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install --ignore-scripts
 
 # Copy project files and build Next.js application
 COPY . .
