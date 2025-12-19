@@ -80,7 +80,7 @@ export default function Page() {
         </div>
         <CreateBotModal
           dialogOpenButton={
-            <Button className="hidden md:flex">
+            <Button className="">
               <Bot className="mr-2 h-4 w-4" />
               Yangi Bot Yaratish
             </Button>
