@@ -87,7 +87,7 @@ function Page({}: Props) {
               yoki qidiruv so'zini sinab ko'ring.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Link href={`/${lang}/website`}>
+              <Link href={`/${lang}/website/templates`}>
                 <Button variant="default" className="gap-2">
                   <Globe className="h-4 w-4" />
                   Website'ga o'tish
