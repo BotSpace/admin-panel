@@ -108,12 +108,13 @@ export function NewProjectFromTemplateDialog({ id }: NewProjectDialogProps) {
 
     // Agar token bo'sh bo'lsa, uni yubormaymiz
     const payload = {
+      template: id,
       ...values,
       ...(values.token === "" ? { token: undefined } : {}),
     };
 
     instanceAuth
-      .post<APIDetailCreateResponse<Project>>("/project/", payload)
+      .post<APIDetailCreateResponse<Project>>("/project/create-from-template/", payload)
       .then(({ data }) => {
         route.push(`/bot/${data.data.id}/constructor`);
         toast.success("Bot yaratildi!", {
