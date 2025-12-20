@@ -110,6 +110,7 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
 
   // 2. Submit uchun funksiya.
   function onSubmit(values: z.infer<typeof botFormSchema>) {
+
     let toastId = toast.loading("Yaratilmoqda...");
 
     // Agar token bo'sh bo'lsa, uni yubormaymiz
@@ -121,23 +122,34 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
     instanceAuth
       .post<APIDetailCreateResponse<Project>>("/project/", payload)
       .then(({ data }) => {
+
+        // TODO bu yerni ham yaxshilash kerak
+        if (payload.token)
+          instanceAuth.post("/enviroment/", {
+            key: "RELEASE_BOT_TOKEN",
+            value: payload.token,
+            project: data.data.id,
+          });
+
         route.push(`/bot/${data.data.id}/constructor`);
         refetch();
         toast.success("Bot yaratildi!", {
           id: toastId,
         });
-      })
-      .catch((err) => {
-        const { data } = err.response.data;
-        toast.error(data.message, {
-          id: toastId,
-        });
-      })
-      .finally(() => {
+
         form.reset();
         setIsOpen(false);
         setStep(1);
-      });
+
+      })
+
+      .catch((err) => {
+        const { data } = err.response.data;
+
+        toast.error(data.plan_id, {
+          id: toastId,
+        });
+      })
   }
 
   useEffect(() => {
@@ -169,11 +181,10 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
         <div className="mb-4 flex items-center justify-between text-xs font-medium">
           <div className="flex flex-1 items-center gap-2">
             <div
-              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${
-                step >= 1
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
-              }`}
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${step >= 1
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground"
+                }`}
             >
               1
             </div>
@@ -190,11 +201,10 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
           <div className="flex flex-1 items-center gap-2">
             <div className="h-px flex-1 bg-border" />
             <div
-              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${
-                step >= 2
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
-              }`}
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${step >= 2
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground"
+                }`}
             >
               2
             </div>
@@ -211,11 +221,10 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
           <div className="flex flex-1 items-center gap-2">
             <div className="h-px flex-1 bg-border" />
             <div
-              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${
-                step >= 3
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
-              }`}
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${step >= 3
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground"
+                }`}
             >
               3
             </div>
@@ -369,7 +378,7 @@ export function CreateBotModal({ dialogOpenButton, refetch }: Props) {
                             onUpgrade={(plan) => {
                               setAmountNeeded(
                                 parsePriceToInteger(plan.price) -
-                                  balance.data.balance
+                                balance.data.balance
                               );
                               form.setValue("plan_id", plan.id, {
                                 shouldDirty: true,

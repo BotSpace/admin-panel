@@ -116,17 +116,22 @@ export function NewProjectFromTemplateDialog({ id }: NewProjectDialogProps) {
     instanceAuth
       .post<APIDetailCreateResponse<Project>>("/project/create-from-template/", payload)
       .then(({ data }) => {
+
+        // TODO Buni yaxshilash kerak
+        instanceAuth.post("/enviroment/", {
+          key: "RELEASE_BOT_TOKEN",
+          value: payload.token,
+          project: data.data.id,
+        });
+
         route.push(`/bot/${data.data.id}/constructor`);
+
         toast.success("Bot yaratildi!", {
           id: toastId,
         });
       })
       .catch((err) => {
         const { data } = err.response.data;
-        console.log(
-          "🔍 ~ NewProjectFromTemplateDialog ~ src/features/templates/components/create-project-alert.tsx:124 ~ data:",
-          data
-        );
 
         toast.dismiss(toastId);
 
