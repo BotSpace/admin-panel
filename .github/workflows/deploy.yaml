@@ -26,10 +26,10 @@ jobs:
           sed -i "s|^DEBUG=.*|DEBUG=true|" .env
           sed -i "s|^NODE_ENV=.*|NODE_ENV=production|" .env
           sed -i "s|^NEXT_PUBLIC_API=.*|NEXT_PUBLIC_API=${{ vars.NEXT_PUBLIC_API }}|" .env
-          sed -i "s|^CONSTRUCTOR_URL=.*|CONSTRUCTOR_URL=${{ vars.CONSTRUCTOR_URL }}|" .env
+          sed -i "s|^CONSTRUCTOR_URL=.*|CONSTRUCTOR_URL=http://constructor:3000|" .env
           sed -i "s|^NEXTAUTH_SECRET=.*|NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}|" .env
           sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=${{ vars.NEXTAUTH_URL }}|" .env
-          sed -i "s|^SALES_URL=.*|SALES_URL=${{ vars.SALES_URL }}|" .env
+          sed -i "s|^SALES_URL=.*|SALES_URL=http://market:3000|" .env
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
