@@ -8,6 +8,7 @@ import { routing } from "@/shared/i18n/routing";
 import { ThemeProvider } from "@/shared/components/theme-provider";
 import LayoutController from "./layout-controller";
 import ErrorBoundary from "@/shared/components/error-boundary";
+import TopLoadingBar from "@/shared/components/top-loading-bar";
 
 import { Toaster } from "react-hot-toast";
 import AuthProvider from "./AuthProvider";
@@ -66,6 +67,7 @@ export default async function RootLayout({
                   enableSystem
                   disableTransitionOnChange
                 >
+                  <TopLoadingBar />
                   <LayoutController>{children}</LayoutController>
                   <Toaster />
                 </ThemeProvider>
