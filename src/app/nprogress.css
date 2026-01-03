@@ -6,7 +6,7 @@
 #nprogress .bar {
   background: hsl(var(--primary));
   position: fixed;
-  z-index: 9999;
+  z-index: 99999;
   top: 0;
   left: 0;
   width: 100%;
@@ -22,9 +22,4 @@
   box-shadow: 0 0 10px hsl(var(--primary)), 0 0 5px hsl(var(--primary));
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
-}
-
-/* Ensure the bar is above all other elements */
-#nprogress .bar {
-  z-index: 99999;
 }
