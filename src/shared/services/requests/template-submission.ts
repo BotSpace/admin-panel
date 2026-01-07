@@ -51,6 +51,9 @@ function buildTemplateFormData(
   }
 
   // Handle categories - send empty array to clear them
+  // For Django REST Framework with FormData, sending an empty string tells the backend
+  // to clear the many-to-many relationship, while not sending the field at all means
+  // "don't update this field" (PATCH behavior)
   if (data.categories !== undefined) {
     if (data.categories.length === 0) {
       formData.append("categories", "");
@@ -62,6 +65,7 @@ function buildTemplateFormData(
   }
 
   // Handle features - send empty array to clear them
+  // Same approach as categories for consistency
   if (data.features !== undefined) {
     if (data.features.length === 0) {
       formData.append("features", "");
