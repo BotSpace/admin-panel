@@ -50,16 +50,30 @@ function buildTemplateFormData(
     formData.append("demo_url", data.demo_url);
   }
 
-  if (data.categories && data.categories.length > 0) {
-    data.categories.forEach((catId) => {
-      formData.append("categories", catId.toString());
-    });
+  // Handle categories - send empty array to clear them
+  // For Django REST Framework with FormData, sending an empty string tells the backend
+  // to clear the many-to-many relationship, while not sending the field at all means
+  // "don't update this field" (PATCH behavior)
+  if (data.categories !== undefined) {
+    if (data.categories.length === 0) {
+      formData.append("categories", "");
+    } else {
+      data.categories.forEach((catId) => {
+        formData.append("categories", catId.toString());
+      });
+    }
   }
 
-  if (data.features && data.features.length > 0) {
-    data.features.forEach((featId) => {
-      formData.append("features", featId.toString());
-    });
+  // Handle features - send empty array to clear them
+  // Same approach as categories for consistency
+  if (data.features !== undefined) {
+    if (data.features.length === 0) {
+      formData.append("features", "");
+    } else {
+      data.features.forEach((featId) => {
+        formData.append("features", featId.toString());
+      });
+    }
   }
 
   return formData;
