@@ -16,6 +16,7 @@ import {
   ChartSpline,
   ChartPie,
   Inbox,
+  Upload,
 } from "lucide-react";
 
 export const HomePageNavigation: NavGroup[] = [
@@ -49,6 +50,12 @@ export const HomePageNavigation: NavGroup[] = [
         title: "Shablonlarim",
         href: "/templates",
         icon: Library,
+        exact: true,
+      },
+      {
+        title: "Mening yuborishlarim",
+        href: "/template-submissions",
+        icon: Upload,
         exact: true,
       },
       {

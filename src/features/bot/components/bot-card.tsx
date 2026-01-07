@@ -29,10 +29,12 @@ import {
   Settings,
   Wrench,
   Trash2,
+  Send,
 } from "lucide-react";
 import DeleteModal from "@/shared/components/common/delete-modal/delete-modal";
 import { instanceAuth } from "@/shared/services/instance";
 import { BotType } from "@/shared/types/bot";
+import { SubmitTemplateDialog } from "@/features/templates/components/submit-template-dialog";
 
 function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
@@ -183,6 +185,19 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
                   <Settings className="h-4 w-4 mr-2" />
                   Sozlamalar
                 </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <SubmitTemplateDialog
+                  projectId={bot.id}
+                  projectName={bot.name}
+                  onSuccess={refetch}
+                  trigger={
+                    <div className="flex items-center w-full cursor-pointer">
+                      <Send className="h-4 w-4 mr-2" />
+                      Template sifatida yuborish
+                    </div>
+                  }
+                />
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setDeleteModalIsOpen(true)}
