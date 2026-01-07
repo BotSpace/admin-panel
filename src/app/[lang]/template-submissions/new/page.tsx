@@ -40,8 +40,8 @@ export default function NewTemplateSubmissionPage() {
   const params = useParams();
   const lang = params?.lang as string;
 
-  const [formData, setFormData] = useState<TemplateSubmissionRequest>({
-    project: 0,
+  const [formData, setFormData] = useState<Omit<TemplateSubmissionRequest, 'project'> & { project: number | null }>({
+    project: null,
     name: "",
     short_description: "",
     description: "",
@@ -86,13 +86,14 @@ export default function NewTemplateSubmissionPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.project) {
+    if (!formData.project || formData.project === 0) {
       toast.error("Iltimos, loyihani tanlang");
       return;
     }
 
     const submitData: TemplateSubmissionRequest = {
       ...formData,
+      project: formData.project,
       image: imageFile,
       video: videoFile,
     };
@@ -173,7 +174,7 @@ export default function NewTemplateSubmissionPage() {
                 </div>
               ) : (
                 <Select
-                  value={formData.project.toString()}
+                  value={formData.project?.toString() || ""}
                   onValueChange={(value) =>
                     setFormData({ ...formData, project: parseInt(value) })
                   }
@@ -384,7 +385,7 @@ export default function NewTemplateSubmissionPage() {
               >
                 Bekor qilish
               </Button>
-              <Button type="submit" disabled={mutation.isPending || projects.length === 0}>
+              <Button type="submit" disabled={mutation.isPending || projects.length === 0 || !formData.project}>
                 {mutation.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
