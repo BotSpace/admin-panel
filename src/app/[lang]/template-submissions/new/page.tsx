@@ -46,6 +46,7 @@ export default function NewTemplateSubmissionPage() {
     short_description: "",
     description: "",
     original_price: "",
+    demo_url: "",
     categories: [],
     features: [],
   });
