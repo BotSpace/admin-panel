@@ -7,10 +7,18 @@ import { APIListResponse } from "@/shared/types/http";
 import { useEffect, useState } from "react";
 import ContainerBadge from "@/shared/components/common/badge/container-badge";
 import EmptyRelease from "./emty-release";
+import { SubmitTemplateDialog } from "@/features/templates/components/submit-template-dialog";
+import { Send } from "lucide-react";
+import { useParams } from "next/navigation";
 
 export function VersionsSection() {
+  const { id }: { id: string } = useParams();
   const { data } = useReactQueryAction<APIListResponse<Release[]>>({
     url: "/relase?project=[id]",
+  });
+
+  const { data: projectData } = useReactQueryAction<any>({
+    url: "project/[id]/",
   });
 
   const [selectedVersion, setSelectedVersion] = useState<Release | null>(null);
@@ -96,7 +104,17 @@ export function VersionsSection() {
                     </p>
                   </div>
 
-                  <div className="mt-auto">
+                  <div className="mt-auto space-y-2">
+                    <SubmitTemplateDialog
+                      projectId={parseInt(id)}
+                      projectName={projectData?.data?.name || "Bot"}
+                      trigger={
+                        <Button className="w-full" variant="outline">
+                          <Send className="mr-2 h-4 w-4" />
+                          Shablon sifatida yuborish
+                        </Button>
+                      }
+                    />
                     <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80">
                       View
                     </Button>
