@@ -3,13 +3,14 @@
 import { Button } from "@/shared/components/ui/button";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { Release } from "@/shared/types/release";
-import { APIListResponse } from "@/shared/types/http";
+import { APIListResponse, ApiRetrieveResponse } from "@/shared/types/http";
 import { useEffect, useState } from "react";
 import ContainerBadge from "@/shared/components/common/badge/container-badge";
 import EmptyRelease from "./emty-release";
 import { SubmitTemplateDialog } from "@/features/templates/components/submit-template-dialog";
 import { Send } from "lucide-react";
 import { useParams } from "next/navigation";
+import { Project } from "@/shared/types/project";
 
 export function VersionsSection() {
   const { id }: { id: string } = useParams();
@@ -17,7 +18,7 @@ export function VersionsSection() {
     url: "/relase?project=[id]",
   });
 
-  const { data: projectData } = useReactQueryAction<any>({
+  const { data: projectData } = useReactQueryAction<ApiRetrieveResponse<Project>>({
     url: "project/[id]/",
   });
 
@@ -107,7 +108,7 @@ export function VersionsSection() {
                   <div className="mt-auto space-y-2">
                     <SubmitTemplateDialog
                       projectId={parseInt(id)}
-                      projectName={projectData?.data?.name || "Bot"}
+                      projectName={projectData?.data?.name || ""}
                       trigger={
                         <Button className="w-full" variant="outline">
                           <Send className="mr-2 h-4 w-4" />
