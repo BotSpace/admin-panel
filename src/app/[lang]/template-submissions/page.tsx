@@ -144,10 +144,10 @@ export default function TemplateSubmissionsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          Mening yuborishlarim
+          Yuborilgan shablonlar
         </h1>
         <p className="text-muted-foreground">
-          Template sifatida yuborilgan loyihalaringiz
+          Tasdiqlash uchun yuborilgan loyihalar
         </p>
       </div>
 
@@ -163,13 +163,13 @@ export default function TemplateSubmissionsPage() {
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
               <Clock className="h-10 w-10 text-primary" />
             </div>
-            <CardTitle className="mb-2">Yuborishlar yo'q</CardTitle>
+            <CardTitle className="mb-2">Yuborilgan shablon yo'q</CardTitle>
             <CardDescription className="mb-4">
-              Siz hali hech qanday loyihani template sifatida yuborilmadingiz.
+              Hali hech qanday loyihani shablon sifatida yuborilmagan.
             </CardDescription>
             <p className="text-sm text-muted-foreground">
-              Loyihangizni template sifatida yuborish uchun bot kartasidagi
-              "Template sifatida yuborish" tugmasini bosing.
+              Loyihangizni shablon sifatida yuborish uchun bot kartasidagi
+              "Shablon sifatida yuborish" tugmasini bosing.
             </p>
           </CardContent>
         </Card>

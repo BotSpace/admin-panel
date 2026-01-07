@@ -53,7 +53,7 @@ export const HomePageNavigation: NavGroup[] = [
         exact: true,
       },
       {
-        title: "Mening yuborishlarim",
+        title: "Yuborilgan shablonlar",
         href: "/template-submissions",
         icon: Upload,
         exact: true,

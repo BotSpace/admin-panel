@@ -85,7 +85,7 @@ export default function SubmissionDetailPage() {
   const deleteMutation = useMutation({
     mutationFn: () => deleteTemplateSubmission(id),
     onSuccess: () => {
-      toast.success("Yuborish muvaffaqiyatli o'chirildi");
+      toast.success("Shablon muvaffaqiyatli o'chirildi");
       queryClient.invalidateQueries({ queryKey: ["template-submissions"] });
       router.push(`/${lang}/template-submissions`);
     },
@@ -110,9 +110,9 @@ export default function SubmissionDetailPage() {
   if (!submission) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold">Yuborish topilmadi</h2>
+        <h2 className="text-2xl font-bold">Shablon topilmadi</h2>
         <p className="text-muted-foreground mt-2">
-          Siz qidirgan yuborish mavjud emas yoki o'chirilgan.
+          Siz qidirgan shablon mavjud emas yoki o'chirilgan.
         </p>
         <Button asChild className="mt-4">
           <Link href={`/${lang}/template-submissions`}>
@@ -153,7 +153,7 @@ export default function SubmissionDetailPage() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Ishonchingiz komilmi?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Bu yuborishni o'chirishni xohlaysizmi? Bu amalni bekor qilib
+                    Bu shablonni o'chirishni xohlaysizmi? Bu amalni qaytarib
                     bo'lmaydi.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -222,7 +222,7 @@ export default function SubmissionDetailPage() {
             </div>
 
             <div>
-              <h3 className="text-sm font-medium mb-2">To'liq tavsif:</h3>
+              <h3 className="text-sm font-medium mb-2">Batafsil tavsif:</h3>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                 {submission.description}
               </p>

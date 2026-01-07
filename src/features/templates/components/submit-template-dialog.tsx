@@ -71,7 +71,7 @@ export function SubmitTemplateDialog({
   const mutation = useMutation({
     mutationFn: submitTemplate,
     onSuccess: () => {
-      toast.success("Template muvaffaqiyatli yuborildi!");
+      toast.success("Shablon muvaffaqiyatli yuborildi!");
       setOpen(false);
       resetForm();
       onSuccess?.();
@@ -133,13 +133,13 @@ export function SubmitTemplateDialog({
         {trigger || (
           <Button>
             <Send className="mr-2 h-4 w-4" />
-            Template sifatida yuborish
+            Shablon sifatida yuborish
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Template sifatida yuborish</DialogTitle>
+          <DialogTitle>Shablon sifatida yuborish</DialogTitle>
           <DialogDescription>
             Loyihangiz: <strong>{projectName}</strong>
           </DialogDescription>
@@ -148,7 +148,7 @@ export function SubmitTemplateDialog({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">
-              Template nomi <span className="text-red-500">*</span>
+              Shablon nomi <span className="text-red-500">*</span>
             </Label>
             <Input
               id="name"
@@ -178,7 +178,7 @@ export function SubmitTemplateDialog({
 
           <div className="space-y-2">
             <Label htmlFor="description">
-              To'liq tavsif <span className="text-red-500">*</span>
+              Batafsil tavsif <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="description"
@@ -186,7 +186,7 @@ export function SubmitTemplateDialog({
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              placeholder="Template haqida batafsil ma'lumot"
+              placeholder="Shablon haqida batafsil ma'lumot"
               rows={4}
               required
             />

@@ -194,7 +194,7 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
                   trigger={
                     <div className="flex items-center w-full cursor-pointer">
                       <Send className="h-4 w-4 mr-2" />
-                      Template sifatida yuborish
+                      Shablon sifatida yuborish
                     </div>
                   }
                 />
