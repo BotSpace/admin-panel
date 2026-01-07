@@ -39,7 +39,7 @@ export default function LayoutController({ children }: Props) {
   // Create custom action for bot pages - template submission button
   const customAction = isBotPage && id ? (
     <SubmitTemplateDialog
-      projectId={parseInt(id)}
+      projectId={parseInt(id, 10)}
       projectName={projectData?.data?.name || ""}
       trigger={
         <Button className="w-full" variant="outline">
