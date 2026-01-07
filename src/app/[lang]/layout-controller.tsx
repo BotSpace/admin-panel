@@ -10,6 +10,12 @@ import { useParams, usePathname } from "next/navigation";
 
 import LogoImage from "../../../public/botmather.png";
 import { SidebarInsetHeader } from "@/shared/components/sidebar-inset-header";
+import { SubmitTemplateDialog } from "@/features/templates/components/submit-template-dialog";
+import { Button } from "@/shared/components/ui/button";
+import { Send } from "lucide-react";
+import { useReactQueryAction } from "@/shared/services/react-query";
+import { ApiRetrieveResponse } from "@/shared/types/http";
+import { Project } from "@/shared/types/project";
 
 type Props = {
   children: React.ReactNode;
@@ -21,19 +27,37 @@ export default function LayoutController({ children }: Props) {
 
   if (/^\/[a-z]{2}\/auth(\/|$)/.test(pathname)) return children;
 
-  const nav = /^\/([a-z]{2})\/bot\/([a-zA-Z0-9_-]+)(?:\/.*)?$/.test(pathname)
-    ? BotPageNavigation(id)
-    : HomePageNavigation;
+  const isBotPage = /^\/([a-z]{2})\/bot\/([a-zA-Z0-9_-]+)(?:\/.*)?$/.test(pathname);
+  const nav = isBotPage ? BotPageNavigation(id) : HomePageNavigation;
+
+  // Fetch project data for bot pages
+  const { data: projectData } = useReactQueryAction<ApiRetrieveResponse<Project>>({
+    url: "project/[id]/",
+    enabled: isBotPage,
+  });
+
+  // Create custom action for bot pages - template submission button
+  const customAction = isBotPage && id ? (
+    <SubmitTemplateDialog
+      projectId={parseInt(id)}
+      projectName={projectData?.data?.name || ""}
+      trigger={
+        <Button className="w-full" variant="outline">
+          <Send className="mr-2 h-4 w-4" />
+          Shablon sifatida yuborish
+        </Button>
+      }
+    />
+  ) : undefined;
 
   return (
     <>
       <SidebarProvider>
         <ReusableSidebar
-          isBackActive={
-            !!/^\/([a-z]{2})\/bot\/([a-zA-Z0-9_-]+)(?:\/.*)?$/.test(pathname)
-          }
+          isBackActive={isBotPage}
           brand={{ name: "Botmother", version: "v1.0", image: LogoImage }}
           nav={nav}
+          customAction={customAction}
         />
         <SidebarInset>
           <div className="flex flex-1 flex-col">

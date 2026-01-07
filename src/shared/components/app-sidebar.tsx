@@ -72,6 +72,7 @@ export type ReusableSidebarProps = React.ComponentProps<typeof Sidebar> & {
   brand?: Brand;
   showUserFooter?: boolean;
   onSignOut?: () => void;
+  customAction?: React.ReactNode;
 };
 
 // ------------------------------
@@ -83,6 +84,7 @@ export function ReusableSidebar({
   brand = { name: "App", version: "", href: "/", image: "" },
   showUserFooter = true,
   onSignOut = defaultSignOut,
+  customAction,
   ...props
 }: ReusableSidebarProps) {
   const pathname = usePathname() ?? "/";
@@ -190,6 +192,17 @@ export function ReusableSidebar({
           </SidebarGroup>
         ))}
       </SidebarContent>
+
+      {/* Custom Action (optional) */}
+      {customAction && (
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              {customAction}
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      )}
 
       {/* User footer (optional) */}
       {showUserFooter && (
