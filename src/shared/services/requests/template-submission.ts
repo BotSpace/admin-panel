@@ -50,16 +50,26 @@ function buildTemplateFormData(
     formData.append("demo_url", data.demo_url);
   }
 
-  if (data.categories && data.categories.length > 0) {
-    data.categories.forEach((catId) => {
-      formData.append("categories", catId.toString());
-    });
+  // Handle categories - send empty array to clear them
+  if (data.categories !== undefined) {
+    if (data.categories.length === 0) {
+      formData.append("categories", "");
+    } else {
+      data.categories.forEach((catId) => {
+        formData.append("categories", catId.toString());
+      });
+    }
   }
 
-  if (data.features && data.features.length > 0) {
-    data.features.forEach((featId) => {
-      formData.append("features", featId.toString());
-    });
+  // Handle features - send empty array to clear them
+  if (data.features !== undefined) {
+    if (data.features.length === 0) {
+      formData.append("features", "");
+    } else {
+      data.features.forEach((featId) => {
+        formData.append("features", featId.toString());
+      });
+    }
   }
 
   return formData;
