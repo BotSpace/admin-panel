@@ -193,75 +193,74 @@ export function ReusableSidebar({
         ))}
       </SidebarContent>
 
-      {/* Custom Action (optional) */}
-      {customAction && (
+      {/* Footer with custom action and/or user profile */}
+      {(customAction || showUserFooter) && (
         <SidebarFooter>
           <SidebarMenu>
-            <SidebarMenuItem>
-              {customAction}
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
-      )}
+            {/* Custom Action (optional) */}
+            {customAction && (
+              <SidebarMenuItem>
+                {customAction}
+              </SidebarMenuItem>
+            )}
+            
+            {/* User footer (optional) */}
+            {showUserFooter && (
+              <SidebarMenuItem>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <SidebarMenuButton
+                      size="lg"
+                      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                    >
+                      <Avatar className="h-8 w-8 rounded-lg">
+                        <AvatarImage
+                          src="/placeholder.svg?height=32&width=32"
+                          alt="User"
+                        />
+                        <AvatarFallback className="rounded-lg">
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="grid flex-1 text-left text-sm leading-tight">
+                        <span className="truncate font-semibold">
+                          {fullName || "Foydalanuvchi"}
+                        </span>
+                        <span className="truncate text-xs text-muted-foreground">
+                          {phoneOrEmail}
+                        </span>
+                      </div>
+                      <ChevronDown className="ml-auto size-4" />
+                    </SidebarMenuButton>
+                  </DropdownMenuTrigger>
 
-      {/* User footer (optional) */}
-      {showUserFooter && (
-        <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton
-                    size="lg"
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  <DropdownMenuContent
+                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                    side="bottom"
+                    align="end"
+                    sideOffset={4}
                   >
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
-                        src="/placeholder.svg?height=32&width=32"
-                        alt="User"
-                      />
-                      <AvatarFallback className="rounded-lg">
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">
-                        {fullName || "Foydalanuvchi"}
-                      </span>
-                      <span className="truncate text-xs text-muted-foreground">
-                        {phoneOrEmail}
-                      </span>
-                    </div>
-                    <ChevronDown className="ml-auto size-4" />
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent
-                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                  side="bottom"
-                  align="end"
-                  sideOffset={4}
-                >
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/profile"
-                      onClick={handleLinkClick}
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/profile"
+                        onClick={handleLinkClick}
+                        className="gap-2"
+                      >
+                        <Settings className="size-4" />
+                        <span>Profil</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => onSignOut()}
                       className="gap-2"
                     >
-                      <Settings className="size-4" />
-                      <span>Profil</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => onSignOut()}
-                    className="gap-2"
-                  >
-                    <LogOut className="size-4" />
-                    <span>Chiqish</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
+                      <LogOut className="size-4" />
+                      <span>Chiqish</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarMenuItem>
+            )}
           </SidebarMenu>
         </SidebarFooter>
       )}

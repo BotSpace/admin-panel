@@ -33,7 +33,7 @@ export default function LayoutController({ children }: Props) {
   // Fetch project data for bot pages
   const { data: projectData } = useReactQueryAction<ApiRetrieveResponse<Project>>({
     url: "project/[id]/",
-    enabled: isBotPage,
+    enabled: isBotPage && !!id,
   });
 
   // Create custom action for bot pages - template submission button
