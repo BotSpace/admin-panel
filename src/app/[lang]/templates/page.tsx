@@ -14,13 +14,13 @@ import React from "react";
 
 type Props = {};
 
-function Page({}: Props) {
+function Page({ }: Props) {
   const params = useParams();
   const lang = params?.lang as string;
   const { data: orders } = useReactQueryAction<
     APIListResponse<OrderListItem[]>
   >({
-    url: "/order",
+    url: "/template/order",
   });
 
   return (
