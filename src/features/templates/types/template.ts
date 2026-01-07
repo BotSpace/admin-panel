@@ -6,6 +6,7 @@ export interface Category {
 export interface Feature {
   id: number;
   name: string;
+  value?: string;
 }
 
 export interface TemplateListType {
