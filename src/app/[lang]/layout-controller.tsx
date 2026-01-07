@@ -37,9 +37,10 @@ export default function LayoutController({ children }: Props) {
   });
 
   // Create custom action for bot pages - template submission button
-  const customAction = isBotPage && id ? (
+  const projectId = id ? parseInt(id, 10) : NaN;
+  const customAction = isBotPage && !isNaN(projectId) ? (
     <SubmitTemplateDialog
-      projectId={parseInt(id, 10)}
+      projectId={projectId}
       projectName={projectData?.data?.name || ""}
       trigger={
         <Button className="w-full" variant="outline">
