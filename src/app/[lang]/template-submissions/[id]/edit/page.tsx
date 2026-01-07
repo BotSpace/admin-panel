@@ -31,7 +31,7 @@ export default function EditTemplateSubmissionPage() {
   const router = useRouter();
   const params = useParams();
   const lang = params?.lang as string;
-  const id = parseInt(params?.id as string);
+  const id = parseInt(params?.id as string, 10);
 
   const [formData, setFormData] = useState<TemplateSubmissionUpdateRequest>({
     name: "",
@@ -49,6 +49,7 @@ export default function EditTemplateSubmissionPage() {
   const { data: submissionData, isLoading: submissionLoading } = useQuery({
     queryKey: ["template-submission", id],
     queryFn: () => getTemplateSubmission(id),
+    enabled: !isNaN(id),
   });
 
   // Fetch categories
