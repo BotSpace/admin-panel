@@ -17,6 +17,7 @@ import {
   ChartPie,
   Inbox,
   Upload,
+  Wallet,
 } from "lucide-react";
 
 export const HomePageNavigation: NavGroup[] = [
@@ -56,6 +57,12 @@ export const HomePageNavigation: NavGroup[] = [
         title: "Yuborilgan shablonlar",
         href: "/template-submissions",
         icon: Upload,
+        exact: true,
+      },
+      {
+        title: "Shablon Daromadlari",
+        href: "/template-earnings",
+        icon: Wallet,
         exact: true,
       },
       {
