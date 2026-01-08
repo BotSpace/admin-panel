@@ -18,7 +18,10 @@ export default function BillingPage() {
     return (
       <div className="py-2 space-y-8">
         {/* Balance Card */}
-        <BalanceCard balance={data.data.balance} />
+        <BalanceCard 
+          balance={data.data.balance} 
+          templateBalance={data.data.template_balance}
+        />
 
         {/* Payment Methods Section */}
         <PaymentMethodsSection />
