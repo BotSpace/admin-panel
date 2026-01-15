@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
@@ -19,61 +17,45 @@ import {
   PopoverTrigger,
 } from "@/shared/components/ui/popover";
 import { useReactQueryAction } from "@/shared/services/react-query";
-import { CollectionListItem } from "@/shared/types/collection";
-import { APIDetailCreateResponse, APIListResponse } from "@/shared/types/http";
+import { APIDetailCreateResponse } from "@/shared/types/http";
 import { useParams } from "next/navigation";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
+interface CollectionItemComboboxProps {
+  collection_name: string;
+  value?: string | number;
+  onSelect?: (value: string | number) => void;
+}
 
 export function CollectionItemCombobox({
   collection_name,
-}: {
-  collection_name: string;
-}) {
+  value,
+  onSelect,
+}: CollectionItemComboboxProps) {
   const { id: project_id } = useParams();
 
-  const { data, refetch: refetchCollectionData } = useReactQueryAction<
-    APIDetailCreateResponse<[]>
-  >({
+  const { data } = useReactQueryAction<APIDetailCreateResponse<any[]>>({
     url: `collection/${collection_name}/query/`,
     method: "POST",
     query: {
       action: "find",
       project: project_id,
       page: "1",
-      size: 10,
+      size: 100,
     },
     data: {
-      limit: 10,
+      limit: 100,
       skip: 0,
     },
   });
 
-  console.log("🚀 ~ file: collection-item-combobox.tsx:53 ~ data:", data);
-
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+
+  const items = data?.data || [];
+
+  const getLabel = (val: string | number) => {
+    const item = items.find((i) => i.id === val || i._id === val || i.uuid === val);
+    return item ? item.name || item.title || item.id || item._id : val;
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -82,38 +64,41 @@ export function CollectionItemCombobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-full justify-between"
         >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
-          <ChevronsUpDown className="opacity-50" />
+          {value ? getLabel(value) : "Tanlang..."}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[200px] p-0" align="start">
         <Command>
-          <CommandInput placeholder="Search framework..." className="h-9" />
+          <CommandInput placeholder="Qidirish..." className="h-9" />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>Hech narsa topilmadi.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
-                <CommandItem
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  {framework.label}
-                  <Check
-                    className={cn(
-                      "ml-auto",
-                      value === framework.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
-              ))}
+              {items.map((item) => {
+                const itemValue = item.id || item._id || item.uuid;
+                const itemLabel = item.name || item.title || String(itemValue);
+
+                return (
+                  <CommandItem
+                    key={String(itemValue)}
+                    value={itemLabel}
+                    onSelect={() => {
+                      onSelect?.(itemValue);
+                      setOpen(false);
+                    }}
+                  >
+                    {itemLabel}
+                    <Check
+                      className={cn(
+                        "ml-auto h-4 w-4",
+                        value === itemValue ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                );
+              })}
             </CommandGroup>
           </CommandList>
         </Command>

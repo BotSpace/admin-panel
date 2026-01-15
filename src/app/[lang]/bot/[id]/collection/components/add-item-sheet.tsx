@@ -223,7 +223,7 @@ export default function AddItemSheet({
         if (field.type === "datetime" && value) {
           submitData[field.name] = new Date(value).toISOString();
         } else if (field.type === "relation") {
-          submitData[field.name] = Number(value);
+          submitData[field.name] = value;
         } else {
           submitData[field.name] = value;
         }
@@ -314,10 +314,10 @@ export default function AddItemSheet({
                         field.type === "photo"
                           ? "image/*"
                           : field.type === "video"
-                          ? "video/*"
-                          : field.type === "audio"
-                          ? "audio/*"
-                          : "*/*"
+                            ? "video/*"
+                            : field.type === "audio"
+                              ? "audio/*"
+                              : "*/*"
                       }
                       onChange={(e) => {
                         const file = e.target.files?.[0];
@@ -381,15 +381,15 @@ export default function AddItemSheet({
                           </Button>
                           {(fileUploads[field.name] ||
                             formData[field.name]) && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleFileRemove(field.name)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          )}
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleFileRemove(field.name)}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            )}
                         </div>
                       </div>
                     ) : (
@@ -409,7 +409,11 @@ export default function AddItemSheet({
                     )}
                   </div>
                 ) : field.type === "relation" ? (
-                  <CollectionItemCombobox collection_name={field.name} />
+                  <CollectionItemCombobox
+                    collection_name={field.name}
+                    value={formData[field.name]}
+                    onSelect={(val) => handleInputChange(field.name, val)}
+                  />
                 ) : (
                   <Input
                     id={`field-${field.id}`}
