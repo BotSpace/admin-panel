@@ -36,12 +36,12 @@ export const HomePageNavigation: NavGroup[] = [
         icon: File,
         exact: true,
       },
-      {
-        title: "Monitoring",
-        href: "/monitoring",
-        icon: Radical,
-        exact: true,
-      },
+      // {
+      //   title: "Monitoring",
+      //   href: "/monitoring",
+      //   icon: Radical,
+      //   exact: true,
+      // },
     ],
   },
   {
