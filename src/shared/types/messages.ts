@@ -1,4 +1,4 @@
-// Foydalanuvchi adimga message yozganda shu yerda turadi
+// Foydalanuvchi adminga message yozganda shu yerda turadi
 // Messagelar keladi
 
 export interface UserInfo {

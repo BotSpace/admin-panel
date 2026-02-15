@@ -22,15 +22,15 @@ export default function BotDashboard() {
         {/* Header */}
         <div className="flex flex-col gap-2.5 md:flex-row justify-between items-center">
           <div>
-            <h1 className="text-2xl font-semibold text-foreground">Hissobot</h1>
+            <h1 className="text-2xl font-semibold text-foreground">Hisobot</h1>
             <p>
-              Telegram botingizni hissobotlarni shuyerda ko'rib turishingiz
+              Telegram botingizni hisobotlarni shu yerda ko'rib turishingiz
               mumkin!
             </p>
           </div>
 
           <Link href={`/bot/${id}/constructor`} className={buttonVariants()}>
-            Telegram bot konstructoriga o'tish
+            Telegram bot konstruktoriga o'tish
             <ArrowRight />
           </Link>
         </div>

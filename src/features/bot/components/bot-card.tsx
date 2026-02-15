@@ -175,7 +175,7 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
                   className="cursor-pointer"
                 >
                   <Wrench className="h-4 w-4 mr-2" />
-                  Konstructor
+                  Konstruktor
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>

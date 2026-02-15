@@ -11,6 +11,7 @@ import { Search, Sparkles, ArrowRight, Globe } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
+import PageHeader from "@/shared/components/page-header";
 
 type Props = {};
 
@@ -25,6 +26,12 @@ function Page({ }: Props) {
 
   return (
     <main className="space-y-6">
+
+      <PageHeader
+        title="shablonlar"
+        description="Barcha shablonlaringizni boshqaring"
+      />
+
       {/* CTA Banner for Website */}
       <Card className="group relative overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 transition-all duration-300 hover:border-primary/40 hover:shadow-lg">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />

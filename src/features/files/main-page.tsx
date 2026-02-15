@@ -18,6 +18,7 @@ import { APIListResponse } from "@/shared/types/http";
 import toast from "react-hot-toast";
 import { instanceAuth } from "@/shared/services/instance";
 import { BotType } from "@/shared/types/bot";
+import PageHeader from "@/shared/components/page-header";
 
 export default function FilesMainPage({ project_id }: { project_id?: string }) {
   const [activeTab, setActiveTab] = useState<FileType>("photo");
@@ -110,19 +111,16 @@ export default function FilesMainPage({ project_id }: { project_id?: string }) {
   return (
     <main className="">
       <div className="">
-        {/* Header */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Fayllar</h1>
-            <p className="text-muted-foreground mt-2">
-              Barcha fayllaringizni boshqaring
-            </p>
-          </div>
-          <Button onClick={() => setIsUploadModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Fayl Yuklash
-          </Button>
-        </div>
+        <PageHeader
+          title="Fayillar"
+          description="Barcha fayllaringizni boshqaring"
+          button={
+            <Button onClick={() => setIsUploadModalOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Fayl Yuklash
+            </Button>
+          }
+        />
 
         {/* Tabs */}
         <Tabs

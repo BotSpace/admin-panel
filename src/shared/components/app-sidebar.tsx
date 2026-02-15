@@ -7,9 +7,6 @@ import {
   Settings,
   LogOut,
   Bot as DefaultBrandIcon,
-  BadgeDollarSignIcon,
-  ChevronsLeft,
-  ChevronsRight,
   MoveLeft,
 } from "lucide-react";
 import {
@@ -113,7 +110,7 @@ export function ReusableSidebar({
   }, [isMobile, setOpenMobile]);
 
   return (
-    <Sidebar variant="inset" collapsible="icon" {...props}>
+    <Sidebar variant="floating" collapsible="icon" {...props}>
       {/* Brand header (optional) */}
       {brand && (
         <SidebarHeader>
@@ -203,7 +200,7 @@ export function ReusableSidebar({
                 {customAction}
               </SidebarMenuItem>
             )}
-            
+
             {/* User footer (optional) */}
             {showUserFooter && (
               <SidebarMenuItem>

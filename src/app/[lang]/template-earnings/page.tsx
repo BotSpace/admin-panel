@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/sha
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { formatCurrency } from "@/shared/lib/format-currency";
 import { DollarSign, TrendingUp } from "lucide-react";
+import PageHeader from "@/shared/components/page-header";
 
 export default function WithdrawalPage() {
   const { data: balanceData, refetch: refetchBalance } = useReactQueryAction<
@@ -37,20 +38,19 @@ export default function WithdrawalPage() {
   return (
     <div className="py-2 space-y-8">
       {/* Header with Balance */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Shablon Daromadlari</h1>
-          <p className="text-muted-foreground mt-1">
-            Shablonlaringizdan olingan daromadlarni boshqaring va pul yeching
-          </p>
-        </div>
-        {balanceData && (
+
+
+      <PageHeader
+        title="Shablon Daromadlari"
+        description="Shablonlaringizdan olingan daromadlarni boshqaring va pul yeching"
+        button={balanceData && (
           <CreateWithdrawalDialog
             availableBalance={templateBalance}
             onSuccess={handleSuccess}
           />
         )}
-      </div>
+
+      />
 
       {/* Balance Cards */}
       <div className="grid gap-4 md:grid-cols-2">
