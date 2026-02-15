@@ -10,6 +10,7 @@ import { CpuCard } from "@/features/monitoring/dashboard/cpu-card";
 import { DiskCard } from "@/features/monitoring/dashboard/disk-card";
 import { TrafficCard } from "@/features/monitoring/dashboard/traffic-card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
+import PageHeader from "@/shared/components/page-header";
 
 // Helper function to format date for display
 function formatDateForDisplay(dateString: string): string {
@@ -192,12 +193,11 @@ export default function DashboardPage() {
 
   return (
     <main className="">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Monitoring</h1>
-        <p className="">
-          Botlaringiz qanday yuklanmada ishlayotganini ko'rib boring
-        </p>
-      </div>
+      <PageHeader
+        title="Monitoring"
+        description="Botlaringiz qanday yuklanmada ishlayotganini ko'rib boring"
+
+      />
 
       <div className="grid gap-6 col-span-1 md:grid-cols-2 lg:grid-cols-3">
         <RamCard

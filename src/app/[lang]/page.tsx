@@ -18,6 +18,7 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 import { CreateBotModal } from "@/features/bot/components/create-new-bot";
 import { useSession } from "next-auth/react";
 import { BotCard } from "@/features/bot/components/bot-card";
+import PageHeader from "@/shared/components/page-header";
 
 // Empty state component
 function EmptyState({ refetch }: { refetch: () => void }) {
@@ -69,26 +70,22 @@ export default function Page() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between flex-col md:flex-row gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Boshqaruv Paneli
-          </h1>
-          <p className="text-muted-foreground">
-            Barcha botlaringizni boshqaring va kuzatib boring
-          </p>
-        </div>
-        <CreateBotModal
-          dialogOpenButton={
-            <Button className="">
-              <Bot className="mr-2 h-4 w-4" />
-              Yangi Bot Yaratish
-            </Button>
-          }
-          refetch={refetch}
-        />
-      </div>
 
+      <PageHeader
+        title="Boshqaruv paneli"
+        description="Barcha botlaringizni boshqaring va kuzatib boring"
+        button={
+          <CreateBotModal
+            dialogOpenButton={
+              <Button className="w-full md:w-auto">
+                <Bot className="mr-2 h-4 w-4" />
+                Yangi Bot Yaratish
+              </Button>
+            }
+            refetch={refetch}
+          />
+        }
+      />
       {isLoading ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (

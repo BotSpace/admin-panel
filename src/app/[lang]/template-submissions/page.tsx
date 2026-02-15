@@ -11,12 +11,13 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
-import { Button } from "@/shared/components/ui/button";
+import { Button, buttonVariants } from "@/shared/components/ui/button";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { Eye, Edit, Trash2, Clock, CheckCircle, XCircle, Plus } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { TemplateSubmission } from "@/features/templates/types/submission";
+import PageHeader from "@/shared/components/page-header";
 
 function getStatusBadge(status: string) {
   switch (status) {
@@ -135,7 +136,7 @@ function SubmissionCardSkeleton() {
 export default function TemplateSubmissionsPage() {
   const params = useParams();
   const lang = params?.lang as string;
-  
+
   const { data, isLoading } = useQuery({
     queryKey: ["template-submissions"],
     queryFn: () => getTemplateSubmissions(),
@@ -145,23 +146,17 @@ export default function TemplateSubmissionsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Yuborilgan shablonlar
-          </h1>
-          <p className="text-muted-foreground">
-            Tasdiqlash uchun yuborilgan loyihalar
-          </p>
-        </div>
-        <Button asChild>
-          <Link href={`/${lang}/template-submissions/new`}>
+
+      <PageHeader
+        title="Yuborilgan shablonlar"
+        description="Tasdiqlash uchun yuborilgan loyihalar"
+        button={
+          <Link className={buttonVariants()} href={`/${lang}/template-submissions/new`}>
             <Plus className="mr-2 h-4 w-4" />
             Shablon yuborish
           </Link>
-        </Button>
-      </div>
-
+        }
+      />
       {isLoading ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <SubmissionCardSkeleton />

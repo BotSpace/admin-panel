@@ -8,6 +8,7 @@ import { Plus, Ticket } from "lucide-react";
 import { TicketListItem } from "@/features/tickets/types/ticket";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
+import PageHeader from "@/shared/components/page-header";
 
 export default function TicketsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -34,21 +35,17 @@ export default function TicketsPage() {
     <main className="">
       <div className="">
         {/* Header */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-              <Ticket className="h-8 w-8" />
-              Ticketlar
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              Yordam so'rovlaringizni boshqaring va kuzatib boring
-            </p>
-          </div>
-          <Button onClick={() => setIsCreateModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Yangi Ticket
-          </Button>
-        </div>
+        <PageHeader
+          title="Ticketlar"
+          description="Yordam so'rovlaringizni boshqaring va kuzatib boring"
+          button={
+            <Button onClick={() => setIsCreateModalOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Yangi Ticket
+            </Button>
+
+          }
+        />
 
         {/* Tickets Table */}
         <TicketListTable

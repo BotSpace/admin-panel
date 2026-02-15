@@ -34,10 +34,10 @@ export default function LayoutController({ children }: Props) {
         />
         <SidebarInset>
           <div className="flex flex-1 flex-col">
-            <div className="bg-gradient rounded-l-3xl bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6 pt-6 pb-4">
+            <div className="p-2 md:p-4 lg:p-8 bg-gradient rounded-l-3xl bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <SidebarInsetHeader />
             </div>
-            <div className="p-8 border-t">{children}</div>
+            <div className="p-2 md:p-4 lg:p-8 border-t">{children}</div>
           </div>
         </SidebarInset>
       </SidebarProvider>

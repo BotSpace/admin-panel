@@ -84,7 +84,7 @@ export const HomePageNavigation: NavGroup[] = [
     title: "Bilimlar bazasi",
     items: [
       {
-        title: "Curslar",
+        title: "Kurslar",
         href: "https://t.me/botmother_community/61",
         icon: BookOpenText,
         exact: true,
@@ -105,7 +105,7 @@ export const BotPageNavigation = (id: string): NavGroup[] => {
       title: "Boshqaruv",
       items: [
         {
-          title: "Hissobot",
+          title: "Hisobot",
           href: `/bot/${id}`,
           icon: ChartSpline,
         },
