@@ -7,7 +7,6 @@ import { routing } from "@/shared/i18n/routing";
 
 import { ThemeProvider } from "@/shared/components/theme-provider";
 import LayoutController from "./layout-controller";
-import ErrorBoundary from "@/shared/components/error-boundary";
 import TopLoadingBar from "@/shared/components/top-loading-bar";
 
 import { Toaster } from "react-hot-toast";
@@ -57,24 +56,22 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ErrorBoundary>
-          <ReactQueryProvider>
-            <AuthProvider>
-              <NextIntlClientProvider>
-                <ThemeProvider
-                  attribute="class"
-                  defaultTheme="system"
-                  enableSystem
-                  disableTransitionOnChange
-                >
-                  <TopLoadingBar />
-                  <LayoutController>{children}</LayoutController>
-                  <Toaster />
-                </ThemeProvider>
-              </NextIntlClientProvider>
-            </AuthProvider>
-          </ReactQueryProvider>
-        </ErrorBoundary>
+        <ReactQueryProvider>
+          <AuthProvider>
+            <NextIntlClientProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <TopLoadingBar />
+                <LayoutController>{children}</LayoutController>
+                <Toaster />
+              </ThemeProvider>
+            </NextIntlClientProvider>
+          </AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

@@ -16,10 +16,10 @@ export interface User {
   id: string;
 }
 
-export interface AuthSession extends User {}
+export interface AuthSession extends User { }
 
 declare module "next-auth" {
-  interface User extends AuthSession {}
+  interface User extends AuthSession { }
   interface Session {
     user: User;
   }
@@ -27,5 +27,5 @@ declare module "next-auth" {
 
 // Extend the default NextAuth JWT
 declare module "next-auth/jwt" {
-  interface JWT extends AuthSession {}
+  interface JWT extends AuthSession { }
 }
