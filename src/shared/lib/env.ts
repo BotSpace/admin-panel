@@ -15,6 +15,8 @@ const envSchema = z.object({
     .string()
     .min(32, "NEXTAUTH_SECRET must be at least 32 characters")
     .optional(),
+  GOOGLE_CLIENT_ID: z.string().min(1).optional().or(z.literal("")),
+  GOOGLE_CLIENT_SECRET: z.string().min(1).optional().or(z.literal("")),
 });
 
 const env = envSchema.parse({
@@ -23,6 +25,8 @@ const env = envSchema.parse({
   CONSTRUCTOR_URL: process.env.CONSTRUCTOR_URL,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   SALES_URL: process.env.SALES_URL,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET
 });
 
 export default env;
