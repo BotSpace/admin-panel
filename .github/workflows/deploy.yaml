@@ -30,6 +30,8 @@ jobs:
           sed -i "s|^NEXTAUTH_SECRET=.*|NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}|" .env
           sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=${{ vars.NEXTAUTH_URL }}|" .env
           sed -i "s|^SALES_URL=.*|SALES_URL=http://market:3000|" .env
+          sed -i "s|^GOOGLE_CLIENT_ID=.*|GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}|" .env
+          sed -i "s|^GOOGLE_CLIENT_SECRET=.*|GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}|" .env
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
