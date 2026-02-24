@@ -1,4 +1,12 @@
 {
   "hello": "こんにちは (Konnichiwa)",
-  "world": "世界 (Sekai)"
+  "world": "世界 (Sekai)",
+  "auth": {
+    "loginForm": {
+      "title": "アカウントにログイン",
+      "description": "アカウントにログインするには、以下にメールアドレスを入力してください",
+      "orContinueWith": "または続行",
+      "loginWithGoogle": "Googleでログイン"
+    }
+  }
 }

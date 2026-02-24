@@ -25,7 +25,7 @@ const authMiddleware = withAuth(
       },
     },
     pages: {
-      signIn: "/uz/auth/google",
+      signIn: "/uz/auth",
       signOut: "/uz/website",
     },
   }

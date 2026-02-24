@@ -12,12 +12,13 @@ import { useRouter } from "@/shared/i18n/routing";
 
 import toast from "react-hot-toast";
 import { Button } from "@/shared/components/ui/button";
-import { Send } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 export default function TelegramAuth() {
   const [code, setCode] = React.useState<string>("");
   const [mounted, setMounted] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const t = useTranslations("auth.login");
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -44,7 +45,7 @@ export default function TelegramAuth() {
   }, [mounted, status, session, router]);
 
   const LoginUser = async () => {
-    const loadingToast = toast.loading(t("loading"));
+    setIsLoading(true);
 
     const response = await signIn("credentials", {
       code: code,
@@ -52,10 +53,11 @@ export default function TelegramAuth() {
     });
 
     if (response?.ok) {
-      toast.success(t("success"), { id: loadingToast });
     } else {
-      toast.error(t("error"), { id: loadingToast });
+      toast.error(t("error"));
     }
+    
+    setIsLoading(false);
   };
 
   React.useEffect(() => {
@@ -84,9 +86,11 @@ export default function TelegramAuth() {
 
   return (
     <>
-      <div className="text-center text-muted-foreground">
+
+      <div className="text-center">
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
         <b><a className="text-blue-500" href="https://t.me/botmother_authbot">@botmother_authbot</a></b>{' '}
-        qirikkibottelegram botiga kiring va 1 daqiqalik kodingizni oling.
+        telegram botiga kiring va kodeni oling.
       </div>
 
       {/* Kod kiritish maydoni */}
@@ -109,8 +113,12 @@ export default function TelegramAuth() {
 
       {/* Kodeni yuborish tugmasi */}
       <div className="flex gap-2">
-        <Button className="w-full" onClick={LoginUser}>
-          <Send className="mr-2 h-4 w-4" />
+        <Button className="w-full" onClick={LoginUser} disabled={isLoading}>
+          {isLoading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Send className="mr-2 h-4 w-4" />
+          )}
           {t("sendCode")}
         </Button>
       </div>

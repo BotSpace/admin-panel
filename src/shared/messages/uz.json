@@ -21,6 +21,12 @@
       "or": "yoki",
       "enterCodeBelow": "Pastga kodingizni kiriting",
       "note": "Kod 10 daqiqa davomida amal qiladi"
+    },
+    "loginForm": {
+      "title": "Hisobingizga kiring",
+      "description": "Hisobingizga kirish uchun quyidagi email manzilingizni kiriting",
+      "orContinueWith": "Yoki davom eting",
+      "loginWithGoogle": "Google orqali kirish"
     }
   }
 }

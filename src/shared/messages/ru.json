@@ -1,4 +1,12 @@
 {
   "hello": "Привет",
-  "world": "Мир"
+  "world": "Мир",
+  "auth": {
+    "loginForm": {
+      "title": "Войдите в свой аккаунт",
+      "description": "Введите свой email ниже, чтобы войти в аккаунт",
+      "orContinueWith": "Или продолжите с",
+      "loginWithGoogle": "Войти через Google"
+    }
+  }
 }
