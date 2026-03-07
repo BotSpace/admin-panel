@@ -85,7 +85,7 @@ export const HomePageNavigation: NavGroup[] = [
     items: [
       {
         title: "Kurslar",
-        href: "https://t.me/botmother_community/61",
+        href: "https://t.me/botmother_community",
         icon: BookOpenText,
         exact: true,
       },

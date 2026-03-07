@@ -6,7 +6,6 @@ const intlMiddleware = createIntlMiddleware(localeConfig);
 
 // Public route’larni aniqlaymiz
 const publicPaths = [
-  // new RegExp(`^\\/(${locales.join("|")})\\/website(\\/.*)?$`),
   new RegExp(`^\\/(${localeConfig.locales.join("|")})\\/website(?:\\/.*)?$`),
   new RegExp(`^\\/website(?:\\/.*)?$`),
 ];
@@ -28,7 +27,7 @@ const authMiddleware = withAuth(
       signIn: "/uz/auth",
       signOut: "/uz/website",
     },
-  }
+  },
 );
 
 export default authMiddleware;
