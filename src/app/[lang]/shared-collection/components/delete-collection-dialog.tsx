@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 import { Button } from "@/shared/components/ui/button";
 import {
   AlertDialog,
@@ -13,9 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/shared/components/ui/alert-dialog";
-import toast from "react-hot-toast";
 import { instanceAuth } from "@/shared/services/instance";
-import { Trash2 } from "lucide-react";
 import { CollectionListItem } from "@/shared/types/collection";
 
 interface DeleteCollectionDialogProps {
@@ -35,35 +35,32 @@ export default function DeleteCollectionDialog({
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmText, setConfirmText] = useState("");
 
-  async function handleDelete() {
+  const handleDelete = async () => {
     if (confirmText !== collection.name) {
       toast.error("Collection nomi noto'g'ri kiritildi");
       return;
     }
 
     setIsDeleting(true);
-
     try {
       await instanceAuth.delete(
         `collection/${collection.name}/?project=${project_id}`
       );
-      
+
       toast.success(`"${collection.name}" collection o'chirildi!`);
       setOpen(false);
-      setConfirmText(""); // Reset confirm text
-      
-      // Trigger refetch to update sidebar
-      if (onDeleted) {
-        onDeleted();
-      }
-    } catch (e: any) {
-      console.error(e);
-      const errorMessage = e?.response?.data?.message || "Collection o'chirishda xatolik yuz berdi.";
-      toast.error(errorMessage);
+      setConfirmText("");
+      onDeleted?.();
+    } catch (error: unknown) {
+      console.error(error);
+      const message =
+        (error as any)?.response?.data?.message ||
+        "Collection o'chirishda xatolik yuz berdi.";
+      toast.error(message);
     } finally {
       setIsDeleting(false);
     }
-  }
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -81,28 +78,30 @@ export default function DeleteCollectionDialog({
             <Trash2 className="h-5 w-5 text-destructive" />
             Collection O'chirish
           </AlertDialogTitle>
-          <AlertDialogDescription className="space-y-3">
-            <p className="font-semibold text-foreground">
-              Diqqat! Bu amal qaytarib bo'lmaydi.
-            </p>
-            <p>
-              <span className="font-semibold text-destructive">
-                "{collection.name}"
-              </span>{" "}
-              collection va undagi barcha ma'lumotlar butunlay o'chiriladi.
-            </p>
-            <div className="space-y-2 pt-2">
-              <p className="text-sm">
-                Tasdiqlash uchun collection nomini kiriting:
+          <AlertDialogDescription asChild>
+            <div className="text-muted-foreground text-sm space-y-3">
+              <p className="font-semibold text-foreground">
+                Diqqat! Bu amal qaytarib bo'lmaydi.
               </p>
-              <input
-                type="text"
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value)}
-                placeholder={collection.name}
-                className="w-full px-3 py-2 border rounded-md bg-background"
-                disabled={isDeleting}
-              />
+              <p>
+                <span className="font-semibold text-destructive">
+                  "{collection.name}"
+                </span>{" "}
+                collection va undagi barcha ma'lumotlar butunlay o'chiriladi.
+              </p>
+              <div className="space-y-2 pt-2">
+                <p className="text-sm">
+                  Tasdiqlash uchun collection nomini kiriting:
+                </p>
+                <input
+                  type="text"
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder={collection.name}
+                  className="w-full px-3 py-2 border rounded-md bg-background"
+                  disabled={isDeleting}
+                />
+              </div>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>

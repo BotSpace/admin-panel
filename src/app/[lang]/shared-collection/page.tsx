@@ -1,96 +1,95 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import { Menu } from "lucide-react";
 import Sidebar from "./components/sidebar";
 import ContentTable from "./components/content-table";
 import { useReactQueryAction } from "@/shared/services/react-query";
-import { APIListResponse } from "@/shared/types/http";
-import { useParams, useSearchParams } from "next/navigation";
-import { CollectionListItem } from "@/shared/types/collection";
+import { APIDetailCreateResponse, APIListResponse } from "@/shared/types/http";
+import { CollectionDetail, CollectionListItem } from "@/shared/types/collection";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { Button } from "@/shared/components/ui/button";
-import { Menu } from "lucide-react";
 import { Sheet, SheetContent } from "@/shared/components/ui/sheet";
 
 export default function SharedCollection() {
   const searchParams = useSearchParams();
   const params = useParams<{ id: string }>();
 
-  const collection = searchParams.get("collection");
-  const id = params.id || searchParams.get("id");
+  const collectionParam = searchParams.get("collection");
+  const projectId = params.id || searchParams.get("id");
 
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedCollection, setSelectedCollection] =
+    useState<CollectionListItem | null>(null);
 
-  const { data, refetch } = useReactQueryAction<
-    APIListResponse<CollectionListItem[]>
+  const { data: collectionsResponse, refetch: refetchCollections } =
+    useReactQueryAction<APIListResponse<CollectionListItem[]>>({
+      url: "collection/?project=[id]",
+    });
+
+  const collections = collectionsResponse?.data.results ?? [];
+
+  const { data: collectionDetailResponse } = useReactQueryAction<
+    APIDetailCreateResponse<CollectionDetail>
   >({
-    url: "collection/?project=[id]",
+    url: `collection/${selectedCollection?.name}/?project=${projectId}`,
+    enabled: !!selectedCollection,
   });
 
-  const [selectedCollection, setSelectedCollection] =
-    useState<CollectionListItem>();
+  const fields = collectionDetailResponse?.data.fields ?? [];
 
-  // Handle collection deletion
+  useEffect(() => {
+    if (collections.length > 0 && !selectedCollection) {
+      setSelectedCollection(collections[0]);
+    }
+  }, [collections, selectedCollection]);
+
+  useEffect(() => {
+    if (!collectionParam || collections.length === 0) return;
+
+    const target = collections.find((item) => item.id === +collectionParam);
+    if (target) {
+      setSelectedCollection(target);
+    }
+  }, [collectionParam, collections]);
+
   const handleCollectionDeleted = () => {
-    // Refetch collections list
-    refetch();
-
-    // Select first collection or clear selection
-    setSelectedCollection(undefined);
+    refetchCollections();
+    setSelectedCollection(null);
   };
 
-  // Auto-select first collection when data changes and no selection
-  useEffect(() => {
-    if (data && data.data.results.length > 0 && !selectedCollection) {
-      setSelectedCollection(data.data.results[0]);
-    }
-  }, [data, selectedCollection]);
-
-  useEffect(() => {
-    if (data && data.data.results.length > 0 && !selectedCollection) {
-      setSelectedCollection(data.data.results[0]);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (data && collection)
-      data.data.results.map((item) => {
-        item.id === +collection && setSelectedCollection(item);
-      });
-  }, [collection, data]);
+  const handleSelectCollection = (collection: CollectionListItem) => {
+    setSelectedCollection(collection);
+    if (isMobile) setSidebarOpen(false);
+  };
 
   const sidebarContent = (
     <Sidebar
-      refetch={refetch}
-      collections={data?.data.results || "loading"}
+      fields={fields}
+      onCollectionDeleted={handleCollectionDeleted}
+      projectId={projectId || ""}
+      refetch={refetchCollections}
+      collections={collectionsResponse ? collections : "loading"}
       selectedCollection={selectedCollection}
-      onSelectCollection={(collection) => {
-        setSelectedCollection(collection);
-        if (isMobile) {
-          setSidebarOpen(false);
-        }
-      }}
+      onSelectCollection={handleSelectCollection}
     />
   );
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
-      {/* Desktop Sidebar */}
-      {!isMobile && <div className="hidden md:block">{sidebarContent}</div>}
-
-      {/* Mobile Sidebar */}
-      {isMobile && (
+    <div className="flex">
+      {isMobile ? (
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetContent side="left" className="w-[280px] p-0">
             {sidebarContent}
           </SheetContent>
         </Sheet>
+      ) : (
+        <div className="hidden md:block">{sidebarContent}</div>
       )}
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden w-full md:w-auto">
-        {/* Mobile Menu Button */}
         {isMobile && (
           <div className="md:hidden p-4 border-b">
             <Button
@@ -103,12 +102,12 @@ export default function SharedCollection() {
           </div>
         )}
 
-        {/* Content Table */}
         {selectedCollection && (
           <ContentTable
-            project={id}
+            fields={fields}
+            project={projectId || ""}
             collection={selectedCollection}
-            onCollectionDeleted={handleCollectionDeleted}
+            collections={collections}
           />
         )}
       </div>

@@ -1,8 +1,8 @@
 "use client";
 
 import { buttonVariants } from "@/shared/components/ui/button";
-import { MetricCard } from "@/shared/components/metric-card";
-import { ChartLineInteractive } from "@/shared/components/visitor-chart";
+import { MetricCard } from "@/shared/components/common/metric-card";
+import { ChartLineInteractive } from "@/shared/components/common/visitor-chart";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/shared/i18n/routing";
 import { useParams } from "next/navigation";

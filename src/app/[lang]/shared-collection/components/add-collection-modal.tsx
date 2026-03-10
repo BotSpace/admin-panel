@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { varibulNameValidator } from "@/shared/lib/input-validators";
+import { variableNameValidator } from "@/shared/lib/input-validators";
 import { instanceAuth } from "@/shared/services/instance";
 import {
   CollectionDetail,
@@ -57,7 +57,7 @@ export function AddNewCollectionModal({
     enabled: open, // Only fetch when dialog is open
   });
 
-  const isValidFieldName = varibulNameValidator(fieldName);
+  const isValidFieldName = variableNameValidator(fieldName);
   const isRelationFieldValid =
     fieldType !== "relation" || relationCollection !== 0;
   const isFormValid =

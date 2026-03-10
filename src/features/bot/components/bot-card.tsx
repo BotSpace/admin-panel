@@ -30,7 +30,7 @@ import {
   Wrench,
   Trash2,
 } from "lucide-react";
-import DeleteModal from "@/shared/components/common/delete-modal/delete-modal";
+import DeleteModal from "@/shared/components/common/delete-modal";
 import { instanceAuth } from "@/shared/services/instance";
 import { BotType } from "@/shared/types/bot";
 

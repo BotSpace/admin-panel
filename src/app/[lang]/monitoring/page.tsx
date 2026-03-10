@@ -10,7 +10,7 @@ import { CpuCard } from "@/features/monitoring/dashboard/cpu-card";
 import { DiskCard } from "@/features/monitoring/dashboard/disk-card";
 import { TrafficCard } from "@/features/monitoring/dashboard/traffic-card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
-import PageHeader from "@/shared/components/page-header";
+import PageHeader from "@/shared/components/common/page-header";
 
 // Helper function to format date for display
 function formatDateForDisplay(dateString: string): string {

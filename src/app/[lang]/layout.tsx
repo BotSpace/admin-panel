@@ -5,14 +5,14 @@ import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/shared/i18n/routing";
 
-import { ThemeProvider } from "@/shared/components/theme-provider";
+import { ThemeProvider } from "@/shared/components/layout/theme-provider";
 import LayoutController from "./layout-controller";
-import TopLoadingBar from "@/shared/components/top-loading-bar";
+import TopLoadingBar from "@/shared/components/layout/top-loading-bar";
 
 import { Toaster } from "react-hot-toast";
 import AuthProvider from "./AuthProvider";
 import ReactQueryProvider from "./ReactQueryProvider";
-import Analytics from "@/shared/components/common/analitics";
+import Analytics from "@/shared/components/common/analytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

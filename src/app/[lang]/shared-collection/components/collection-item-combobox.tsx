@@ -24,14 +24,17 @@ interface CollectionItemComboboxProps {
   collection_name: string;
   value?: string | number;
   onSelect?: (value: string | number) => void;
+  project?: string;
 }
 
 export function CollectionItemCombobox({
   collection_name,
   value,
   onSelect,
+  project: projectProp,
 }: CollectionItemComboboxProps) {
-  const { id: project_id } = useParams();
+  const { id: paramsId } = useParams();
+  const project_id = projectProp ?? paramsId;
 
   const { data } = useReactQueryAction<APIDetailCreateResponse<any[]>>({
     url: `collection/${collection_name}/query/`,

@@ -8,7 +8,7 @@ import { Plus, Ticket } from "lucide-react";
 import { TicketListItem } from "@/features/tickets/types/ticket";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
-import PageHeader from "@/shared/components/page-header";
+import PageHeader from "@/shared/components/common/page-header";
 
 export default function TicketsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

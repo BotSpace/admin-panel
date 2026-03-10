@@ -26,7 +26,7 @@ import { Plus } from "lucide-react";
 import { instanceAuth } from "@/shared/services/instance";
 import { useRouter } from "@/shared/i18n/routing";
 import { useSearchParams } from "next/navigation";
-import SelectPlan from "@/shared/components/select-plan";
+import SelectPlan from "@/shared/components/common/select-plan";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { botFormSchema } from "@/features/bot/botSchema";

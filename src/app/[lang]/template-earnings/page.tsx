@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/sha
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { formatCurrency } from "@/shared/lib/format-currency";
 import { DollarSign, TrendingUp } from "lucide-react";
-import PageHeader from "@/shared/components/page-header";
+import PageHeader from "@/shared/components/common/page-header";
 
 export default function WithdrawalPage() {
   const { data: balanceData, refetch: refetchBalance } = useReactQueryAction<

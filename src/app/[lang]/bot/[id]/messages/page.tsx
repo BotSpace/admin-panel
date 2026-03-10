@@ -6,7 +6,7 @@ import {
   SendMessageUsersListResponse,
   UserMessageListItem,
   UserMessagesListResponse,
-} from "@/shared/types/messages";
+} from "@/shared/types/chat-message";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import {

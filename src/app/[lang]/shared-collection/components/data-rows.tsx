@@ -86,9 +86,8 @@ export default function DataRows({
         return (
           <tr
             key={rowKey}
-            className={`border-b border-border hover:bg-secondary/30 transition-colors ${
-              isSelected ? "bg-secondary/50" : ""
-            }`}
+            className={`border-b border-border hover:bg-secondary/30 transition-colors ${isSelected ? "bg-secondary/50" : ""
+              }`}
           >
             {/* Selection checkbox */}
             <td className="px-2 md:px-4 py-3 md:py-4 w-10 md:w-12">

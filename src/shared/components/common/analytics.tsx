@@ -3,7 +3,7 @@ import React from "react";
 
 type Props = {};
 
-function Analytics({}: Props) {
+function Analytics({ }: Props) {
   return (
     <>
       <Script

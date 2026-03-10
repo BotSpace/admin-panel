@@ -18,7 +18,7 @@ import { APIListResponse } from "@/shared/types/http";
 import toast from "react-hot-toast";
 import { instanceAuth } from "@/shared/services/instance";
 import { BotType } from "@/shared/types/bot";
-import PageHeader from "@/shared/components/page-header";
+import PageHeader from "@/shared/components/common/page-header";
 
 export default function FilesMainPage({ project_id }: { project_id?: string }) {
   const [activeTab, setActiveTab] = useState<FileType>("photo");

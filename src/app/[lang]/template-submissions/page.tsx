@@ -17,7 +17,7 @@ import { Eye, Edit, Trash2, Clock, CheckCircle, XCircle, Plus } from "lucide-rea
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { TemplateSubmission } from "@/features/templates/types/submission";
-import PageHeader from "@/shared/components/page-header";
+import PageHeader from "@/shared/components/common/page-header";
 
 function getStatusBadge(status: string) {
   switch (status) {

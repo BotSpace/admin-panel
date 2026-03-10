@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import type { DollarSignIcon, LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import {
   ChevronDown,
   Settings,

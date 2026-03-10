@@ -1,11 +1,10 @@
 "use client";
 
+import { Settings } from "lucide-react";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-import { Settings } from "lucide-react";
 import { CollectionListItem } from "@/shared/types/collection";
 import { EditCollectionSheet } from "./edit-collection-sheet";
-import { useEffect, useState } from "react";
 
 interface EmptyStateProps {
   collection: CollectionListItem;
@@ -18,13 +17,6 @@ export default function EmptyState({
   project,
   onSuccess,
 }: EmptyStateProps) {
-  const [autoOpen, setAutoOpen] = useState(false);
-
-  useEffect(() => {
-    // Auto-open settings modal when component mounts
-    setAutoOpen(true);
-  }, []);
-
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <Card className="p-4 hover:shadow-lg cursor-pointer flex items-center justify-center">
@@ -34,16 +26,16 @@ export default function EmptyState({
           </div>
           <h2 className="text-2xl font-semibold mb-2">Collection Bo'sh</h2>
           <p className="text-sm text-muted-foreground mb-6 text-center max-w-md">
-            Ushbu collection'da hali fieldlar yo'q. Collection sozlamalarini oching 
-            va fieldlarni qo'shing.
+            Ushbu collection'da hali fieldlar yo'q. Collection sozlamalarini
+            oching va fieldlarni qo'shing.
           </p>
 
           <EditCollectionSheet
             collection={collection}
             fields={[]}
             project_id={project}
-            onSuccess={onSuccess ?? (() => {})}
-            autoOpen={autoOpen}
+            onSuccess={onSuccess ?? (() => { })}
+            autoOpen
           >
             <Button size="lg" className="flex items-center space-x-2">
               <Settings className="h-5 w-5" />

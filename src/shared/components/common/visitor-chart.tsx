@@ -16,7 +16,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/shared/components/ui/chart";
-import { ChartItem } from "../types/project";
+import { ChartItem } from "@/shared/types/project";
 
 export const description = "An interactive line chart";
 

@@ -9,7 +9,7 @@ import { BotType } from "@/shared/types/bot";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useSession } from "next-auth/react";
 import { BotCard } from "@/features/bot/components/bot-card";
-import PageHeader from "@/shared/components/page-header";
+import PageHeader from "@/shared/components/common/page-header";
 
 // Empty state component
 

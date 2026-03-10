@@ -174,7 +174,7 @@ export function SidebarInsetHeader() {
 
   const breadcrumbItems = useMemo(() => {
     // Remove locale prefix (e.g., /uz, /en) and split path
-    const pathWithoutLocale = pathname.replace(/^\/(en|uz|ru|cr)/, "") || "/";
+    const pathWithoutLocale = pathname.replace(/^\/(en|uz|ru)/, "") || "/";
     const segments = pathWithoutLocale.split("/").filter(Boolean);
 
     const items: Array<{ href: string; label: string; isLast: boolean }> = [];

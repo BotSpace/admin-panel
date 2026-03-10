@@ -1,4 +1,4 @@
-import { NavGroup } from "@/shared/components/app-sidebar";
+import { NavGroup } from "@/shared/components/layout/app-sidebar";
 import {
   BadgeDollarSignIcon,
   BarChart3,

@@ -4,13 +4,13 @@ import {
   SendMessageResponse,
   MessageListResponse,
   MessageResponse,
-} from "@/shared/types/message";
+} from "@/shared/types/broadcast-message";
 import {
   MarkAsReadRequest,
   MarkAsReadResponse,
   SendChatMessageRequest,
   SendChatMessageResponse,
-} from "@/shared/types/messages";
+} from "@/shared/types/chat-message";
 import { AxiosResponse } from "axios";
 
 // Xabar yuborish (JSON yoki FormData qabul qiladi)

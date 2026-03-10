@@ -3,7 +3,7 @@ import { createNavigation } from "next-intl/navigation";
 
 export const localeConfig = {
   // A list of all locales that are supported
-  locales: ["en", "uz", "ru", "cr"],
+  locales: ["en", "uz", "ru"],
 
   // Used when no locale matches
   defaultLocale: "uz",

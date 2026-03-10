@@ -11,7 +11,7 @@ import { Search, Sparkles, ArrowRight, Globe } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
-import PageHeader from "@/shared/components/page-header";
+import PageHeader from "@/shared/components/common/page-header";
 
 type Props = {};
 

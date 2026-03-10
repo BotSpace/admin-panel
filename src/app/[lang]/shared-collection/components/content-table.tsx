@@ -1,22 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIDetailCreateResponse } from "@/shared/types/http";
-import {
-  CollectionDetail,
-  CollectionListItem,
-} from "@/shared/types/collection";
-
-import TableHeader from "./table-header";
-import DataRows from "./data-rows";
-import EmptyState from "./empty-state";
-import { Skeleton } from "@/shared/components/ui/skeleton";
-import AddItemSheet from "./add-item-sheet";
-import { Button } from "@/shared/components/ui/button";
-import { Trash2, Settings } from "lucide-react";
-import toast from "react-hot-toast";
+import { CollectionDetail, CollectionListItem } from "@/shared/types/collection";
 import { instanceAuth } from "@/shared/services/instance";
+import { Button } from "@/shared/components/ui/button";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,33 +19,63 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
-import { EditCollectionSheet } from "./edit-collection-sheet";
-import DeleteCollectionDialog from "./delete-collection-dialog";
+import TableHeader from "./table-header";
+import DataRows from "./data-rows";
+import AddItemRow from "./add-item-row";
+import EmptyState from "./empty-state";
 
 interface ContentTableProps {
   collection: CollectionListItem;
   project: string;
-  onCollectionDeleted?: () => void;
+  fields: CollectionDetail["fields"];
+  collections?: { id: number; name: string }[];
+}
+
+const SKELETON_WIDTHS = [
+  ["80px", "120px", "60px", "120px"],
+  ["100px", "80px", "80px", "60px"],
+  ["50px", "120px", "100px", "90px"],
+] as const;
+
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const;
+
+function TableSkeleton() {
+  return (
+    <>
+      {SKELETON_WIDTHS.map((widths, rowIdx) => (
+        <tr key={rowIdx}>
+          {widths.map((w, colIdx) => (
+            <td key={colIdx} className="px-2 md:px-4 py-3 md:py-4">
+              <Skeleton className={`w-[${w}] md:w-[${parseInt(w) * 1.6}px] h-[15px]`} />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </>
+  );
+}
+
+function extractItemId(item: any): string {
+  if (item._id) {
+    if (typeof item._id === "object" && item._id.$oid) {
+      return item._id.$oid;
+    }
+    return String(item._id);
+  }
+  return String(item.id ?? "");
 }
 
 export default function ContentTable({
   collection,
   project,
-  onCollectionDeleted,
+  fields,
+  collections = [],
 }: ContentTableProps) {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-
-  const { data, refetch } = useReactQueryAction<
-    APIDetailCreateResponse<CollectionDetail>
-  >({
-    url: `collection/${collection.name}/?project=` + project,
-  });
 
   const { data: collectionData, refetch: refetchCollectionData } =
     useReactQueryAction<APIDetailCreateResponse<[]>>({
@@ -61,7 +83,7 @@ export default function ContentTable({
       method: "POST",
       query: {
         action: "find",
-        project: project,
+        project,
         page: currentPage.toString(),
         size: pageSize.toString(),
       },
@@ -69,10 +91,11 @@ export default function ContentTable({
         limit: pageSize,
         skip: (currentPage - 1) * pageSize,
       },
-      enabled: !!data,
     });
 
-  // Reset pagination when collection changes
+  const rows = collectionData?.data;
+  const rowCount = rows?.length ?? 0;
+
   useEffect(() => {
     setSelectedItems([]);
     setCurrentPage(1);
@@ -85,18 +108,8 @@ export default function ContentTable({
   };
 
   const handleSelectAll = (checked: boolean) => {
-    if (checked && collectionData?.data) {
-      const allIds = collectionData.data.map((item: any) => {
-        // Extract ID from MongoDB $oid format
-        if (item._id) {
-          if (typeof item._id === "object" && item._id.$oid) {
-            return item._id.$oid;
-          }
-          return String(item._id);
-        }
-        return String(item.id ?? "");
-      });
-      setSelectedItems(allIds);
+    if (checked && rows) {
+      setSelectedItems(rows.map(extractItemId));
     } else {
       setSelectedItems([]);
     }
@@ -104,307 +117,185 @@ export default function ContentTable({
 
   const handleMultiDelete = async () => {
     setIsDeleting(true);
-
     try {
-      // Build where clause with $or for multiple items
-      const whereClause = {
-        $or: selectedItems.map((id) => ({ _id: id })),
-      };
-
       await instanceAuth.post(
         `collection/${collection.name}/query/?action=delete&project=${project}`,
-        {
-          where: whereClause,
-        }
+        { where: { $or: selectedItems.map((id) => ({ _id: id })) } }
       );
 
       toast.success(`${selectedItems.length} ta ma'lumot o'chirildi!`);
       setSelectedItems([]);
       setShowDeleteDialog(false);
       refetchCollectionData();
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
       toast.error("Ma'lumotlarni o'chirishda xatolik yuz berdi.");
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const allSelected =
-    (collectionData?.data?.length ?? 0) > 0 &&
-    selectedItems.length === (collectionData?.data?.length ?? 0);
+  const allSelected = rowCount > 0 && selectedItems.length === rowCount;
+  const hasData = rows && rowCount > 0;
 
-  if (data)
-    return (
-      <div className="flex flex-col h-full overflow-hidden">
-        {/* Header with Add Button */}
-        {data?.data.fields.length > 0 && (
-          <div className="flex-shrink-0 flex flex-col md:flex-row md:justify-between md:items-center gap-4 p-4 border-b">
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-              <div>
-                <h2 className="text-xl md:text-2xl font-semibold">
-                  {collection.name}
-                </h2>
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  Jami: {collectionData?.data?.length || 0} ta yozuv
-                </p>
-              </div>
-              {selectedItems.length > 0 && (
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => setShowDeleteDialog(true)}
-                  className="w-full md:w-auto"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  {selectedItems.length} ta o'chirish
-                </Button>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <DeleteCollectionDialog
-                collection={collection}
-                project_id={project}
-                onDeleted={onCollectionDeleted}
-              >
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 md:flex-none"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">O'chirish</span>
-                </Button>
-              </DeleteCollectionDialog>
-              <EditCollectionSheet
-                collection={collection}
-                fields={data.data.fields}
-                project_id={project}
-                onSuccess={() => refetch()}
-              >
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 md:flex-none"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Sozlamalar</span>
-                </Button>
-              </EditCollectionSheet>
-              <AddItemSheet
-                fields={data.data.fields}
-                collectionName={collection.name}
-                project={project}
-                onInserted={() => refetchCollectionData()}
-              />
-            </div>
+  if (fields.length === 0) {
+    return <EmptyState collection={collection} project={project} />;
+  }
+
+  return (
+    <div className="flex flex-col h-full overflow-hidden">
+      <div className="shrink-0 flex flex-col md:flex-row md:justify-between md:items-center gap-4 p-4">
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+          <div>
+            <h2 className="text-xl md:text-2xl font-semibold">
+              {collection.name}
+            </h2>
+            <p className="text-xs md:text-sm text-muted-foreground">
+              Jami: {rowCount} ta yozuv
+            </p>
           </div>
-        )}
-
-        {/* Table Container with Scroll */}
-        <div className="flex-1 overflow-auto">
-          {data?.data.fields.length ? (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[600px]">
-                <TableHeader
-                  fields={data.data.fields}
-                  collection={collection}
-                  project={project}
-                  onSuccess={() => {
-                    refetch();
-                  }}
-                  allSelected={allSelected}
-                  onSelectAll={handleSelectAll}
-                />
-
-                <tbody>
-                  {collectionData?.data ? (
-                    <DataRows
-                      fields={data.data.fields}
-                      collectionName={collection.name}
-                      collectionData={collectionData?.data}
-                      project={project}
-                      onDataChanged={() => refetchCollectionData()}
-                      selectedItems={selectedItems}
-                      onSelectionChange={handleSelectionChange}
-                    />
-                  ) : (
-                    <>
-                      <tr>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
-                        </td>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[120px] md:w-[210px] h-[15px]" />
-                        </td>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[60px] md:w-[100px] h-[15px]" />
-                        </td>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[120px] md:w-[200px] h-[15px]" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[100px] md:w-[160px] h-[15px]" />
-                        </td>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
-                        </td>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[80px] md:w-[130px] h-[15px]" />
-                        </td>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[60px] md:w-[100px] h-[15px]" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[50px] md:w-[80px] h-[15px]" />
-                        </td>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[120px] md:w-[200px] h-[15px]" />
-                        </td>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[100px] md:w-[170px] h-[15px]" />
-                        </td>
-                        <td className="px-2 md:px-4 py-3 md:py-4">
-                          <Skeleton className="w-[90px] md:w-[140px] h-[15px]" />
-                        </td>
-                      </tr>
-                    </>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState
-              collection={collection}
-              project={project}
-              onSuccess={() => refetch()}
-            />
+          {selectedItems.length > 0 && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setShowDeleteDialog(true)}
+              className="w-full md:w-auto"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              {selectedItems.length} ta o'chirish
+            </Button>
           )}
         </div>
+      </div>
 
-        {/* Multi Delete Confirmation Dialog */}
-        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Ma'lumotlarni o'chirish</AlertDialogTitle>
-              <AlertDialogDescription>
-                {selectedItems.length} ta ma'lumotni o'chirishni xohlaysizmi? Bu
-                amalni qaytarib bo'lmaydi.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel disabled={isDeleting}>
-                Bekor qilish
-              </AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleMultiDelete}
-                disabled={isDeleting}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                {isDeleting ? "O'chirilmoqda..." : "O'chirish"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
-        {/* Pagination - Fixed at Bottom */}
-        {collectionData?.data && collectionData.data.length > 0 && (
-          <div className="flex-shrink-0 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 py-3 border-t bg-background">
-            <div className="flex-1 text-xs md:text-sm text-muted-foreground">
-              {selectedItems.length > 0 && (
-                <span>{selectedItems.length} ta tanlangan</span>
+      <div className="">
+        <div>
+          <table className="w-full min-w-[600px]">
+            <TableHeader
+              fields={fields}
+              collection={collection}
+              project={project}
+              onSuccess={() => { }}
+              allSelected={allSelected}
+              onSelectAll={handleSelectAll}
+            />
+            <tbody>
+              <AddItemRow
+                fields={fields}
+                collectionName={collection.name}
+                project={project}
+                collections={collections}
+                onInserted={() => refetchCollectionData()}
+              />
+              {rows ? (
+                <DataRows
+                  fields={fields}
+                  collectionName={collection.name}
+                  collectionData={rows}
+                  project={project}
+                  onDataChanged={() => refetchCollectionData()}
+                  selectedItems={selectedItems}
+                  onSelectionChange={handleSelectionChange}
+                />
+              ) : (
+                <TableSkeleton />
               )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Ma'lumotlarni o'chirish</AlertDialogTitle>
+            <AlertDialogDescription>
+              {selectedItems.length} ta ma'lumotni o'chirishni xohlaysizmi? Bu
+              amalni qaytarib bo'lmaydi.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>
+              Bekor qilish
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleMultiDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "O'chirilmoqda..." : "O'chirish"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {hasData && (
+        <div className="shrink-0 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 py-3">
+          <div className="flex-1 text-xs md:text-sm text-muted-foreground">
+            {selectedItems.length > 0 && (
+              <span>{selectedItems.length} ta tanlangan</span>
+            )}
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center gap-3 md:space-x-6 lg:space-x-8">
+            <div className="flex items-center space-x-2">
+              <p className="text-xs md:text-sm font-medium">
+                Sahifadagi ma'lumotlar:
+              </p>
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="h-8 w-[70px] rounded-md border border-input bg-background px-2 md:px-3 py-1 text-xs md:text-sm"
+              >
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="flex flex-col md:flex-row md:items-center gap-3 md:space-x-6 lg:space-x-8">
-              <div className="flex items-center space-x-2">
-                <p className="text-xs md:text-sm font-medium">
-                  Sahifadagi ma'lumotlar:
-                </p>
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="h-8 w-[70px] rounded-md border border-input bg-background px-2 md:px-3 py-1 text-xs md:text-sm"
-                >
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+                className="text-xs md:text-sm"
+              >
+                <span className="hidden sm:inline">Birinchi</span>
+                <span className="sm:hidden">1</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="text-xs md:text-sm"
+              >
+                <span className="hidden sm:inline">Oldingi</span>
+                <span className="sm:hidden">‹</span>
+              </Button>
+              <div className="flex items-center gap-1 px-2">
+                <span className="text-xs md:text-sm font-medium">
+                  {currentPage}
+                </span>
               </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(1)}
-                  disabled={currentPage === 1}
-                  className="text-xs md:text-sm"
-                >
-                  <span className="hidden sm:inline">Birinchi</span>
-                  <span className="sm:hidden">1</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(1, prev - 1))
-                  }
-                  disabled={currentPage === 1}
-                  className="text-xs md:text-sm"
-                >
-                  <span className="hidden sm:inline">Oldingi</span>
-                  <span className="sm:hidden">‹</span>
-                </Button>
-                <div className="flex items-center gap-1 px-2">
-                  <span className="text-xs md:text-sm font-medium">
-                    {currentPage}
-                  </span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
-                  disabled={
-                    !collectionData?.data ||
-                    collectionData.data.length < pageSize
-                  }
-                  className="text-xs md:text-sm"
-                >
-                  <span className="hidden sm:inline">Keyingi</span>
-                  <span className="sm:hidden">›</span>
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                disabled={!rows || rowCount < pageSize}
+                className="text-xs md:text-sm"
+              >
+                <span className="hidden sm:inline">Keyingi</span>
+                <span className="sm:hidden">›</span>
+              </Button>
             </div>
           </div>
-        )}
-      </div>
-    );
-  return (
-    <>
-      <table>
-        <thead>
-          <tr className="border-b border-border">
-            <th className="px-4 py-3">
-              <Skeleton className="w-[300px] h-[16px]" />
-            </th>
-            <th className="px-4 py-3">
-              <Skeleton className="w-[200px] h-[16px]" />
-            </th>
-            <th className="px-4 py-3">
-              <Skeleton className="w-[300px] h-[16px]" />
-            </th>
-            <th className="px-4 py-3">
-              <Skeleton className="w-[350px] h-[16px]" />
-            </th>
-          </tr>
-        </thead>
-      </table>
-    </>
+        </div>
+      )}
+    </div>
   );
 }

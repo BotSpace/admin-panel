@@ -27,7 +27,7 @@ import {
 } from "@/shared/components/ui/select";
 import { useState, useMemo } from "react";
 import { useReactQueryAction } from "@/shared/services/react-query";
-import { MessageListResponse, MessageStatus } from "@/shared/types/message";
+import { MessageListResponse, MessageStatus } from "@/shared/types/broadcast-message";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 
 interface Message {

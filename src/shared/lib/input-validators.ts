@@ -1,9 +1,7 @@
-export function varibulNameValidator(value: string) {
-  // string o'zgaruvchi ochish qoidalariga zid yoki zid emasligini belgilaydi
-  // misol uchun:
-  // salom olam = false
-  // salom_olam = true
-
+export function variableNameValidator(value: string) {
   const isValid = /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
   return value && isValid;
 }
+
+/** @deprecated Use `variableNameValidator` instead */
+export const varibulNameValidator = variableNameValidator;

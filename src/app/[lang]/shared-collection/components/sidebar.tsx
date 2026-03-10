@@ -1,17 +1,40 @@
 "use client";
 
-import CollectionModal from "./collection-modal";
-import { Button } from "@/shared/components/ui/button";
+import { Edit2, Trash2, Folder } from "lucide-react";
+import AddNewCollectionInput from "./add-new-collection-input";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
-import { Separator } from "@/shared/components/ui/separator";
 import { Skeleton } from "@/shared/components/ui/skeleton";
-import { CollectionListItem } from "@/shared/types/collection";
+import { CollectionDetail, CollectionListItem } from "@/shared/types/collection";
+import { cn } from "@/shared/lib/utils";
+import DeleteCollectionDialog from "./delete-collection-dialog";
+import { EditCollectionSheet } from "./edit-collection-sheet";
 
 interface SidebarProps {
-  selectedCollection?: CollectionListItem;
+  selectedCollection: CollectionListItem | null;
   onSelectCollection: (collection: CollectionListItem) => void;
   collections: CollectionListItem[] | "loading";
   refetch: () => void;
+  projectId: string;
+  onCollectionDeleted?: () => void;
+  fields: CollectionDetail["fields"];
+}
+
+function CollectionListSkeleton() {
+  return (
+    <div className="space-y-2 px-2">
+      {Array.from({ length: 3 }, (_, idx) => (
+        <Skeleton className="h-9 w-full rounded-md" key={idx} />
+      ))}
+    </div>
+  );
+}
+
+function CollectionEmptyState() {
+  return (
+    <div className="px-2 py-4 text-center text-sm text-muted-foreground border border-dashed rounded-lg">
+      Collectionlar mavjud emas
+    </div>
+  );
 }
 
 export default function Sidebar({
@@ -19,58 +42,81 @@ export default function Sidebar({
   onSelectCollection,
   collections,
   refetch,
+  projectId,
+  onCollectionDeleted,
+  fields,
 }: SidebarProps) {
   return (
-    <div className="w-full md:w-56 h-full border-r">
-      {/* Collections */}
-      <ScrollArea className="flex-1 p-4 h-full">
-        <div className="mb-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          Collections
-        </div>
-
-        {collections === "loading" ? (
-          <div className="space-y-2">
-            {[...Array(3)].map((_, idx) => (
-              <Skeleton className="rounded-md h-8" key={idx} />
-            ))}
-          </div>
-        ) : collections.length === 0 ? (
-          <div className="text-center text-sm text-muted-foreground">
-            Collectionlar yo'q
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {collections.map((collection) => (
-              <Button
-                key={collection.id}
-                variant={
-                  selectedCollection?.id === collection.id
-                    ? "default"
-                    : "outline"
-                }
-                className="w-full justify-between"
-                onClick={() => onSelectCollection(collection)}
-              >
-                {collection.name}
-                <span className="text-xs opacity-60">{1}</span>
-              </Button>
-            ))}
-          </div>
-        )}
-        <Separator className="w-full my-2" />
-
-        <CollectionModal refetch={refetch} />
-
-        {/* Add Collection Modal */}
-      </ScrollArea>
-
-      {/* Footer */}
-      <Separator />
-      <div className="p-4">
-        <Button variant="link" className="text-xs text-muted-foreground">
-          Watch Tutorials
-        </Button>
+    <ScrollArea className="flex-1 w-[260px] bg-background px-3 py-4">
+      <div className="mb-4 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Collections
       </div>
-    </div>
+
+      <div className="space-y-1 mb-1">
+        {collections === "loading" ? (
+          <CollectionListSkeleton />
+        ) : collections.length === 0 ? (
+          <CollectionEmptyState />
+        ) : (
+          collections.map((collection) => {
+            const isActive = selectedCollection?.id === collection.id;
+
+            return (
+              <div
+                key={collection.id}
+                role="button"
+                onClick={() => onSelectCollection(collection)}
+                className={cn(
+                  "group relative flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 cursor-pointer",
+                  isActive
+                    ? "bg-secondary text-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                )}
+              >
+                <div className="flex items-center gap-2 truncate">
+                  <Folder
+                    className={cn(
+                      "h-4 w-4 shrink-0",
+                      isActive ? "text-primary" : "text-muted-foreground/60"
+                    )}
+                  />
+                  <span className="truncate">{collection.name}</span>
+                </div>
+
+                <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <EditCollectionSheet
+                    collection={collection}
+                    fields={fields}
+                    project_id={projectId}
+                    onSuccess={() => refetch()}
+                  >
+                    <button
+                      onClick={(e) => e.stopPropagation()}
+                      className="p-1 cursor-pointer hover:text-primary transition-colors"
+                    >
+                      <Edit2 className="h-3.5 w-3.5" />
+                    </button>
+                  </EditCollectionSheet>
+
+                  <DeleteCollectionDialog
+                    collection={collection}
+                    project_id={projectId}
+                    onDeleted={onCollectionDeleted}
+                  >
+                    <button
+                      onClick={(e) => e.stopPropagation()}
+                      className="p-1 cursor-pointer hover:text-destructive transition-colors"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </DeleteCollectionDialog>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+      <AddNewCollectionInput refetch={refetch} />
+    </ScrollArea>
   );
 }

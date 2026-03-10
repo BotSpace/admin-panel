@@ -1,6 +1,6 @@
 "use client";
 
-import { ReusableSidebar } from "@/shared/components/app-sidebar";
+import { ReusableSidebar } from "@/shared/components/layout/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/shared/components/ui/sidebar";
 import {
   BotPageNavigation,
@@ -9,7 +9,7 @@ import {
 import { useParams, usePathname } from "next/navigation";
 
 import LogoImage from "../../../public/botmather.png";
-import { SidebarInsetHeader } from "@/shared/components/sidebar-inset-header";
+import { SidebarInsetHeader } from "@/shared/components/layout/sidebar-inset-header";
 
 type Props = {
   children: React.ReactNode;

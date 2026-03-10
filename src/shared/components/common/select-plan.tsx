@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { APIListResponse, ApiRetrieveResponse } from "../types/http";
-import { useReactQueryAction } from "../services/react-query";
-import { Plan } from "../types/plan";
-import { PlanCard } from "@/app/[lang]/bot/[id]/plans/components/plan-card";
+import { APIListResponse, ApiRetrieveResponse } from "@/shared/types/http";
+import { useReactQueryAction } from "@/shared/services/react-query";
+import { Plan } from "@/shared/types/plan";
+import { PlanCard } from "@/shared/components/common/plan-card";
 import { Balance } from "@/features/auth/types/get-me";
-import { parsePriceToInteger } from "../lib/parce-pice";
-import { FormMessage } from "./ui/form";
+import { parsePriceToInteger } from "@/shared/lib/parse-price";
+import { FormMessage } from "@/shared/components/ui/form";
 import { PaymentMethodsSection } from "@/features/billing/payment-methods-section";
 
 type Props = {

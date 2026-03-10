@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { instanceAuth } from "../instance";
-import { useDebounces } from "@/shared/hooks/use-debounces";
+import { useDebounce } from "@/shared/hooks/use-debounce";
 import { handleApiError } from "@/shared/lib/error-handler";
 import { queryGenerator } from "@/shared/lib/query-generator";
 
@@ -45,7 +45,7 @@ export const useReactQueryAction = <T>({
   }
 
   // ✅ Debounce ishlatish (ixtiyoriy)
-  const debouncedUrl = debounceTime ? useDebounces(url, debounceTime) : url;
+  const debouncedUrl = debounceTime ? useDebounce(url, debounceTime) : url;
 
   return useQuery<T>({
     queryKey: [debouncedUrl],

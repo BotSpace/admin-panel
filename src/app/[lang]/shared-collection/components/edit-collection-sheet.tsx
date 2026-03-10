@@ -22,7 +22,8 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 import { Label } from "@/shared/components/ui/label";
-import { varibulNameValidator } from "@/shared/lib/input-validators";
+import { Switch } from "@/shared/components/ui/switch";
+import { variableNameValidator } from "@/shared/lib/input-validators";
 import { instanceAuth } from "@/shared/services/instance";
 import {
   CollectionDetail,
@@ -31,7 +32,7 @@ import {
 import toast from "react-hot-toast";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
-import { Settings, Trash2, Plus } from "lucide-react";
+import { Settings, Trash2, Plus, Loader2, Database } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -173,7 +174,7 @@ export function EditCollectionSheet({
 
     // Check for valid variable names
     const invalidNames = editableFields.filter(
-      (f) => !varibulNameValidator(f.name)
+      (f) => !variableNameValidator(f.name)
     );
     if (invalidNames.length > 0) {
       toast.error(
@@ -228,7 +229,7 @@ export function EditCollectionSheet({
       console.error("Collection yangilashda xatolik:", err);
       toast.error(
         err?.response?.data?.message ||
-          "Collection yangilashda xatolik yuz berdi"
+        "Collection yangilashda xatolik yuz berdi"
       );
     } finally {
       setIsSubmitting(false);
@@ -246,20 +247,30 @@ export function EditCollectionSheet({
             </Button>
           )}
         </SheetTrigger>
-        <SheetContent className="overflow-y-auto sm:max-w-xl">
-          <SheetHeader className="px-6 pt-6">
-            <SheetTitle>Collection Sozlamalari</SheetTitle>
-            <SheetDescription>
-              {collection.name} kolleksiyasining fieldlarini boshqaring
-            </SheetDescription>
-          </SheetHeader>
+        <SheetContent className="sm:max-w-xl overflow-y-hidden1 flex flex-col p-0">
+          <form
+            id="edit-collection-form"
+            onSubmit={handleSubmit}
+            className="flex flex-col flex-1 min-h-0"
+          >
+            <SheetHeader className="px-6 pt-6 pb-4 border-b shrink-0">
+              <SheetTitle>Collection sozlamalari</SheetTitle>
+              <SheetDescription>
+                Fieldlarni qo'shing, o'zgartiring yoki o'chiring
+              </SheetDescription>
+            </SheetHeader>
 
-          <form onSubmit={handleSubmit} className="flex flex-col h-full">
-            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
               {/* Collection Name */}
-              <div className="space-y-2 pb-4 border-b">
-                <Label className="text-sm font-medium">Collection nomi</Label>
-                <Input value={collection.name} disabled className="bg-muted" />
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-foreground">
+                  Collection nomi
+                </Label>
+                <Input
+                  value={collection.name}
+                  disabled
+                  className="bg-muted/50 h-9"
+                />
                 <p className="text-xs text-muted-foreground">
                   Collection nomini o'zgartirish mumkin emas
                 </p>
@@ -267,13 +278,16 @@ export function EditCollectionSheet({
 
               {/* Fields List */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Fieldlar</Label>
+                <div className="flex items-center justify-between gap-3">
+                  <Label className="text-sm font-medium text-foreground">
+                    Fieldlar
+                  </Label>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={handleAddField}
+                    className="shrink-0"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Yangi field
@@ -281,56 +295,65 @@ export function EditCollectionSheet({
                 </div>
 
                 {editableFields.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>Fieldlar yo'q. Yangi field qo'shing.</p>
+                  <div className="flex flex-col items-center justify-center py-12 px-4 rounded-xl border-2 border-dashed border-muted-foreground/20 bg-muted/30">
+                    <Database className="h-12 w-12 text-muted-foreground/50 mb-3" />
+                    <p className="text-sm font-medium text-muted-foreground mb-1">
+                      Fieldlar yo'q
+                    </p>
+                    <p className="text-xs text-muted-foreground/80 text-center mb-4">
+                      Collection uchun birinchi fieldni qo'shing
+                    </p>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={handleAddField}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Field qo'shish
+                    </Button>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {editableFields.map((field, index) => (
                       <div
                         key={index}
-                        className="p-4 border rounded-lg space-y-3 bg-card"
+                        className="p-4 rounded-xl border bg-card/50 hover:bg-card transition-colors space-y-4"
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 space-y-3">
-                            {/* Field Name */}
-                            <div className="space-y-1">
-                              <Label className="text-xs">
-                                Field nomi
-                                {field.isNew && (
-                                  <span className="ml-2 text-xs text-green-500">
-                                    (Yangi)
-                                  </span>
-                                )}
-                              </Label>
-                              <Input
-                                value={field.name}
-                                onChange={(e) =>
-                                  handleFieldChange(
-                                    index,
-                                    "name",
-                                    e.target.value
-                                  )
-                                }
-                                placeholder="field_name"
-                                className={
-                                  field.name &&
-                                  !varibulNameValidator(field.name)
-                                    ? "border-red-500"
-                                    : ""
-                                }
-                              />
-                              {field.name &&
-                                !varibulNameValidator(field.name) && (
-                                  <p className="text-xs text-red-500">
-                                    Noto'g'ri format
-                                  </p>
-                                )}
-                            </div>
-
-                            {/* Field Type */}
-                            <div className="space-y-1">
-                              <Label className="text-xs">Type</Label>
+                        {/* Row 1: Name + Type + Delete */}
+                        <div className="flex gap-3 items-start">
+                          <div className="flex-1 min-w-0 space-y-1.5">
+                            <Label className="text-xs font-medium flex items-center gap-2">
+                              Field nomi
+                              {field.isNew && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+                                  Yangi
+                                </span>
+                              )}
+                            </Label>
+                            <Input
+                              value={field.name}
+                              onChange={(e) =>
+                                handleFieldChange(index, "name", e.target.value)
+                              }
+                              placeholder="field_name"
+                              className={
+                                field.name &&
+                                  !variableNameValidator(field.name)
+                                  ? "border-destructive focus-visible:ring-destructive/20"
+                                  : ""
+                              }
+                            />
+                            {field.name &&
+                              !variableNameValidator(field.name) && (
+                                <p className="text-xs text-destructive">
+                                  Faqat harflar, raqamlar va _ ishlatiladi
+                                </p>
+                              )}
+                          </div>
+                          <div className="flex gap-2 shrink-0 items-end">
+                            <div className="w-[130px] space-y-1.5">
+                              <Label className="text-xs font-medium">Type</Label>
                               <Select
                                 value={field.type}
                                 onValueChange={(value) => {
@@ -339,29 +362,24 @@ export function EditCollectionSheet({
                                     "type",
                                     value as CollectionDetail["fields"][number]["type"]
                                   );
-                                  // Clear relation_collection if type is changed from relation
                                   if (value !== "relation") {
                                     handleFieldChange(
                                       index,
                                       "relation_collection",
-                                      ""
+                                      0
                                     );
                                   }
                                 }}
                               >
-                                <SelectTrigger>
+                                <SelectTrigger className="h-9">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectGroup>
                                     <SelectLabel>Data types</SelectLabel>
                                     <SelectItem value="text">Text</SelectItem>
-                                    <SelectItem value="number">
-                                      Number
-                                    </SelectItem>
-                                    <SelectItem value="bool">
-                                      Boolean
-                                    </SelectItem>
+                                    <SelectItem value="number">Number</SelectItem>
+                                    <SelectItem value="bool">Boolean</SelectItem>
                                     <SelectItem value="datetime">
                                       DateTime
                                     </SelectItem>
@@ -376,78 +394,89 @@ export function EditCollectionSheet({
                                 </SelectContent>
                               </Select>
                             </div>
-
-                            {/* Relation Collection Selector */}
-                            {field.type === "relation" && (
-                              <div className="space-y-1">
-                                <Label className="text-xs">
-                                  Relation Collection
-                                  <span className="text-red-500 ml-1">*</span>
-                                </Label>
-                                <Select
-                                  onValueChange={(value) => {
-                                    console.log(Number(value));
-                                    return handleFieldChange(
-                                      index,
-                                      "relation_collection",
-                                      Number(value)
-                                    );
-                                  }}
-                                >
-                                  <SelectTrigger
-                                    className={
-                                      field.type === "relation" &&
-                                      !field.relation_collection
-                                        ? "border-red-500"
-                                        : ""
-                                    }
-                                  >
-                                    <SelectValue placeholder="Collection tanlang">
-                                      {field.relation_collection &&
-                                        collectionsData?.data.results.find(
-                                          (c) =>
-                                            c.id === field.relation_collection
-                                        )?.name}
-                                    </SelectValue>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectGroup>
-                                      <SelectLabel>Collections</SelectLabel>
-                                      {collectionsData?.data.results
-                                        .filter(
-                                          (c) => c.name !== collection.name
-                                        )
-                                        .map((c) => (
-                                          <SelectItem
-                                            key={c.id}
-                                            value={c.id.toString()}
-                                          >
-                                            {c.name}
-                                          </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                  </SelectContent>
-                                </Select>
-                                {field.type === "relation" &&
-                                  !field.relation_collection && (
-                                    <p className="text-xs text-red-500">
-                                      Collection tanlash majburiy
-                                    </p>
-                                  )}
-                              </div>
-                            )}
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemoveField(index)}
+                              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-9 w-9 shrink-0"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
+                        </div>
 
-                          {/* Delete button */}
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleRemoveField(index)}
-                            className="mt-6"
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
+                        {/* Row 2: Required + Relation (if relation type) */}
+                        <div className="flex flex-wrap items-center gap-4 pt-1 border-t">
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              id={`required-${index}`}
+                              checked={field.required}
+                              onCheckedChange={(checked) =>
+                                handleFieldChange(index, "required", checked)
+                              }
+                            />
+                            <Label
+                              htmlFor={`required-${index}`}
+                              className="text-xs font-normal cursor-pointer"
+                            >
+                              Majburiy
+                            </Label>
+                          </div>
+                          {field.type === "relation" && (
+                            <div className="flex-1 min-w-[200px] space-y-1.5">
+                              <Label className="text-xs font-medium">
+                                Bog'lanish collection
+                                <span className="text-destructive ml-0.5">*</span>
+                              </Label>
+                              <Select
+                                value={
+                                  field.relation_collection
+                                    ? String(field.relation_collection)
+                                    : ""
+                                }
+                                onValueChange={(value) =>
+                                  handleFieldChange(
+                                    index,
+                                    "relation_collection",
+                                    Number(value)
+                                  )
+                                }
+                              >
+                                <SelectTrigger
+                                  className={
+                                    field.type === "relation" &&
+                                      !field.relation_collection
+                                      ? "h-9 border-destructive focus-visible:ring-destructive/20"
+                                      : "h-9"
+                                  }
+                                >
+                                  <SelectValue placeholder="Collection tanlang" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    <SelectLabel>Collections</SelectLabel>
+                                    {collectionsData?.data.results
+                                      ?.filter((c) => c.name !== collection.name)
+                                      .map((c) => (
+                                        <SelectItem
+                                          key={c.id}
+                                          value={c.id.toString()}
+                                        >
+                                          {c.name}
+                                        </SelectItem>
+                                      ))}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                              {field.type === "relation" &&
+                                !field.relation_collection && (
+                                  <p className="text-xs text-destructive">
+                                    Collection tanlash majburiy
+                                  </p>
+                                )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -456,7 +485,7 @@ export function EditCollectionSheet({
               </div>
             </div>
 
-            <SheetFooter className="px-6 pb-6 pt-4 border-t gap-2 flex-shrink-0">
+            <SheetFooter className="px-6 py-4 border-t gap-2 shrink-0 bg-muted/20">
               <Button
                 type="button"
                 variant="outline"
@@ -466,8 +495,20 @@ export function EditCollectionSheet({
               >
                 Bekor qilish
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="flex-1">
-                {isSubmitting ? "Saqlanmoqda..." : "Saqlash"}
+              <Button
+                type="submit"
+                form="edit-collection-form"
+                disabled={isSubmitting}
+                className="flex-1"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saqlanmoqda...
+                  </>
+                ) : (
+                  "Saqlash"
+                )}
               </Button>
             </SheetFooter>
           </form>

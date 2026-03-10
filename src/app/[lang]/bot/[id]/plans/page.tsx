@@ -60,10 +60,7 @@ function BotPlanSettingsPage() {
   const currentPlanDetails = currentPlanResponse?.data?.plan_details;
   const currentPlanName =
     currentPlanDetails?.name || projectResponse?.data?.plan;
-
-  const mostPopularPlanId =
-    plans.find((plan) => plan.name === "pro")?.id ?? plans[0]?.id;
-
+n
   const currentBalance = balance?.data?.balance ?? 0;
 
   const requiredAmount = useMemo(() => {

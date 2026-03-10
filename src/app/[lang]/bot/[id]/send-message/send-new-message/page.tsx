@@ -18,7 +18,7 @@ import { useChatMessageStore } from "@/shared/store/chat-message";
 import { Link, useRouter } from "@/shared/i18n/routing";
 import MessagePreview from "@/features/bot/components/message-preview";
 import { sendMessage } from "@/shared/services/requests/message";
-import { ApiButton, MessageListResponse, MessageStatus } from "@/shared/types/message";
+import { ApiButton, MessageListResponse, MessageStatus } from "@/shared/types/broadcast-message";
 import toast from "react-hot-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { Badge } from "@/shared/components/ui/badge";

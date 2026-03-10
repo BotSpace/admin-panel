@@ -48,7 +48,7 @@ export default function TableHeader({
         <th className="px-2 md:px-4 py-2 md:py-3 text-right w-20 md:w-24">
           <AddNewCollectionModal
             collection={collection}
-            onSuccess={onSuccess ?? (() => {})}
+            onSuccess={onSuccess ?? (() => { })}
             fields={fields}
             project_id={project}
           >
