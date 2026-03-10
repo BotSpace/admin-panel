@@ -17,7 +17,7 @@ export default function SharedCollection() {
   const params = useParams<{ id: string }>();
 
   const collectionParam = searchParams.get("collection");
-  const projectId = params.id || searchParams.get("id");
+  const projectId = params.id || collectionParam;
 
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,7 +26,7 @@ export default function SharedCollection() {
 
   const { data: collectionsResponse, refetch: refetchCollections } =
     useReactQueryAction<APIListResponse<CollectionListItem[]>>({
-      url: "collection/?project=[id]",
+      url: "collection/?project=" + projectId,
     });
 
   const collections = collectionsResponse?.data.results ?? [];
