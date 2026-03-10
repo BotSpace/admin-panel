@@ -60,7 +60,7 @@ function BotPlanSettingsPage() {
   const currentPlanDetails = currentPlanResponse?.data?.plan_details;
   const currentPlanName =
     currentPlanDetails?.name || projectResponse?.data?.plan;
-n
+
   const currentBalance = balance?.data?.balance ?? 0;
 
   const requiredAmount = useMemo(() => {
@@ -144,7 +144,7 @@ n
               const isCurrent =
                 currentPlanDetails?.id === plan.id ||
                 currentPlanName === plan.name;
-              const isPopular = plan.id === mostPopularPlanId;
+              const isPopular = plan.name === "Pro";
               const isProcessing = upgradingPlanId === plan.id;
 
               return (
@@ -159,8 +159,8 @@ n
                     isCurrent
                       ? "Aktiv tarif"
                       : plan.name === "free"
-                      ? "Bepul boshlash"
-                      : "Tarifga o'tish"
+                        ? "Bepul boshlash"
+                        : "Tarifga o'tish"
                   }
                 />
               );
