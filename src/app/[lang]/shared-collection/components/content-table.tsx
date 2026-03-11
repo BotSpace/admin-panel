@@ -143,7 +143,7 @@ export default function ContentTable({
   }
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-1 flex-col min-h-0 overflow-hidden">
       <div className="shrink-0 flex flex-col md:flex-row md:justify-between md:items-center gap-4 p-4">
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
           <div>
@@ -168,41 +168,39 @@ export default function ContentTable({
         </div>
       </div>
 
-      <div className="">
-        <div>
-          <table className="w-full min-w-[600px]">
-            <TableHeader
+      <div className="flex-1 min-h-0 overflow-auto">
+        <table className="w-full min-w-max">
+        <TableHeader
+          fields={fields}
+          collection={collection}
+          project={project}
+          onSuccess={() => { }}
+          allSelected={allSelected}
+          onSelectAll={handleSelectAll}
+        />
+        <tbody>
+          <AddItemRow
+            fields={fields}
+            collectionName={collection.name}
+            project={project}
+            collections={collections}
+            onInserted={() => refetchCollectionData()}
+          />
+          {rows ? (
+            <DataRows
               fields={fields}
-              collection={collection}
+              collectionName={collection.name}
+              collectionData={rows}
               project={project}
-              onSuccess={() => { }}
-              allSelected={allSelected}
-              onSelectAll={handleSelectAll}
+              onDataChanged={() => refetchCollectionData()}
+              selectedItems={selectedItems}
+              onSelectionChange={handleSelectionChange}
             />
-            <tbody>
-              <AddItemRow
-                fields={fields}
-                collectionName={collection.name}
-                project={project}
-                collections={collections}
-                onInserted={() => refetchCollectionData()}
-              />
-              {rows ? (
-                <DataRows
-                  fields={fields}
-                  collectionName={collection.name}
-                  collectionData={rows}
-                  project={project}
-                  onDataChanged={() => refetchCollectionData()}
-                  selectedItems={selectedItems}
-                  onSelectionChange={handleSelectionChange}
-                />
-              ) : (
-                <TableSkeleton />
-              )}
-            </tbody>
-          </table>
-        </div>
+          ) : (
+            <TableSkeleton />
+          )}
+        </tbody>
+      </table>
       </div>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

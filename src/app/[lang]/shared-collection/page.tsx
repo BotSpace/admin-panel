@@ -11,6 +11,7 @@ import { CollectionDetail, CollectionListItem } from "@/shared/types/collection"
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { Button } from "@/shared/components/ui/button";
 import { Sheet, SheetContent } from "@/shared/components/ui/sheet";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function SharedCollection() {
   const searchParams = useSearchParams();
@@ -41,7 +42,7 @@ export default function SharedCollection() {
     enabled: !!selectedCollection,
   });
 
-  const fields = collectionDetailResponse?.data.fields ?? [];
+  const fields = collectionDetailResponse?.data.fields
 
   useEffect(() => {
     if (collections.length > 0 && !selectedCollection) {
@@ -70,7 +71,7 @@ export default function SharedCollection() {
 
   const sidebarContent = (
     <Sidebar
-      fields={fields}
+      fields={fields ?? null}
       onCollectionDeleted={handleCollectionDeleted}
       projectId={projectId || ""}
       refetch={refetchCollections}
@@ -81,7 +82,7 @@ export default function SharedCollection() {
   );
 
   return (
-    <div className="flex">
+    <div className="flex h-screen min-h-0 flex-1">
       {isMobile ? (
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetContent side="left" className="w-[280px] p-0">
@@ -92,28 +93,47 @@ export default function SharedCollection() {
         <div className="hidden md:block">{sidebarContent}</div>
       )}
 
-      <div className="flex-1 flex flex-col overflow-hidden w-full md:w-auto">
-        {isMobile && (
-          <div className="md:hidden p-4 border-b">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          </div>
-        )}
+      {selectedCollection && (
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col overflow-hidden">
 
-        {selectedCollection && (
-          <ContentTable
-            fields={fields}
-            project={projectId || ""}
-            collection={selectedCollection}
-            collections={collections}
-          />
-        )}
-      </div>
+          {
+            fields ? (
+              <ContentTable
+                fields={fields}
+                project={projectId || ""}
+                collection={selectedCollection}
+                collections={collections}
+              />
+            ) : <ContentTableSkeleton />
+          }
+        </div>
+      )}
+
+      {isMobile && (
+        <div className="md:hidden p-4 border-b">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+function ContentTableSkeleton() {
+  return (
+    <div className="flex flex-col gap-2">
+      <Skeleton className="h-10 w-[150px]" />
+      <Skeleton className="h-4 w-[250px]" />
+
+      <Skeleton className="h-8 w-full mt-2.5" />
+      <Skeleton className="h-8 w-full" />
+      <Skeleton className="h-8 w-full" />
     </div>
   );
 }

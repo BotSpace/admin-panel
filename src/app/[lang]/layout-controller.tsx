@@ -34,11 +34,11 @@ export default function LayoutController({ children }: Props) {
           nav={nav}
         />
         <SidebarInset>
-          <div className="flex flex-1 flex-col">
-            <div className="p-2 md:p-4 lg:p-8 bg-gradient rounded-l-3xl bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex min-h-0 flex-1 flex-col">
+            <div className="shrink-0 p-2 md:p-4 lg:p-8 bg-gradient rounded-l-3xl bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <SidebarInsetHeader />
             </div>
-            <div className="p-2 md:p-4 lg:p-8 border-t">{children}</div>
+            <div className="min-h-0 flex-1 overflow-auto p-2 md:p-4 lg:p-8 border-t">{children}</div>
           </div>
         </SidebarInset>
       </SidebarProvider>

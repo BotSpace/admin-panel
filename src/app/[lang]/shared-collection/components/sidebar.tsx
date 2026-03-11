@@ -16,7 +16,7 @@ interface SidebarProps {
   refetch: () => void;
   projectId: string;
   onCollectionDeleted?: () => void;
-  fields: CollectionDetail["fields"];
+  fields: CollectionDetail["fields"] | null;
 }
 
 function CollectionListSkeleton() {
@@ -84,19 +84,23 @@ export default function Sidebar({
                 </div>
 
                 <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <EditCollectionSheet
-                    collection={collection}
-                    fields={fields}
-                    project_id={projectId}
-                    onSuccess={() => refetch()}
-                  >
-                    <button
-                      onClick={(e) => e.stopPropagation()}
-                      className="p-1 cursor-pointer hover:text-primary transition-colors"
-                    >
-                      <Edit2 className="h-3.5 w-3.5" />
-                    </button>
-                  </EditCollectionSheet>
+                  {
+                    fields && (
+                      <EditCollectionSheet
+                        collection={collection}
+                        fields={fields}
+                        project_id={projectId}
+                        onSuccess={() => refetch()}
+                      >
+                        <button
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-1 cursor-pointer hover:text-primary transition-colors"
+                        >
+                          <Edit2 className="h-3.5 w-3.5" />
+                        </button>
+                      </EditCollectionSheet>
+                    )
+                  }
 
                   <DeleteCollectionDialog
                     collection={collection}
