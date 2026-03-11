@@ -4,22 +4,24 @@ import { Button } from "@/shared/components/ui/button";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { Release } from "@/shared/types/release";
 import { APIListResponse } from "@/shared/types/http";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ContainerBadge from "@/shared/components/common/container-badge";
 import EmptyRelease from "./emty-release";
-import { useParams } from "next/navigation";
 
 export function VersionsSection() {
-  const { id }: { id: string } = useParams();
   const { data } = useReactQueryAction<APIListResponse<Release[]>>({
     url: "/relase?project=[id]",
   });
 
-  const [selectedVersion, setSelectedVersion] = useState<Release | null>(null);
+  const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
+  const selectedVersion =
+    selectedVersionId !== null && data
+      ? data.data.results.find((r) => r.id === selectedVersionId) ?? data.data.results[0]
+      : data?.data.results[0] ?? null;
 
-  useEffect(() => {
-    if (data) setSelectedVersion(data.data.results[0]);
-  }, [data]);
+  const handleSelectVersion = (release: Release) => {
+    setSelectedVersionId(release.id);
+  };
 
   if (data)
     return (
@@ -32,10 +34,9 @@ export function VersionsSection() {
                 ({ version, id, service_id, status }, index) => (
                   <button
                     key={id}
-                    onClick={() => setSelectedVersion(data.data.results[index])}
-                    className={`w-full border-b border-border p-4 text-left transition-colors hover:bg-muted/50 ${
-                      selectedVersion?.id === id ? "bg-muted/30" : ""
-                    }`}
+                    onClick={() => handleSelectVersion(data.data.results[index])}
+                    className={`w-full border-b border-border p-4 text-left transition-colors hover:bg-muted/50 ${selectedVersion?.id === id ? "bg-muted/30" : ""
+                      }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 // 1. useLocale ni import qilamiz
 import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/shared/i18n/routing";

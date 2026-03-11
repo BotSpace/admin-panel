@@ -69,15 +69,17 @@ export default function EditTemplateSubmissionPage() {
   // Populate form data when submission is loaded
   useEffect(() => {
     if (submission) {
-      setFormData({
-        name: submission.name,
-        short_description: submission.short_description,
-        description: submission.description,
-        original_price: submission.original_price,
-        demo_url: submission.demo_url || "",
-        categories: submission.categories?.map((cat) => cat.id) || [],
-        features: submission.features?.map((feat) => feat.id) || [],
-      });
+      queueMicrotask(() =>
+        setFormData({
+          name: submission.name,
+          short_description: submission.short_description,
+          description: submission.description,
+          original_price: submission.original_price,
+          demo_url: submission.demo_url || "",
+          categories: submission.categories?.map((cat) => cat.id) || [],
+          features: submission.features?.map((feat) => feat.id) || [],
+        })
+      );
     }
   }, [submission]);
 
@@ -295,6 +297,7 @@ export default function EditTemplateSubmissionPage() {
                   <p className="text-sm text-muted-foreground mb-2">
                     Hozirgi rasm:
                   </p>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- dynamic submission image */}
                   <img
                     src={submission.image}
                     alt={submission.name}

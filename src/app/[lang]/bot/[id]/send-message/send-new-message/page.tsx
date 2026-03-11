@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Send, Eye, FileText, Grid3x3, Users, AlertCircle, CheckCircle2, Clock, XCircle, History } from "lucide-react";
+import { Send, Eye, FileText, Grid3x3, Users, AlertCircle, CheckCircle2, Clock, XCircle, History } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import {
   Card,
@@ -11,11 +11,9 @@ import {
   CardTitle,
   CardDescription,
 } from "@/shared/components/ui/card";
-import { Separator } from "@/shared/components/ui/separator";
 import SendMessage from "@/features/bot/components/send-message";
 import InlineButtons from "@/features/bot/components/inline-buttons";
 import { useChatMessageStore } from "@/shared/store/chat-message";
-import { Link, useRouter } from "@/shared/i18n/routing";
 import MessagePreview from "@/features/bot/components/message-preview";
 import { sendMessage } from "@/shared/services/requests/message";
 import { ApiButton, MessageListResponse, MessageStatus } from "@/shared/types/broadcast-message";
@@ -27,11 +25,8 @@ import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { format } from "date-fns";
 import { uz } from "date-fns/locale";
 
-type Props = {};
-
-function Page({}: Props) {
+function Page() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
   const [isSending, setIsSending] = useState(false);
   const [activeTab, setActiveTab] = useState("message");
 

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Search,
   Filter,
   Star,
   Download,
@@ -11,7 +10,6 @@ import {
   Sliders,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
 import {
   Card,
   CardContent,
@@ -142,8 +140,8 @@ export default function HomePage() {
   const [ratingFilter, setRatingFilter] = useState("all");
   const [sortBy, setSortBy] = useState("popular");
   const [showSearchResults, setShowSearchResults] = useState(false);
-  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [, setSearchSuggestions] = useState<string[]>([]);
+  const [, setShowSuggestions] = useState(false);
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 100]);
@@ -151,7 +149,7 @@ export default function HomePage() {
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
-  const popularSearches = [
+  const popularSearches = useMemo(() => [
     "e-commerce bot",
     "payment integration",
     "task manager",
@@ -164,7 +162,7 @@ export default function HomePage() {
     "reminder bot",
     "game bot",
     "business automation",
-  ];
+  ], []);
 
   const allTags = useMemo(() => {
     const tags = new Set<string>();
@@ -187,12 +185,14 @@ export default function HomePage() {
           search.toLowerCase().includes(searchQuery.toLowerCase())
         )
         .slice(0, 5);
-      setSearchSuggestions(suggestions);
-      setShowSuggestions(suggestions.length > 0);
+      queueMicrotask(() => {
+        setSearchSuggestions(suggestions);
+        setShowSuggestions(suggestions.length > 0);
+      });
     } else {
-      setShowSuggestions(false);
+      queueMicrotask(() => setShowSuggestions(false));
     }
-  }, [searchQuery]);
+  }, [searchQuery, popularSearches]);
 
   const filteredTemplates = useMemo(() => {
     let filtered = templates;
@@ -289,19 +289,19 @@ export default function HomePage() {
     selectedAuthors,
   ]);
 
-  const handleSearch = (query: string) => {
+  const _handleSearch = (query: string) => {
     setSearchQuery(query);
     setShowSearchResults(query.length > 0);
     setShowSuggestions(false);
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
+  const _handleSuggestionClick = (suggestion: string) => {
     setSearchQuery(suggestion);
     setShowSearchResults(true);
     setShowSuggestions(false);
   };
 
-  const clearSearch = () => {
+  const _clearSearch = () => {
     setSearchQuery("");
     setShowSearchResults(false);
     setShowSuggestions(false);
@@ -738,6 +738,7 @@ export default function HomePage() {
                       className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                     >
                       <div className="relative overflow-hidden rounded-t-lg">
+                        {/* eslint-disable-next-line @next/next/no-img-element -- dynamic template images */}
                         <img
                           src={template.image || "/placeholder.svg"}
                           alt={template.title}

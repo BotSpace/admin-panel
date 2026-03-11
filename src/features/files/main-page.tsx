@@ -96,7 +96,7 @@ export default function FilesMainPage({ project_id }: { project_id?: string }) {
 
       await refetch();
       toast.success("Fayl muvaffaqiyatli o'chirildi");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Faylni o'chirishda xatolik yuz berdi");
     }
   };
@@ -132,7 +132,8 @@ export default function FilesMainPage({ project_id }: { project_id?: string }) {
               value="photo"
               className="ml-10 md:ml-0 flex items-center gap-2"
             >
-              <Image className="h-4 w-4" />
+              {/* eslint-disable-next-line jsx-a11y/alt-text -- Lucide icon, not img */}
+              <Image className="h-4 w-4" aria-hidden />
               Rasmlar
               {totalCounts.photo > 0 && (
                 <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary/10 text-primary rounded-full">

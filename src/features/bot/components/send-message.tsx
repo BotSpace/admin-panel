@@ -5,7 +5,6 @@ import { useState, useRef, useEffect } from "react";
 import {
   X,
   Upload,
-  File,
   ImageIcon,
   Video,
   Smile,
@@ -23,8 +22,7 @@ import {
 import EmojiPicker from "emoji-picker-react";
 import { Label } from "@/shared/components/ui/label";
 
-export default function FilesView({}: {}) {
-  const [isLoading, setIsLoading] = useState(false);
+export default function FilesView() {
   const [isDragging, setIsDragging] = useState(false);
   const { files, setFiles, changeTextContent, text_content } =
     useChatMessageStore();
@@ -36,14 +34,15 @@ export default function FilesView({}: {}) {
     // Clean up previous previews to avoid memory leaks
     previews.forEach((url) => URL.revokeObjectURL(url));
 
-    // Create new preview URLs
+    // Create new preview URLs - defer setState to avoid synchronous update in effect
     const newPreviews = files.map((file) => URL.createObjectURL(file));
-    setPreviews(newPreviews);
+    queueMicrotask(() => setPreviews(newPreviews));
 
     // Cleanup function to revoke object URLs when component unmounts or files change
     return () => {
       newPreviews.forEach((url) => URL.revokeObjectURL(url));
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- previews derived from files, cleanup only needs files
   }, [files]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,8 +61,7 @@ export default function FilesView({}: {}) {
 
         if (isImage && file.size > MAX_PHOTO_SIZE) {
           errors.push(
-            `${
-              file.name
+            `${file.name
             }: Rasm hajmi 10 MB dan katta bo'lmasligi kerak (hozir: ${(
               file.size /
               1024 /
@@ -72,8 +70,7 @@ export default function FilesView({}: {}) {
           );
         } else if (isVideo && file.size > MAX_VIDEO_SIZE) {
           errors.push(
-            `${
-              file.name
+            `${file.name
             }: Video hajmi 50 MB dan katta bo'lmasligi kerak (hozir: ${(
               file.size /
               1024 /
@@ -88,8 +85,8 @@ export default function FilesView({}: {}) {
       if (errors.length > 0) {
         alert(
           "Fayl hajmi oshib ketgan:\n\n" +
-            errors.join("\n") +
-            "\n\nTelegram Bot API limit:\n- Rasm: max 10 MB\n- Video: max 50 MB"
+          errors.join("\n") +
+          "\n\nTelegram Bot API limit:\n- Rasm: max 10 MB\n- Video: max 50 MB"
         );
       }
 
@@ -106,10 +103,6 @@ export default function FilesView({}: {}) {
     // Remove the file and its preview
     setFiles(files.filter((_, i) => i !== index));
     setPreviews(previews.filter((_, i) => i !== index));
-  };
-
-  const handleSend = () => {
-    setIsLoading(true);
   };
 
   const getFileIcon = (file: File) => {
@@ -136,11 +129,14 @@ export default function FilesView({}: {}) {
         {(isImage || isVideo) && previewUrl && (
           <div className="relative aspect-square w-full overflow-hidden bg-muted">
             {isImage ? (
-              <img
-                src={previewUrl || "/placeholder.svg"}
-                alt={file.name}
-                className="h-full w-full object-cover transition-transform group-hover:scale-105"
-              />
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element -- blob URL for file preview */}
+                <img
+                  src={previewUrl || "/placeholder.svg"}
+                  alt={file.name}
+                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                />
+              </>
             ) : (
               <video src={previewUrl} className="h-full w-full object-cover" />
             )}
@@ -234,8 +230,7 @@ export default function FilesView({}: {}) {
 
         if (isImage && file.size > MAX_PHOTO_SIZE) {
           errors.push(
-            `${
-              file.name
+            `${file.name
             }: Rasm hajmi 10 MB dan katta bo'lmasligi kerak (hozir: ${(
               file.size /
               1024 /
@@ -244,8 +239,7 @@ export default function FilesView({}: {}) {
           );
         } else if (isVideo && file.size > MAX_VIDEO_SIZE) {
           errors.push(
-            `${
-              file.name
+            `${file.name
             }: Video hajmi 50 MB dan katta bo'lmasligi kerak (hozir: ${(
               file.size /
               1024 /
@@ -260,8 +254,8 @@ export default function FilesView({}: {}) {
       if (errors.length > 0) {
         alert(
           "Fayl hajmi oshib ketgan:\n\n" +
-            errors.join("\n") +
-            "\n\nTelegram Bot API limit:\n- Rasm: max 10 MB\n- Video: max 50 MB"
+          errors.join("\n") +
+          "\n\nTelegram Bot API limit:\n- Rasm: max 10 MB\n- Video: max 50 MB"
         );
       }
 
@@ -285,27 +279,24 @@ export default function FilesView({}: {}) {
           onChange={handleFileChange}
         />
         <div
-          className={`group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all ${
-            isDragging
-              ? "border-primary bg-primary/10 scale-[1.02]"
-              : "border-border bg-muted/30 hover:border-primary/50 hover:bg-muted/50"
-          } px-6 py-10`}
+          className={`group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all ${isDragging
+            ? "border-primary bg-primary/10 scale-[1.02]"
+            : "border-border bg-muted/30 hover:border-primary/50 hover:bg-muted/50"
+            } px-6 py-10`}
           onClick={() => fileInputRef.current?.click()}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
           <div
-            className={`rounded-full p-4 transition-all ${
-              isDragging
-                ? "bg-primary/20 scale-110"
-                : "bg-primary/10 group-hover:bg-primary/20"
-            }`}
+            className={`rounded-full p-4 transition-all ${isDragging
+              ? "bg-primary/20 scale-110"
+              : "bg-primary/10 group-hover:bg-primary/20"
+              }`}
           >
             <Upload
-              className={`h-8 w-8 transition-all ${
-                isDragging ? "text-primary animate-bounce" : "text-primary"
-              }`}
+              className={`h-8 w-8 transition-all ${isDragging ? "text-primary animate-bounce" : "text-primary"
+                }`}
             />
           </div>
           <div className="mt-4 text-center space-y-1">

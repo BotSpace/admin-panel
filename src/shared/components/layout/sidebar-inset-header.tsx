@@ -4,7 +4,6 @@ import { usePathname } from "@/shared/i18n/routing";
 import { Link } from "@/shared/i18n/routing";
 import {
   Home,
-  SlashIcon,
   File,
   BarChart3,
   Library,

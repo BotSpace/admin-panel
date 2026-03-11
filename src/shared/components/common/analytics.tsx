@@ -1,21 +1,22 @@
 import Script from "next/script";
 import React from "react";
 
-type Props = {};
-
-function Analytics({ }: Props) {
+function Analytics() {
   return (
     <>
+      {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document -- Amplitude requires early load in App Router */}
       <Script
         src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"
         strategy="beforeInteractive"
       />
+      {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document */}
       <Script
         src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.23.2-min.js.gz"
         strategy="beforeInteractive"
       />
 
       {/* For Amplitude session replay */}
+      {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document */}
       <Script
         id="amplitude-init"
         strategy="beforeInteractive"

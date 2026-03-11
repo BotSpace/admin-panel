@@ -206,10 +206,10 @@ export function EditCollectionSheet({
 
     try {
       // Send ALL fields (including removed ones will be excluded automatically)
-      const fieldsToSend = editableFields.map(({ isNew, ...field }) => {
+      const fieldsToSend = editableFields.map(({ isNew: _isNew, ...field }) => {
         // Only include relation_collection if type is relation
         if (field.type !== "relation") {
-          const { relation_collection, ...rest } = field;
+          const { relation_collection: _relation_collection, ...rest } = field;
           return rest;
         }
         return field;

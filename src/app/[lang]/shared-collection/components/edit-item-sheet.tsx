@@ -388,6 +388,7 @@ export default function EditItemSheet({
                       <div className="border rounded-lg p-4 space-y-2">
                         {fileUploads[field.name]?.preview ? (
                           <div className="relative">
+                            {/* eslint-disable-next-line @next/next/no-img-element -- blob URL preview */}
                             <img
                               src={fileUploads[field.name].preview}
                               alt="Preview"
@@ -397,19 +398,25 @@ export default function EditItemSheet({
                         ) : formData[field.name] ? (
                           <div className="space-y-2">
                             {field.type === "photo" && fileUrls[field.name] && (
-                              <img
-                                src={fileUrls[field.name]}
-                                alt="Current file"
-                                className="w-full h-32 object-cover rounded"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = "none";
-                                }}
-                              />
+                              <>
+                                {/* eslint-disable-next-line @next/next/no-img-element -- dynamic file URL */}
+                                <img
+                                  src={fileUrls[field.name]}
+                                  alt="Current file"
+                                  className="w-full h-32 object-cover rounded"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = "none";
+                                  }}
+                                />
+                              </>
                             )}
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               {field.type === "photo" && (
-                                <Image className="h-4 w-4" />
-                              )}
+                              <>
+                                {/* eslint-disable-next-line jsx-a11y/alt-text -- Lucide icon, not img */}
+                                <Image className="h-4 w-4" aria-hidden />
+                              </>
+                            )}
                               {field.type === "video" && (
                                 <Video className="h-4 w-4" />
                               )}

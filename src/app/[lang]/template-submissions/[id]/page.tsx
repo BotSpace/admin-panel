@@ -271,6 +271,7 @@ export default function SubmissionDetailPage() {
             {submission.image && (
               <div>
                 <h3 className="text-sm font-medium mb-2">Rasm:</h3>
+                {/* eslint-disable-next-line @next/next/no-img-element -- dynamic submission image */}
                 <img
                   src={submission.image}
                   alt={submission.name}

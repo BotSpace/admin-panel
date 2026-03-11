@@ -6,7 +6,6 @@ import {
   ChevronDown,
   Settings,
   LogOut,
-  Bot as DefaultBrandIcon,
   MoveLeft,
 } from "lucide-react";
 import {

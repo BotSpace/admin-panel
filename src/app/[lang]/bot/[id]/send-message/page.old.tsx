@@ -12,7 +12,6 @@ import {
   Send,
   Search,
   Filter,
-  Loader2,
 } from "lucide-react";
 import { buttonVariants } from "@/shared/components/ui/button";
 import { Link } from "@/shared/i18n/routing";
@@ -30,22 +29,7 @@ import { useReactQueryAction } from "@/shared/services/react-query";
 import { MessageListResponse, MessageStatus } from "@/shared/types/broadcast-message";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 
-interface Message {
-  id: string;
-  content: string;
-  recipients: string;
-  sentAt: Date;
-  status: "pending" | "delivered" | "failed";
-  count: number;
-  done: number;
-  fail: number;
-  message_type: "text" | "photo" | "video";
-  isNewlyCreated: boolean;
-}
-
-interface MessageHistoryProps {}
-
-export default function MessageHistory({}: MessageHistoryProps) {
+export default function MessageHistory() {
   const { id }: { id: string } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");

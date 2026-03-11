@@ -102,8 +102,8 @@ export function PaymentMethodsSection({
     const initialAmount = initialAmmount
       ? Math.max(initialAmmount, minAmount)
       : minAmount;
-    setAmount(initialAmount);
-  }, [initialAmmount]);
+    queueMicrotask(() => setAmount(initialAmount));
+  }, [initialAmmount, minAmount]);
 
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">

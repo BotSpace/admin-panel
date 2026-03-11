@@ -10,7 +10,7 @@ export function toKey(val: any, fallback: string) {
     }
     try {
       return JSON.stringify(val);
-    } catch (e) {
+    } catch (_e) {
       return fallback;
     }
   }

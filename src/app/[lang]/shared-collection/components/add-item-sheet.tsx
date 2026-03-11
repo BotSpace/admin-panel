@@ -337,6 +337,7 @@ export default function AddItemSheet({
                       <div className="border rounded-lg p-4 space-y-2">
                         {fileUploads[field.name]?.preview ? (
                           <div className="relative">
+                            {/* eslint-disable-next-line @next/next/no-img-element -- blob URL preview */}
                             <img
                               src={fileUploads[field.name].preview}
                               alt="Preview"
@@ -346,7 +347,10 @@ export default function AddItemSheet({
                         ) : formData[field.name] ? (
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             {field.type === "photo" && (
-                              <Image className="h-4 w-4" />
+                              <>
+                                {/* eslint-disable-next-line jsx-a11y/alt-text -- Lucide icon, not img */}
+                                <Image className="h-4 w-4" aria-hidden />
+                              </>
                             )}
                             {field.type === "video" && (
                               <Video className="h-4 w-4" />

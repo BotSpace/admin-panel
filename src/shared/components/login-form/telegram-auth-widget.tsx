@@ -64,6 +64,7 @@ export default function TelegramAuth() {
     if (code.length == 6) {
       LoginUser();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- LoginUser is stable callback
   }, [code]);
 
   // Hydration mismatch'ni oldini olish uchun dastlabki render'da loading ko'rsatish

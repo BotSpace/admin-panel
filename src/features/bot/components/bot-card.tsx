@@ -22,10 +22,7 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import {
   MoreHorizontal,
-  Power,
-  PowerOff,
   RotateCw,
-  FileText,
   Settings,
   Wrench,
   Trash2,
@@ -36,10 +33,10 @@ import { BotType } from "@/shared/types/bot";
 
 function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [_isLoading, setIsLoading] = useState(false);
   const [logsModalOpen, setLogsModalOpen] = useState(false);
 
-  async function toggleBotStatus() {
+  async function _toggleBotStatus() {
     setIsLoading(true);
     try {
       const endpoint = bot.release?.status === "running" ? "stop" : "start";
@@ -52,7 +49,7 @@ function BotCard({ bot, refetch }: { bot: BotType; refetch: () => void }) {
     }
   }
 
-  async function reloadBot() {
+  async function _reloadBot() {
     setIsLoading(true);
     try {
       await instanceAuth.post(`project/${bot.id}/reload/`);

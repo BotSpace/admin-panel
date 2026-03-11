@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { AxiosError } from "axios";
-import { Folder, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
 import { instanceAuth } from "@/shared/services/instance";
 import { APIDetailCreateResponse } from "@/shared/types/http";

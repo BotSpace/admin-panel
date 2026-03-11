@@ -3,7 +3,7 @@ import React from "react";
 // Example Delete Modal using shadcn/ui components, Tailwind and lucide-react icons
 // File: shadcn-delete-modal.tsx
 
-import { Trash2, X, Loader2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import {
   Dialog,

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { TicketListTable } from "@/features/tickets/components/ticket-list-table";
 import { CreateTicketModal } from "@/features/tickets/components/create-ticket-modal";
 import { Button } from "@/shared/components/ui/button";
-import { Plus, Ticket } from "lucide-react";
+import { Plus } from "lucide-react";
 import { TicketListItem } from "@/features/tickets/types/ticket";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";

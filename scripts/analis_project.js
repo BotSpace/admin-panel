@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require("fs");
 const path = require("path");
 
@@ -64,7 +64,7 @@ function analyzeDirectory(dir, prefix = "") {
           collectedFiles.push({ path: relativePath, content });
         }
       }
-    } catch (error) {
+    } catch {
       // Ba'zi tizim fayllariga kirishda xatolik bo'lishi mumkin
       structure += `${prefix}    (xatolik: ${entry} o'qilmadi)\n`;
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Bell, Mail, Save } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -41,7 +41,7 @@ export function NotificationSection() {
       localStorage.setItem("notificationSettings", JSON.stringify(settings));
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate API call
       toast.success("Sozlamalar muvaffaqiyatli saqlandi!", { id: toastId });
-    } catch (error) {
+    } catch (_error) {
       toast.error("Sozlamalarni saqlashda xatolik yuz berdi", { id: toastId });
     } finally {
       setIsLoading(false);

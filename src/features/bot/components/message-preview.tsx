@@ -12,7 +12,6 @@ import {
   Image as ImageIcon,
   Video,
   Archive,
-  FileImage,
   Presentation,
 } from "lucide-react";
 
@@ -126,6 +125,7 @@ export default function MessagePreview() {
                     >
                       {previewUrl ? (
                         <>
+                          {/* eslint-disable-next-line @next/next/no-img-element -- blob URL for file preview */}
                           <img
                             src={previewUrl}
                             alt={file.name}
@@ -259,7 +259,7 @@ export default function MessagePreview() {
             const fileIndex = files.indexOf(file);
             const previewUrl = fileIndex >= 0 ? previews[fileIndex] : null;
             const isPDF = file.name.toLowerCase().endsWith(".pdf");
-            const isArchive = ["rar", "zip", "7z", "tar", "gz"].includes(
+            const _isArchive = ["rar", "zip", "7z", "tar", "gz"].includes(
               file.name.split(".").pop()?.toLowerCase() || ""
             );
 
@@ -276,6 +276,7 @@ export default function MessagePreview() {
                 {isPDF && previewUrl ? (
                   <div className="flex gap-3 p-3">
                     <div className="relative w-16 h-20 shrink-0 rounded overflow-hidden bg-muted border border-border group/thumb">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- blob URL for PDF preview */}
                       <img
                         src={previewUrl}
                         alt={file.name}

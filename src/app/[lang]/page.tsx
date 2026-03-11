@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
-import { Bot, Plus, FolderCode } from "lucide-react";
+import { Plus, FolderCode } from "lucide-react";
 
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIDetailCreateResponse, APIListResponse } from "@/shared/types/http";
 import { BotType } from "@/shared/types/bot";
 import { Skeleton } from "@/shared/components/ui/skeleton";
-import { useSession } from "next-auth/react";
 import { BotCard } from "@/features/bot/components/bot-card";
 import PageHeader from "@/shared/components/common/page-header";
 
@@ -34,7 +32,7 @@ function CreateNewProjectButton() {
 
   function handleCreateNewProject() {
 
-    let toastId = toast.loading("Yaratilmoqda...");
+    const toastId = toast.loading("Yaratilmoqda...");
 
     instanceAuth
       .post<APIDetailCreateResponse<Project>>("/project/", {

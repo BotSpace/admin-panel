@@ -10,9 +10,7 @@ import { buttonVariants } from "@/shared/components/ui/button";
 import { Link } from "@/shared/i18n/routing";
 import { useParams } from "next/navigation";
 
-type Props = {};
-
-function EmptyRelease({}: Props) {
+function EmptyRelease() {
   const { id }: { id: string } = useParams();
   return (
     <Card className="max-w-md mx-auto">

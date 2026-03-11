@@ -12,7 +12,6 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { Download, Eye, Trash2, File, Music } from "lucide-react";
 import { formatFileSize } from "@/shared/lib/utils";
-import { format } from "date-fns";
 import FilesEmpty from "./files-empty";
 
 interface FileTableProps {

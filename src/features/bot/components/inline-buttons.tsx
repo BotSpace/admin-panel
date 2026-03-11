@@ -68,7 +68,7 @@ export default function InlineButtons() {
       // Basic URL validation
       try {
         new URL(urlTrimmed);
-      } catch (e) {
+      } catch (_e) {
         alert("Noto'g'ri URL format!\nTo'g'ri format: https://example.com");
         return;
       }
@@ -130,7 +130,7 @@ export default function InlineButtons() {
       // Basic URL validation
       try {
         new URL(urlTrimmed);
-      } catch (e) {
+      } catch (_e) {
         alert("Noto'g'ri URL format!\nTo'g'ri format: https://example.com");
         return;
       }

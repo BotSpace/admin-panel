@@ -3,9 +3,7 @@ import { Button } from "../ui/button"
 import { Field } from "../ui/field"
 import { useTranslations } from "next-intl";
 
-type Props = {}
-
-function GoogleAuthWidget({ }: Props) {
+function GoogleAuthWidget() {
   const t = useTranslations("auth.loginForm");
 
   return (

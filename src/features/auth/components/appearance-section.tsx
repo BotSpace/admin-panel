@@ -62,7 +62,7 @@ export function AppearanceSection() {
       localStorage.setItem("dashboardLayout", layout);
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate API call
       toast.success("Sozlamalar muvaffaqiyatli saqlandi!", { id: toastId });
-    } catch (error) {
+    } catch (_error) {
       toast.error("Sozlamalarni saqlashda xatolik yuz berdi", { id: toastId });
     } finally {
       setIsLoading(false);

@@ -38,13 +38,15 @@ function SelectPlan({
     if (balance) {
       const plan_id = selectedPlanId;
 
-      plans.map((plan) => {
-        plan.id == plan_id &&
+      plans.forEach((plan) => {
+        if (plan.id == plan_id) {
           setAmountNeeded(
             parsePriceToInteger(plan.price) - balance.data.balance
           );
+        }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- plans/selectedPlanId used for side effect only
   }, [balance]);
 
   return (
@@ -86,7 +88,7 @@ function SelectPlan({
                   setAmountNeeded(
                     parsePriceToInteger(plan.price) - balance.data.balance
                   );
-                  onSelectPlan && onSelectPlan(plan);
+                  onSelectPlan?.(plan);
                 }}
               />
             );

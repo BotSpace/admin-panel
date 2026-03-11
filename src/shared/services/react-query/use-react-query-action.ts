@@ -44,16 +44,17 @@ export const useReactQueryAction = <T>({
     url += queryGenerator(query);
   }
 
-  // ✅ Debounce ishlatish (ixtiyoriy)
-  const debouncedUrl = debounceTime ? useDebounce(url, debounceTime) : url;
+  // ✅ Debounce ishlatish (ixtiyoriy) - hooks har doim chaqirilishi kerak
+  const debouncedUrl = useDebounce(url, debounceTime ?? 0);
+  const finalUrl = debounceTime ? debouncedUrl : url;
 
   return useQuery<T>({
-    queryKey: [debouncedUrl],
+    queryKey: [finalUrl],
     queryFn: async () => {
       try {
         const { data: responseData } = await instanceAuth.request({
           method,
-          url: debouncedUrl,
+          url: finalUrl,
           data,
         });
         return responseData;
@@ -63,7 +64,7 @@ export const useReactQueryAction = <T>({
         // Development'da error'ni console'ga chiqarish
         if (process.env.NODE_ENV === "development") {
           console.error("React Query Error:", {
-            url: debouncedUrl,
+            url: finalUrl,
             error: apiError,
             originalError: error,
           });

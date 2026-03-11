@@ -1,18 +1,8 @@
 "use client";
 
-import { useReactQueryAction } from "@/shared/services/react-query";
-import React, { useEffect } from "react";
+import React from "react";
 
-type Props = {};
-
-function Page({}: Props) {
-  const { data } = useReactQueryAction({
-    url: "/used/40",
-  });
-
-  useEffect(() => {
-    console.log("🚀 ~ file: page.tsx:16 ~ data:", data);
-  }, [data]);
+function Page() {
   return <div>Page</div>;
 }
 

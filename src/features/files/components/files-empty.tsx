@@ -1,9 +1,7 @@
 import { File } from "lucide-react";
 import React from "react";
 
-type Props = {};
-
-function FilesEmpty({}: Props) {
+function FilesEmpty() {
   return (
     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
       <div className="p-12 text-center">

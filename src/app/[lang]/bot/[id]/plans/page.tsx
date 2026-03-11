@@ -118,6 +118,7 @@ function BotPlanSettingsPage() {
     if (planWithInsufficientBalance && !upgradingPlanId) {
       handleUpgrade(planWithInsufficientBalance);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- handleUpgrade is stable, balance triggers re-check
   }, [balance, planWithInsufficientBalance, upgradingPlanId]);
 
   return (

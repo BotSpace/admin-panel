@@ -329,7 +329,7 @@ export function UploadFileModal({
                 <SelectGroup>
                   <SelectLabel>Fruits</SelectLabel>
                   {projects.map((item) => (
-                    <SelectItem value={item.id.toString()}>
+                    <SelectItem key={item.id} value={item.id.toString()}>
                       {item.name}
                     </SelectItem>
                   ))}

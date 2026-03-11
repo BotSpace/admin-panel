@@ -13,7 +13,6 @@ import {
   Calendar,
   Hash,
   Upload,
-  X,
 } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";

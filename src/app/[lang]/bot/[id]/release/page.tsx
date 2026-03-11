@@ -1,8 +1,6 @@
 import { VersionsSection } from "./versions-section";
 
-type Props = {};
-
-function Page({}: Props) {
+function Page() {
   return (
     <main className="min-h-screen">
       <div className="space-y-6">

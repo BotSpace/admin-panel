@@ -31,9 +31,7 @@ import { Button } from "@/shared/components/ui/button";
 import toast from "react-hot-toast";
 import { uploadFile } from "@/shared/services/requests/file";
 
-type Props = {};
-
-function Page({}: Props) {
+function Page() {
   const { id } = useParams<{ id: string }>();
   const [selectedUser, setSelectedUser] = useState<UserMessageListItem | null>(
     null
@@ -90,6 +88,7 @@ function Page({}: Props) {
       URL.revokeObjectURL(filePreview);
       setFilePreview(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only reset when selectedUser changes
   }, [selectedUser]);
 
   // Cleanup file preview on unmount
@@ -184,7 +183,7 @@ function Page({}: Props) {
             project: Number(id),
           });
           fileUuid = uploadResponse.data.data.uuid;
-        } catch (error: any) {
+        } catch (_error: unknown) {
           toast.error("Fayl yuklashda xatolik yuz berdi", { id: toastId });
           setIsSending(false);
           setIsUploadingFile(false);
@@ -420,6 +419,7 @@ function Page({}: Props) {
               {selectedFile && (
                 <div className="mb-3 flex items-center gap-2 p-2 bg-background rounded-lg border">
                   {filePreview ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- blob URL for file preview
                     <img
                       src={filePreview}
                       alt="Preview"

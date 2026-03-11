@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getSession, signOut } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import { RefreshAccessToken } from "./requests/auth";
 
 import env from "@/shared/lib/env";

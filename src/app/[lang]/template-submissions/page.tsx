@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/shared/components/ui/badge";
 import { Button, buttonVariants } from "@/shared/components/ui/button";
 import { Skeleton } from "@/shared/components/ui/skeleton";
-import { Eye, Edit, Trash2, Clock, CheckCircle, XCircle, Plus } from "lucide-react";
+import { Eye, Edit, Clock, CheckCircle, XCircle, Plus } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { TemplateSubmission } from "@/features/templates/types/submission";

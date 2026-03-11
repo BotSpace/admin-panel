@@ -1,5 +1,3 @@
-import NextAuth from "next-auth";
-
 export type Role = "admin" | "user" | "moderator";
 export type Lang = "uz" | "en" | "ru" | "jp";
 
@@ -16,10 +14,11 @@ export interface User {
   id: string;
 }
 
-export interface AuthSession extends User { }
+export type AuthSession = User;
 
 declare module "next-auth" {
-  interface User extends AuthSession { }
+  /* eslint-disable-next-line @typescript-eslint/no-empty-object-type */
+  interface User extends AuthSession {}
   interface Session {
     user: User;
   }
@@ -27,5 +26,6 @@ declare module "next-auth" {
 
 // Extend the default NextAuth JWT
 declare module "next-auth/jwt" {
-  interface JWT extends AuthSession { }
+  /* eslint-disable-next-line @typescript-eslint/no-empty-object-type */
+  interface JWT extends AuthSession {}
 }

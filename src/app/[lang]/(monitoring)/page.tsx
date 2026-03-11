@@ -139,21 +139,6 @@ export default function DashboardPage() {
     [monitoringResponse]
   );
 
-  // Calculate total costs
-  const totalCost =
-    data.ram.cost + data.cpu.cost + data.disk.cost + data.traffic.cost;
-  const daysInMonth = 30;
-  const currentDay = new Date().getDate();
-  const projectedCost = (totalCost / currentDay) * daysInMonth;
-
-  // Format last updated time
-  const lastUpdated = useMemo(() => {
-    if (!monitoringResponse) return "yuklanmoqda...";
-    return new Date().toLocaleTimeString("uz-UZ", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }, [monitoringResponse]);
 
   if (isLoading) {
     return (

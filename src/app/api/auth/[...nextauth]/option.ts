@@ -26,7 +26,7 @@ export const authOptions: NextAuthOptions = {
         console.log("🚀 ~ file: option.ts:24 ~ code:", code);
 
         // Avval Confirm API orqali tasdiqlash tokenlarini olish
-        let { data, request, status, headers, config } = await Login({ code });
+        const { data, request, status } = await Login({ code });
         console.log("🚀 ~ file: option.ts:27 ~ status:", status);
         console.log("🚀 ~ file: option.ts:27 ~ request:", request);
         console.log("🚀 ~ file: option.ts:27 ~ data:", data);

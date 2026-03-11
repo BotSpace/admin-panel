@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { Menu } from "lucide-react";
 import Sidebar from "./components/sidebar";
@@ -29,7 +29,10 @@ export default function SharedCollection() {
       url: "collection/?project=" + projectId,
     });
 
-  const collections = collectionsResponse?.data.results ?? [];
+  const collections = useMemo(
+    () => collectionsResponse?.data.results ?? [],
+    [collectionsResponse?.data.results]
+  );
 
   const { data: collectionDetailResponse } = useReactQueryAction<
     APIDetailCreateResponse<CollectionDetail>
@@ -42,7 +45,7 @@ export default function SharedCollection() {
 
   useEffect(() => {
     if (collections.length > 0 && !selectedCollection) {
-      setSelectedCollection(collections[0]);
+      queueMicrotask(() => setSelectedCollection(collections[0]));
     }
   }, [collections, selectedCollection]);
 
@@ -51,7 +54,7 @@ export default function SharedCollection() {
 
     const target = collections.find((item) => item.id === +collectionParam);
     if (target) {
-      setSelectedCollection(target);
+      queueMicrotask(() => setSelectedCollection(target));
     }
   }, [collectionParam, collections]);
 

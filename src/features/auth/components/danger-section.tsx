@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Trash2, Download, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 import { signOut } from "next-auth/react";
-import { useRouter } from "@/shared/i18n/routing";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -28,7 +27,6 @@ import {
 import { Separator } from "@/shared/components/ui/separator";
 
 export function DangerSection() {
-  const router = useRouter();
   const [isExporting, setIsExporting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -63,7 +61,7 @@ export function DangerSection() {
       toast.success("Ma'lumotlar muvaffaqiyatli yuklab olindi!", {
         id: toastId,
       });
-    } catch (error) {
+    } catch (_error) {
       toast.error("Ma'lumotlarni eksport qilishda xatolik yuz berdi", {
         id: toastId,
       });
@@ -82,7 +80,7 @@ export function DangerSection() {
 
       toast.success("Hisob muvaffaqiyatli o'chirildi", { id: toastId });
       await signOut({ redirect: true, callbackUrl: "/uz/auth/login" });
-    } catch (error) {
+    } catch (_error) {
       toast.error("Hisobni o'chirishda xatolik yuz berdi", { id: toastId });
     } finally {
       setIsDeleting(false);

@@ -13,9 +13,7 @@ import { useParams } from "next/navigation";
 import React from "react";
 import PageHeader from "@/shared/components/common/page-header";
 
-type Props = {};
-
-function Page({ }: Props) {
+function Page() {
   const params = useParams();
   const lang = params?.lang as string;
   const { data: orders } = useReactQueryAction<

@@ -68,6 +68,7 @@ export function NewProjectFromTemplateDialog({ id }: NewProjectDialogProps) {
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch is required for plan selection
   const selectedPlanId = form.watch("plan_id");
 
   // URL orqali modalni ochish logikasi
@@ -104,7 +105,7 @@ export function NewProjectFromTemplateDialog({ id }: NewProjectDialogProps) {
 
   // 2. Submit uchun funksiya.
   function onSubmit(values: z.infer<typeof botFormSchema>) {
-    let toastId = toast.loading("Yaratilmoqda...");
+    const toastId = toast.loading("Yaratilmoqda...");
 
     // Agar token bo'sh bo'lsa, uni yubormaymiz
     const payload = {
