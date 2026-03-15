@@ -2,7 +2,18 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { Send, Eye, FileText, Grid3x3, Users, AlertCircle, CheckCircle2, Clock, XCircle, History } from "lucide-react";
+import {
+  Send,
+  Eye,
+  FileText,
+  Grid3x3,
+  Users,
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  History,
+} from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import {
   Card,
@@ -11,19 +22,38 @@ import {
   CardTitle,
   CardDescription,
 } from "@/shared/components/ui/card";
-import SendMessage from "@/features/bot/components/send-message";
-import InlineButtons from "@/features/bot/components/inline-buttons";
+import InlineButtons from "@/features/bot/detail/components/inline-buttons";
 import { useChatMessageStore } from "@/shared/store/chat-message";
-import MessagePreview from "@/features/bot/components/message-preview";
+import MessagePreview from "@/features/bot/detail/components/message-preview";
 import { sendMessage } from "@/shared/services/requests/message";
-import { ApiButton, MessageListResponse, MessageStatus } from "@/shared/types/broadcast-message";
-import toast from "react-hot-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
+import {
+  ApiButton,
+  MessageListResponse,
+  MessageStatus,
+} from "@/shared/types/broadcast-message";
+import { toast } from "sonner";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
 import { Badge } from "@/shared/components/ui/badge";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { format } from "date-fns";
 import { uz } from "date-fns/locale";
+
+function getStatusIcon(status: string) {
+  switch (status) {
+    case "delivered":
+      return <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />;
+    case "pending":
+      return <Clock className="h-3.5 w-3.5 text-yellow-500 animate-pulse" />;
+    default:
+      return <XCircle className="h-3.5 w-3.5 text-red-500" />;
+  }
+}
 
 function Page() {
   const { id } = useParams<{ id: string }>();
@@ -41,7 +71,7 @@ function Page() {
 
   // Map API status to frontend status
   const mapStatus = (
-    status: MessageStatus
+    status: MessageStatus,
   ): "pending" | "delivered" | "failed" => {
     switch (status) {
       case "progress":
@@ -70,7 +100,11 @@ function Page() {
         } else if (msg.total > 0) {
           if (msg.done === msg.total) {
             status = "done";
-          } else if (msg.fail > 0 && msg.done === 0 && msg.done + msg.fail === msg.total) {
+          } else if (
+            msg.fail > 0 &&
+            msg.done === 0 &&
+            msg.done + msg.fail === msg.total
+          ) {
             status = "failed";
           } else if (msg.done > 0 || msg.fail > 0) {
             status = "progress";
@@ -94,17 +128,6 @@ function Page() {
       };
     });
   }, [historyData]);
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "delivered":
-        return <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />;
-      case "pending":
-        return <Clock className="h-3.5 w-3.5 text-yellow-500 animate-pulse" />;
-      default:
-        return <XCircle className="h-3.5 w-3.5 text-red-500" />;
-    }
-  };
 
   // Reset store on mount
   useEffect(() => {
@@ -152,7 +175,7 @@ function Page() {
           }
 
           return apiButton;
-        })
+        }),
       );
 
       // Prepare request data
@@ -175,7 +198,7 @@ function Page() {
         formData.append("message_type", message_type);
         formData.append(
           "button_type",
-          inlineButtons.length > 0 ? "inline" : "reply"
+          inlineButtons.length > 0 ? "inline" : "reply",
         );
         formData.append("buttons", JSON.stringify(apiButtons));
 
@@ -230,7 +253,9 @@ function Page() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Xabar yuborish</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              Xabar yuborish
+            </h1>
             <p className="text-sm text-muted-foreground mt-1">
               Barcha foydalanuvchilarga xabar yuborish
             </p>
@@ -271,13 +296,20 @@ function Page() {
           )}
 
           {/* Tabs for better organization */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="message" className="gap-2">
                 <FileText className="h-4 w-4" />
                 Xabar tuzish
                 {(text_content || files.length > 0) && (
-                  <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  <Badge
+                    variant="secondary"
+                    className="ml-1 h-5 px-1.5 text-xs"
+                  >
                     {files.length > 0 ? files.length : "✓"}
                   </Badge>
                 )}
@@ -286,7 +318,10 @@ function Page() {
                 <Grid3x3 className="h-4 w-4" />
                 Inline tugmalar
                 {buttonCount > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  <Badge
+                    variant="secondary"
+                    className="ml-1 h-5 px-1.5 text-xs"
+                  >
                     {buttonCount}
                   </Badge>
                 )}
@@ -302,7 +337,8 @@ function Page() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <SendMessage />
+                  {/* TODO: Add SendMessage component */}
+                  {/* <SendMessage /> */}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -455,7 +491,11 @@ function Page() {
                             <div className="flex items-center justify-between text-xs">
                               <div className="flex items-center gap-3">
                                 <span className="text-muted-foreground">
-                                  {message.message_type === "photo" ? "🖼️" : message.message_type === "video" ? "🎥" : "📝"}
+                                  {message.message_type === "photo"
+                                    ? "🖼️"
+                                    : message.message_type === "video"
+                                      ? "🎥"
+                                      : "📝"}
                                 </span>
                                 <Badge variant="outline" className="h-5 px-1.5">
                                   {message.done}/{message.count}
@@ -467,7 +507,9 @@ function Page() {
                                 )}
                               </div>
                               <span className="text-muted-foreground">
-                                {format(message.sentAt, "HH:mm", { locale: uz })}
+                                {format(message.sentAt, "HH:mm", {
+                                  locale: uz,
+                                })}
                               </span>
                             </div>
                           </div>

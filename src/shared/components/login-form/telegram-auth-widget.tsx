@@ -10,7 +10,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/shared/i18n/routing";
 
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -22,15 +22,15 @@ export default function TelegramAuth() {
   const t = useTranslations("auth.login");
   const { data: session, status } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
 
   // Codeni set qilish
   React.useEffect(() => {
-    const code = searchParams.get("code")
+    const code = searchParams.get("code");
     if (code) {
-      setCode(code)
+      setCode(code);
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   // Client-side'da mount bo'lganda
   React.useEffect(() => {
@@ -56,7 +56,7 @@ export default function TelegramAuth() {
     } else {
       toast.error(t("error"));
     }
-    
+
     setIsLoading(false);
   };
 
@@ -87,16 +87,24 @@ export default function TelegramAuth() {
 
   return (
     <>
-
       <div className="text-center">
         <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <b><a className="text-blue-500" href="https://t.me/botmother_authbot">@botmother_authbot</a></b>{' '}
+        <b>
+          <a className="text-blue-500" href="https://t.me/botmother_authbot">
+            @botmother_authbot
+          </a>
+        </b>{" "}
         telegram botiga kiring va kodeni oling.
       </div>
 
       {/* Kod kiritish maydoni */}
       <div className="flex justify-center">
-        <InputOTP value={code} onChange={setCode} maxLength={6} className="w-full">
+        <InputOTP
+          value={code}
+          onChange={setCode}
+          maxLength={6}
+          className="w-full"
+        >
           <InputOTPGroup>
             <InputOTPSlot index={0} className="h-14 w-12 text-2xl" />
             <InputOTPSlot index={1} className="h-14 w-12 text-2xl" />

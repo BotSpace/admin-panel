@@ -29,7 +29,7 @@ import {
   Tag,
 } from "lucide-react";
 import Link from "next/link";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -188,7 +188,9 @@ export default function SubmissionDetailPage() {
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium">Narx:</span>
-                <span className="text-sm">{submission.original_price} so'm</span>
+                <span className="text-sm">
+                  {submission.original_price} so'm
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />

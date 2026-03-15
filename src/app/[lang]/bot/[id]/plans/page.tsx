@@ -2,22 +2,33 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 
 import { ApiRetrieveResponse, APIListResponse } from "@/shared/types/http";
 import { Plan } from "@/shared/types/plan";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { instanceAuth } from "@/shared/services/instance";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { Balance } from "@/features/auth/types/get-me";
 
-import { PlansHeader } from "./components/plans-header";
-import { PlanCard } from "./components/plan-card";
-import { ConfirmationDialog } from "./components/confirmation-dialog";
-import { InsufficientBalanceDialog } from "./components/insufficient-balance-dialog";
-import { ConfettiAnimation } from "./components/confetti-animation";
-import { ProjectWithPlan, ProjectPlanResponse } from "./components/types";
-import { parsePlanPrice } from "./components/utils";
+import { PlansHeader } from "@/features/bot/plans/components/plans-header";
+import { PlanCard } from "@/features/bot/plans/components/plan-card";
+import { ConfirmationDialog } from "@/features/bot/plans/components/confirmation-dialog";
+import { InsufficientBalanceDialog } from "@/features/bot/plans/components/insufficient-balance-dialog";
+import {
+  ProjectWithPlan,
+  ProjectPlanResponse,
+} from "@/features/bot/plans/components/types";
+
+const ConfettiAnimation = dynamic(
+  () =>
+    import("@/features/bot/plans/components/confetti-animation").then((m) => ({
+      default: m.ConfettiAnimation,
+    })),
+  { ssr: false },
+);
+import { parsePlanPrice } from "@/features/bot/plans/components/utils";
 
 function BotPlanSettingsPage() {
   const { id } = useParams<{ id: string; lang: string }>();
@@ -189,10 +200,12 @@ function BotPlanSettingsPage() {
         />
       </div>
 
-      <ConfettiAnimation
-        isActive={isConfettie}
-        onComplete={() => setIsConfettie(false)}
-      />
+      {isConfettie && (
+        <ConfettiAnimation
+          isActive={isConfettie}
+          onComplete={() => setIsConfettie(false)}
+        />
+      )}
     </main>
   );
 }

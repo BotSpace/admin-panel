@@ -9,7 +9,7 @@ import { ThemeProvider } from "@/shared/components/layout/theme-provider";
 import LayoutController from "./layout-controller";
 import TopLoadingBar from "@/shared/components/layout/top-loading-bar";
 
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "sonner";
 import AuthProvider from "./AuthProvider";
 import ReactQueryProvider from "./ReactQueryProvider";
 import Analytics from "@/shared/components/common/analytics";

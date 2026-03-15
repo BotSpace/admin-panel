@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Search } from "lucide-react";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
@@ -18,7 +18,7 @@ export interface PaymentHistoryItem {
   created_at: string;
 }
 
-export function PaymentHistoryTable() {
+export const PaymentHistoryTable = memo(function PaymentHistoryTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -269,4 +269,4 @@ export function PaymentHistoryTable() {
       )}
     </div>
   );
-}
+});

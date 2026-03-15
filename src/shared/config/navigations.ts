@@ -97,8 +97,13 @@ export const HomePageNavigation: NavGroup[] = [
   },
 ];
 
+const botPageNavigationCache = new Map<string, NavGroup[]>();
+
 export const BotPageNavigation = (id: string): NavGroup[] => {
-  return [
+  const cached = botPageNavigationCache.get(id);
+  if (cached) return cached;
+
+  const nav: NavGroup[] = [
     {
       title: "Boshqaruv",
       items: [
@@ -149,4 +154,6 @@ export const BotPageNavigation = (id: string): NavGroup[] => {
       ],
     },
   ];
+  botPageNavigationCache.set(id, nav);
+  return nav;
 };

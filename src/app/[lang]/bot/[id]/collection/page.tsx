@@ -1,8 +1,11 @@
-import SharedCollection from '@/app/[lang]/shared-collection/page'
 import React from 'react'
 
 function Page() {
-    return <SharedCollection />
+    return (
+        <div>
+            <h1>Collection</h1>
+        </div>
+    )
 }
 
 export default Page

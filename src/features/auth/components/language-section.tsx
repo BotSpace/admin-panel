@@ -5,7 +5,7 @@ import { useTransition } from "react";
 import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/shared/i18n/routing";
 import { Globe } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 import {
   Card,

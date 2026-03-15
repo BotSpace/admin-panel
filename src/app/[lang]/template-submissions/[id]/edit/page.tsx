@@ -24,7 +24,7 @@ import {
 } from "@/shared/services/requests/template-submission";
 import { TemplateSubmissionUpdateRequest } from "@/features/templates/types/submission";
 import { Skeleton } from "@/shared/components/ui/skeleton";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Link from "next/link";
 
 export default function EditTemplateSubmissionPage() {
@@ -78,7 +78,7 @@ export default function EditTemplateSubmissionPage() {
           demo_url: submission.demo_url || "",
           categories: submission.categories?.map((cat) => cat.id) || [],
           features: submission.features?.map((feat) => feat.id) || [],
-        })
+        }),
       );
     }
   }, [submission]);
@@ -226,7 +226,10 @@ export default function EditTemplateSubmissionPage() {
                 id="short_description"
                 value={formData.short_description}
                 onChange={(e) =>
-                  setFormData({ ...formData, short_description: e.target.value })
+                  setFormData({
+                    ...formData,
+                    short_description: e.target.value,
+                  })
                 }
                 placeholder="Qisqa tavsif (1-2 jumla)"
                 required
@@ -358,7 +361,10 @@ export default function EditTemplateSubmissionPage() {
                 <Label>Kategoriyalar</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 rounded-md border p-4">
                   {categories.map((category) => (
-                    <div key={category.id} className="flex items-center space-x-2">
+                    <div
+                      key={category.id}
+                      className="flex items-center space-x-2"
+                    >
                       <Checkbox
                         id={`category-${category.id}`}
                         checked={formData.categories?.includes(category.id)}
@@ -387,7 +393,10 @@ export default function EditTemplateSubmissionPage() {
                 <Label>Xususiyatlar</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 rounded-md border p-4">
                   {features.map((feature) => (
-                    <div key={feature.id} className="flex items-center space-x-2">
+                    <div
+                      key={feature.id}
+                      className="flex items-center space-x-2"
+                    >
                       <Checkbox
                         id={`feature-${feature.id}`}
                         checked={formData.features?.includes(feature.id)}
@@ -413,7 +422,9 @@ export default function EditTemplateSubmissionPage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push(`/${lang}/template-submissions/${id}`)}
+                onClick={() =>
+                  router.push(`/${lang}/template-submissions/${id}`)
+                }
               >
                 Bekor qilish
               </Button>

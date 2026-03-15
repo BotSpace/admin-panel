@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Bell, Mail, Save } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 import { Button } from "@/shared/components/ui/button";
 import {

@@ -1,6 +1,6 @@
 "use client";
 
-import FilesMainPage from "@/features/files/main-page";
+import FilesMainPage from "@/features/bot/files/main-page";
 import { useParams } from "next/navigation";
 import React from "react";
 

@@ -22,20 +22,3 @@ export interface TemplateListType {
   categories: Category[];
   features: Feature[];
 }
-
-export interface TemplateDetailType {
-  id: number;
-  name: string;
-  image: string;
-  video: string;
-  short_description: string;
-  description: string;
-  price: number;
-  views: number;
-  likes: number;
-  original_price: string;
-  discount: string;
-  discount_type: string;
-  categories: Category[];
-  features: Feature[];
-}

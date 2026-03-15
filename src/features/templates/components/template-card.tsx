@@ -8,8 +8,13 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import { NewProjectFromTemplateDialog } from "./create-project-alert";
+import { memo } from "react";
 
-export const TemplateCard = (template: TemplateListType) => {
+export const TemplateCard = memo(function TemplateCard({
+  template,
+}: {
+  template: TemplateListType;
+}) {
   return (
     <Card className="group py-0 flex h-full flex-col overflow-hidden bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-lg">
       {/* Template Preview Area */}
@@ -36,4 +41,4 @@ export const TemplateCard = (template: TemplateListType) => {
       </CardFooter>
     </Card>
   );
-};
+});

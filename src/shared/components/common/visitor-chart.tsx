@@ -18,8 +18,6 @@ import {
 } from "@/shared/components/ui/chart";
 import { ChartItem } from "@/shared/types/project";
 
-export const description = "An interactive line chart";
-
 const chartConfig = {
   value: {
     label: "Desktop",

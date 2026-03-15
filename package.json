@@ -9,6 +9,12 @@
     "lint": "eslint .",
     "prepare": "husky"
   },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@lottiefiles/react-lottie-player": "^3.6.0",
@@ -36,7 +42,6 @@
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
-    "emoji-picker-react": "^4.16.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.561.0",
     "next": "^15.5.9",
@@ -45,7 +50,6 @@
     "next-themes": "^0.4.6",
     "nprogress": "^0.2.0",
     "radix-ui": "^1.4.3",
-    "react-hot-toast": "^2.6.0",
     "recharts": "^2.15.4",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
@@ -60,6 +64,8 @@
     "@types/react": "19.2.7",
     "eslint": "9.39.2",
     "eslint-config-next": "16.1.1",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "3.8.1"
   }
 }
