@@ -1,4 +1,4 @@
-import { VersionsSection } from "./versions-section";
+import { VersionsSection } from "@/features/bot/release/components/versions-section";
 
 function Page() {
   return (

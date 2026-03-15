@@ -76,7 +76,7 @@ export default function MessagePreview() {
   const imageFiles = files.filter((f) => f.type.startsWith("image/"));
   const videoFiles = files.filter((f) => f.type.startsWith("video/"));
   const otherFiles = files.filter((f) => !f.type.startsWith("image/") && !f.type.startsWith("video/"));
-  
+
   // Check if we have media (image or video)
   const hasMedia = imageFiles.length > 0 || videoFiles.length > 0;
 
@@ -104,15 +104,14 @@ export default function MessagePreview() {
           {imageFiles.length > 0 && (
             <div className="max-w-[85%] rounded-2xl rounded-tl-sm overflow-hidden border border-border bg-card">
               <div
-                className={`grid gap-1 ${
-                  imageFiles.length === 1
+                className={`grid gap-1 ${imageFiles.length === 1
                     ? "grid-cols-1"
                     : imageFiles.length === 2
-                    ? "grid-cols-2"
-                    : imageFiles.length === 3
-                    ? "grid-cols-2"
-                    : "grid-cols-2"
-                }`}
+                      ? "grid-cols-2"
+                      : imageFiles.length === 3
+                        ? "grid-cols-2"
+                        : "grid-cols-2"
+                  }`}
               >
                 {imageFiles.slice(0, 4).map((file, index) => {
                   const fileIndex = files.indexOf(file);
@@ -155,7 +154,7 @@ export default function MessagePreview() {
                   );
                 })}
               </div>
-              
+
               {/* Caption under image (Telegram style) */}
               {text_content.trim() && (
                 <div className="p-3 bg-card border-t border-border">
@@ -164,7 +163,7 @@ export default function MessagePreview() {
                   </p>
                 </div>
               )}
-              
+
               {/* Inline Buttons under image */}
               {inlineButtons.length > 0 && (
                 <div className="p-2 bg-card border-t border-border space-y-1">
@@ -221,7 +220,7 @@ export default function MessagePreview() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Caption under video (Telegram style) */}
                 {text_content.trim() && (
                   <div className="p-3 bg-card border-t border-border">
@@ -230,7 +229,7 @@ export default function MessagePreview() {
                     </p>
                   </div>
                 )}
-                
+
                 {/* Inline Buttons under video */}
                 {inlineButtons.length > 0 && (
                   <div className="p-2 bg-card border-t border-border space-y-1">

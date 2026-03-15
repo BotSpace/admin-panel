@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { instanceAuth } from "../instance";
 import { useDebounce } from "@/shared/hooks/use-debounce";
-import { handleApiError } from "@/shared/lib/error-handler";
 import { queryGenerator } from "@/shared/lib/query-generator";
 
 export const useReactQueryAction = <T>({
@@ -59,19 +58,17 @@ export const useReactQueryAction = <T>({
         });
         return responseData;
       } catch (error) {
-        const apiError = handleApiError(error);
-
         // Development'da error'ni console'ga chiqarish
         if (process.env.NODE_ENV === "development") {
           console.error("React Query Error:", {
             url: finalUrl,
-            error: apiError,
+            error: error,
             originalError: error,
           });
         }
 
         // Error'ni throw qilish React Query'ga error state'ni berish uchun
-        throw apiError;
+        throw error;
       }
     },
     // ✅ Debounce bo'lsa, URL tayyor bo'lganda ishga tushsin

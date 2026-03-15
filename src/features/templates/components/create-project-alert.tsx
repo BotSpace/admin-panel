@@ -29,7 +29,7 @@ import { useSearchParams } from "next/navigation";
 import SelectPlan from "@/shared/components/common/select-plan";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { botFormSchema } from "@/features/bot/botSchema";
+import { botFormSchema } from "@/features/bot/detail/botSchema";
 import z from "zod";
 import { useReactQueryAction } from "@/shared/services/react-query/use-react-query-action";
 import { APIDetailCreateResponse, APIListResponse } from "@/shared/types/http";

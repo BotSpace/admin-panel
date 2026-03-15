@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { FileGrid } from "@/features/files/components/file-grid";
-import { FileTable } from "@/features/files/components/file-table";
-import { UploadFileModal } from "@/features/files/components/upload-file-modal";
+import { FileGrid } from "@/features/bot/files/components/file-grid";
+import { FileTable } from "@/features/bot/files/components/file-table";
+import { UploadFileModal } from "@/features/bot/files/components/upload-file-modal";
 import { Button } from "@/shared/components/ui/button";
 import {
   Tabs,
@@ -12,7 +12,7 @@ import {
   TabsTrigger,
 } from "@/shared/components/ui/tabs";
 import { Plus, File, Image, Video, Music } from "lucide-react";
-import { FileListItem, FileType } from "@/features/files/types/file";
+import { FileListItem, FileType } from "@/features/bot/files/types/file";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
 import toast from "react-hot-toast";

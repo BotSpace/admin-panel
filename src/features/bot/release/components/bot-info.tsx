@@ -171,9 +171,8 @@ function PermissionItem({ title, value }: { title: string; value: boolean }) {
     <Card className="p-3 flex flex-row items-center justify-between border rounded-lg">
       <span className="text-sm font-medium">{title}</span>
       <span
-        className={`text-sm font-bold ${
-          value ? "text-green-600" : "text-red-600"
-        }`}
+        className={`text-sm font-bold ${value ? "text-green-600" : "text-red-600"
+          }`}
       >
         {value ? "✓" : "✗"}
       </span>

@@ -1,4 +1,4 @@
-import FilesMainPage from "@/features/files/main-page";
+import FilesMainPage from "@/features/bot/files/main-page";
 import React from "react";
 
 function FilesPage() {

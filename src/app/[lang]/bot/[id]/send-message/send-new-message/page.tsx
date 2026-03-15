@@ -11,10 +11,9 @@ import {
   CardTitle,
   CardDescription,
 } from "@/shared/components/ui/card";
-import SendMessage from "@/features/bot/components/send-message";
-import InlineButtons from "@/features/bot/components/inline-buttons";
+import InlineButtons from "@/features/bot/detail/components/inline-buttons";
 import { useChatMessageStore } from "@/shared/store/chat-message";
-import MessagePreview from "@/features/bot/components/message-preview";
+import MessagePreview from "@/features/bot/detail/components/message-preview";
 import { sendMessage } from "@/shared/services/requests/message";
 import { ApiButton, MessageListResponse, MessageStatus } from "@/shared/types/broadcast-message";
 import toast from "react-hot-toast";
@@ -302,7 +301,8 @@ function Page() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <SendMessage />
+                  {/* TODO: Add SendMessage component */}
+                  {/* <SendMessage /> */}
                 </CardContent>
               </Card>
             </TabsContent>

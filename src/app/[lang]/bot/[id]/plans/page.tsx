@@ -11,13 +11,13 @@ import { instanceAuth } from "@/shared/services/instance";
 import toast from "react-hot-toast";
 import { Balance } from "@/features/auth/types/get-me";
 
-import { PlansHeader } from "./components/plans-header";
-import { PlanCard } from "./components/plan-card";
-import { ConfirmationDialog } from "./components/confirmation-dialog";
-import { InsufficientBalanceDialog } from "./components/insufficient-balance-dialog";
-import { ConfettiAnimation } from "./components/confetti-animation";
-import { ProjectWithPlan, ProjectPlanResponse } from "./components/types";
-import { parsePlanPrice } from "./components/utils";
+import { PlansHeader } from "@/features/bot/plans/components/plans-header";
+import { PlanCard } from "@/features/bot/plans/components/plan-card";
+import { ConfirmationDialog } from "@/features/bot/plans/components/confirmation-dialog";
+import { InsufficientBalanceDialog } from "@/features/bot/plans/components/insufficient-balance-dialog";
+import { ConfettiAnimation } from "@/features/bot/plans/components/confetti-animation";
+import { ProjectWithPlan, ProjectPlanResponse } from "@/features/bot/plans/components/types";
+import { parsePlanPrice } from "@/features/bot/plans/components/utils";
 
 function BotPlanSettingsPage() {
   const { id } = useParams<{ id: string; lang: string }>();

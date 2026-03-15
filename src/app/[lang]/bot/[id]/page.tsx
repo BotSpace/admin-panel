@@ -51,12 +51,6 @@ export default function BotDashboard() {
 
         {/* Visitor Chart */}
         <ChartLineInteractive chart={data?.data.chart.new_users ?? []} />
-
-        {/* Documents Table */}
-        {/* TODO: Vaqtincha o'chirib qo'yildi kerak bo'lsa yoqiladi */}
-        {/* <Card className="bg-card p-6"> */}
-        {/*   <DocumentsTable /> */}
-        {/* </Card> */}
       </div>
     </main>
   );

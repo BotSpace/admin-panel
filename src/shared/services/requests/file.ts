@@ -3,7 +3,7 @@ import {
   FileListItem,
   CreateFileRequest,
   UpdateFileRequest,
-} from "@/features/files/types/file";
+} from "@/features/bot/files/types/file";
 import { APIListResponse, ApiRetrieveResponse } from "@/shared/types/http";
 import { AxiosResponse } from "axios";
 
@@ -21,34 +21,38 @@ export async function getFiles(params?: {
     queryParams.append("page_size", params.page_size.toString());
   if (params?.filetype) queryParams.append("filetype", params.filetype);
 
-  const url = queryParams.toString() ? `/file/?${queryParams.toString()}` : "/file/";
+  const url = queryParams.toString()
+    ? `/file/?${queryParams.toString()}`
+    : "/file/";
 
   return await instanceAuth.get<APIListResponse<FileListItem[]>>(url);
 }
 
 // Bitta faylni olish
 export async function getFile(
-  uuid: string
+  uuid: string,
 ): Promise<AxiosResponse<ApiRetrieveResponse<FileListItem>>> {
-  return await instanceAuth.get<ApiRetrieveResponse<FileListItem>>(`/file/${uuid}/`);
+  return await instanceAuth.get<ApiRetrieveResponse<FileListItem>>(
+    `/file/${uuid}/`,
+  );
 }
 
 // Fayl yuklash
 export async function uploadFile(
-  data: CreateFileRequest & { project: number }
+  data: CreateFileRequest & { project: number },
 ): Promise<AxiosResponse<ApiRetrieveResponse<FileListItem>>> {
   const formData = new FormData();
-  
+
   if (data.file instanceof File) {
     formData.append("file", data.file);
   } else {
     formData.append("file", data.file);
   }
-  
+
   if (data.filetype) {
     formData.append("filetype", data.filetype);
   }
-  
+
   formData.append("project", data.project.toString());
 
   return await instanceAuth.post<ApiRetrieveResponse<FileListItem>>(
@@ -58,14 +62,14 @@ export async function uploadFile(
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    }
+    },
   );
 }
 
 // Faylni yangilash
 export async function updateFile(
   uuid: string,
-  data: UpdateFileRequest
+  data: UpdateFileRequest,
 ): Promise<AxiosResponse<ApiRetrieveResponse<FileListItem>>> {
   const formData = new FormData();
 
@@ -86,14 +90,11 @@ export async function updateFile(
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    }
+    },
   );
 }
 
 // Faylni o'chirish
-export async function deleteFile(
-  uuid: string
-): Promise<AxiosResponse<void>> {
+export async function deleteFile(uuid: string): Promise<AxiosResponse<void>> {
   return await instanceAuth.delete<void>(`/file/${uuid}/`);
 }
-

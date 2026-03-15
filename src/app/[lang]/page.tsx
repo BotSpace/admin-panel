@@ -6,7 +6,7 @@ import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIDetailCreateResponse, APIListResponse } from "@/shared/types/http";
 import { BotType } from "@/shared/types/bot";
 import { Skeleton } from "@/shared/components/ui/skeleton";
-import { BotCard } from "@/features/bot/components/bot-card";
+import { BotCard } from "@/features/home/components/bot-card";
 import PageHeader from "@/shared/components/common/page-header";
 
 // Empty state component
