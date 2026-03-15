@@ -1,9 +1,23 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { buttonVariants } from "@/shared/components/ui/button";
 import { MetricCard } from "@/shared/components/common/metric-card";
-import { ChartLineInteractive } from "@/shared/components/common/visitor-chart";
 import { ArrowRight } from "lucide-react";
+
+const ChartLineInteractive = dynamic(
+  () =>
+    import("@/shared/components/common/visitor-chart").then((m) => ({
+      default: m.ChartLineInteractive,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[250px] animate-pulse rounded-lg bg-muted" />
+    ),
+  },
+);
+
 import { Link } from "@/shared/i18n/routing";
 import { useParams } from "next/navigation";
 import { ApiRetrieveResponse } from "@/shared/types/http";

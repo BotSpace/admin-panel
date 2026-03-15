@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 
 import { ApiRetrieveResponse, APIListResponse } from "@/shared/types/http";
@@ -15,8 +16,18 @@ import { PlansHeader } from "@/features/bot/plans/components/plans-header";
 import { PlanCard } from "@/features/bot/plans/components/plan-card";
 import { ConfirmationDialog } from "@/features/bot/plans/components/confirmation-dialog";
 import { InsufficientBalanceDialog } from "@/features/bot/plans/components/insufficient-balance-dialog";
-import { ConfettiAnimation } from "@/features/bot/plans/components/confetti-animation";
-import { ProjectWithPlan, ProjectPlanResponse } from "@/features/bot/plans/components/types";
+import {
+  ProjectWithPlan,
+  ProjectPlanResponse,
+} from "@/features/bot/plans/components/types";
+
+const ConfettiAnimation = dynamic(
+  () =>
+    import("@/features/bot/plans/components/confetti-animation").then((m) => ({
+      default: m.ConfettiAnimation,
+    })),
+  { ssr: false },
+);
 import { parsePlanPrice } from "@/features/bot/plans/components/utils";
 
 function BotPlanSettingsPage() {
@@ -189,10 +200,12 @@ function BotPlanSettingsPage() {
         />
       </div>
 
-      <ConfettiAnimation
-        isActive={isConfettie}
-        onComplete={() => setIsConfettie(false)}
-      />
+      {isConfettie && (
+        <ConfettiAnimation
+          isActive={isConfettie}
+          onComplete={() => setIsConfettie(false)}
+        />
+      )}
     </main>
   );
 }

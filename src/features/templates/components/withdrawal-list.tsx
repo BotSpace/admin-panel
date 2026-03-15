@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import { TemplateWithdrawalRequest } from "@/features/templates/types/withdrawal";
 import {
   Table,
@@ -52,7 +52,10 @@ const statusConfig = {
   },
 };
 
-export function WithdrawalList({ withdrawals, onDelete }: WithdrawalListProps) {
+export const WithdrawalList = memo(function WithdrawalList({
+  withdrawals,
+  onDelete,
+}: WithdrawalListProps) {
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const handleDelete = async (id: number) => {
@@ -65,9 +68,10 @@ export function WithdrawalList({ withdrawals, onDelete }: WithdrawalListProps) {
       onDelete();
     } catch (error: any) {
       console.error("Delete error:", error);
-      const errorMessage = error?.response?.data?.detail || 
-                          error?.response?.data?.message ||
-                          "So'rovni o'chirishda xatolik yuz berdi";
+      const errorMessage =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
+        "So'rovni o'chirishda xatolik yuz berdi";
       toast.error("Xatolik", {
         description: errorMessage,
       });
@@ -82,7 +86,8 @@ export function WithdrawalList({ withdrawals, onDelete }: WithdrawalListProps) {
         <Clock className="h-12 w-12 text-muted-foreground/50 mb-4" />
         <h3 className="text-lg font-semibold mb-2">So'rovlar yo'q</h3>
         <p className="text-sm text-muted-foreground max-w-md">
-          Hozircha pul yechish so'rovlari yo'q. Yuqoridagi tugma orqali yangi so'rov yaratishingiz mumkin.
+          Hozircha pul yechish so'rovlari yo'q. Yuqoridagi tugma orqali yangi
+          so'rov yaratishingiz mumkin.
         </p>
       </div>
     );
@@ -105,7 +110,7 @@ export function WithdrawalList({ withdrawals, onDelete }: WithdrawalListProps) {
           {withdrawals.map((withdrawal) => {
             const config = statusConfig[withdrawal.status];
             const StatusIcon = config.icon;
-            
+
             return (
               <TableRow key={withdrawal.id}>
                 <TableCell className="font-medium">
@@ -125,11 +130,12 @@ export function WithdrawalList({ withdrawals, onDelete }: WithdrawalListProps) {
                     <StatusIcon className="h-3 w-3" />
                     {config.label}
                   </Badge>
-                  {withdrawal.status === "rejected" && withdrawal.rejection_reason && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {withdrawal.rejection_reason}
-                    </p>
-                  )}
+                  {withdrawal.status === "rejected" &&
+                    withdrawal.rejection_reason && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {withdrawal.rejection_reason}
+                      </p>
+                    )}
                 </TableCell>
                 <TableCell className="text-right">
                   {withdrawal.status === "pending" && (
@@ -149,7 +155,8 @@ export function WithdrawalList({ withdrawals, onDelete }: WithdrawalListProps) {
                             So'rovni o'chirish
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            Bu so'rovni o'chirishni xohlaysizmi? Bu amalni qaytarib bo'lmaydi.
+                            Bu so'rovni o'chirishni xohlaysizmi? Bu amalni
+                            qaytarib bo'lmaydi.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -172,4 +179,4 @@ export function WithdrawalList({ withdrawals, onDelete }: WithdrawalListProps) {
       </Table>
     </div>
   );
-}
+});

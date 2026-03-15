@@ -11,7 +11,7 @@ import PageHeader from "@/shared/components/common/page-header";
 
 // Empty state component
 
-import { Button } from "@/shared/components/ui/button"
+import { Button } from "@/shared/components/ui/button";
 import {
   Empty,
   EmptyContent,
@@ -19,8 +19,8 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/shared/components/ui/empty"
-import { ArrowUpRightIcon } from "lucide-react"
+} from "@/shared/components/ui/empty";
+import { ArrowUpRightIcon } from "lucide-react";
 import { instanceAuth } from "@/shared/services/instance";
 import { Project } from "@/shared/types/project";
 import { useRouter } from "@/shared/i18n/routing";
@@ -29,9 +29,7 @@ import toast from "react-hot-toast";
 function CreateNewProjectButton() {
   const route = useRouter();
 
-
   function handleCreateNewProject() {
-
     const toastId = toast.loading("Yaratilmoqda...");
 
     instanceAuth
@@ -50,7 +48,7 @@ function CreateNewProjectButton() {
         toast.error(data.plan_id, {
           id: toastId,
         });
-      })
+      });
   }
 
   return (
@@ -58,7 +56,7 @@ function CreateNewProjectButton() {
       <Plus className="h-4 w-4" />
       Yangi Bot Yaratish
     </Button>
-  )
+  );
 }
 
 function EmptyProjects() {
@@ -70,7 +68,8 @@ function EmptyProjects() {
         </EmptyMedia>
         <EmptyTitle>Hali loyihalar yo'q</EmptyTitle>
         <EmptyDescription>
-          Siz hali hech qanday loyiha yaratmadingiz. Birinchi loyihangizni yaratishdan boshlang.
+          Siz hali hech qanday loyiha yaratmadingiz. Birinchi loyihangizni
+          yaratishdan boshlang.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
@@ -87,9 +86,8 @@ function EmptyProjects() {
         </a>
       </Button>
     </Empty>
-  )
+  );
 }
-
 
 export default function Page() {
   const { data, isLoading, refetch } = useReactQueryAction<
@@ -98,18 +96,13 @@ export default function Page() {
     url: "project/",
   });
 
-
-
   return (
     <div className="space-y-6">
       <PageHeader
         title="Boshqaruv paneli"
         description="Barcha botlaringizni boshqaring va kuzatib boring"
-        button={
-          <CreateNewProjectButton />
-        }
+        button={<CreateNewProjectButton />}
       />
-
 
       {/* Loading projects */}
       {isLoading && (
@@ -121,10 +114,7 @@ export default function Page() {
       )}
 
       {/* Empty projects */}
-      {
-        data && !data.data.results.length && <EmptyProjects />
-      }
-
+      {data && !data.data.results.length && <EmptyProjects />}
 
       {/* Projects list */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
