@@ -24,7 +24,6 @@ function Page() {
 
   return (
     <main className="space-y-6">
-
       <PageHeader
         title="shablonlar"
         description="Barcha shablonlaringizni boshqaring"
@@ -75,7 +74,7 @@ function Page() {
                       animation: `slideInUp 0.5s ease-out forwards`,
                     }}
                   >
-                    <TemplateCard {...template} />
+                    <TemplateCard key={id} template={template} />
                   </div>
                 );
               })}
