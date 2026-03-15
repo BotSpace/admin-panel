@@ -59,12 +59,12 @@ Og'ir komponentlar statik import qilingan. `next/dynamic` ishlatish tavsiya etil
 | `emoji-picker-react` (package.json:44) | Hech qayerda ishlatilmaydi — xavfsiz o'chirish mumkin |
 | `radix-ui` (package.json:53) | Faqat `label.tsx`da — `@radix-ui/react-label`ga o'tkazish mumkin |
 
-### 2.2 Takroriy Toast kutubxonalari
+### 2.2 Takroriy Toast kutubxonalari ✅ (Bajarildi)
 
-- **react-hot-toast** — layout.tsx, ko'p feature komponentlarda
-- **sonner** — create-withdrawal-dialog.tsx, withdrawal-list.tsx
+~~**react-hot-toast** — layout.tsx, ko'p feature komponentlarda~~
+~~**sonner** — create-withdrawal-dialog.tsx, withdrawal-list.tsx~~
 
-**Tavsiya:** Bitta kutubxonaga standartlashtirish (masalan, `sonner`) va ikkinchisini o'chirish.
+**Bajarildi:** Barcha toast xabarlari **sonner** ga standartlashtirildi, `react-hot-toast` o'chirildi.
 
 ### 2.3 Recharts import strategiyasi
 
@@ -84,14 +84,14 @@ Har bir komponentda alohida import — tree-shaking uchun yaxshi. O'zgartirish s
 
 ## 3. Kod Sifati Yaxshilanishlari
 
-### 3.1 Takroriy kod — Monitoring sahifalari
+### 3.1 Takroriy kod — Monitoring sahifalari ✅ (Bajarildi)
 
-`src/app/[lang]/monitoring/page.tsx` va `src/app/[lang]/bot/[id]/monitoring/page.tsx` bir xil funksiyalarni o'z ichiga oladi:
+~~`src/app/[lang]/monitoring/page.tsx` va `src/app/[lang]/bot/[id]/monitoring/page.tsx` bir xil funksiyalarni o'z ichiga oladi~~
 
-- `formatDateForDisplay`, `formatTimeForDisplay`, `transformMonitoringData` (16–116 qatorlar)
-- O'xshash loading/error skeletonlar
-
-**Tavsiya:** Umumiy logikani `src/features/monitoring/utils/transform-monitoring-data.ts` va umumiy `MonitoringSkeleton` komponentiga ajratish.
+**Bajarildi:**
+- `src/features/monitoring/utils/transform-monitoring-data.ts` — `formatDateForDisplay`, `formatTimeForDisplay`, `transformMonitoringData`
+- `src/features/monitoring/components/monitoring-skeleton.tsx` — umumiy loading skeleton
+- `src/features/monitoring/components/monitoring-error.tsx` — umumiy error holati
 
 ### 3.2 Bug — Noto'g'ri Hook ishlatilishi
 

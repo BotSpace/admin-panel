@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Palette, Layout, Save, Moon, Sun, Monitor } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 import { Button } from "@/shared/components/ui/button";
 import {

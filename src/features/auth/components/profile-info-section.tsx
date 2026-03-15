@@ -4,16 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useEffect, useState, useRef } from "react";
-import toast from "react-hot-toast";
-import {
-  Save,
-  User,
-  Mail,
-  Phone,
-  Calendar,
-  Hash,
-  Upload,
-} from "lucide-react";
+import { toast } from "sonner";
+import { Save, User, Mail, Phone, Calendar, Hash, Upload } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import {

@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -20,9 +20,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { MoreHorizontal, Settings, Wrench, Trash2 } from "lucide-react";
+import { MoreHorizontal, Settings, Wrench } from "lucide-react";
 import DeleteModal from "@/shared/components/common/delete-modal";
-import { instanceAuth } from "@/shared/services/instance";
 import { BotType } from "@/shared/types/bot";
 
 const BotCard = memo(function BotCard({
@@ -32,14 +31,6 @@ const BotCard = memo(function BotCard({
   bot: BotType;
   refetch: () => void;
 }) {
-  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
-
-  async function deleteBot(params: { id: number }) {
-    instanceAuth.delete(`project/${params.id}/`).then(() => {
-      refetch();
-    });
-  }
-
   const isRunning = bot.release?.status === "running";
   const statusColor = isRunning ? "bg-green-500" : "bg-gray-400";
   const statusText = isRunning ? "Ishlamoqda" : "To'xtagan";
@@ -89,13 +80,6 @@ const BotCard = memo(function BotCard({
           Boshqarish
         </Link>
 
-        <DeleteModal
-          itemName={bot.name}
-          onConfirm={() => deleteBot({ id: bot.id })}
-          open={deleteModalIsOpen}
-          onOpenChange={setDeleteModalIsOpen}
-        />
-
         <div className="flex flex-wrap gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -119,13 +103,12 @@ const BotCard = memo(function BotCard({
                   Sozlamalar
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setDeleteModalIsOpen(true)}
-                className="text-destructive focus:text-destructive cursor-pointer"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
+
+              <DeleteModal
+                bot_id={bot.id}
+                bot_name={bot.name}
+                refetch={refetch}
+              />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

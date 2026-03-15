@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Trash2, Download, AlertTriangle } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { signOut } from "next-auth/react";
 
 import { Button } from "@/shared/components/ui/button";

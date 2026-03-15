@@ -21,7 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/shared/components/ui/form"; // Form komponentlari qo'shildi
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { Plus } from "lucide-react";
 import { instanceAuth } from "@/shared/services/instance";
 import { useRouter } from "@/shared/i18n/routing";
@@ -46,7 +46,7 @@ export function NewProjectFromTemplateDialog({ id }: NewProjectDialogProps) {
 
   // Bosqichlar: 'project' (nom va token) -> 'payment' (tarif)
   const [currentStep, setCurrentStep] = useState<"project" | "payment">(
-    "project"
+    "project",
   );
   const [open, setOpen] = useState(false);
 
@@ -115,9 +115,11 @@ export function NewProjectFromTemplateDialog({ id }: NewProjectDialogProps) {
     };
 
     instanceAuth
-      .post<APIDetailCreateResponse<Project>>("/project/create-from-template/", payload)
+      .post<APIDetailCreateResponse<Project>>(
+        "/project/create-from-template/",
+        payload,
+      )
       .then(({ data }) => {
-
         // TODO Buni yaxshilash kerak
         instanceAuth.post("/enviroment/", {
           key: "RELEASE_BOT_TOKEN",

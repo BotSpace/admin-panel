@@ -22,7 +22,7 @@ import {
 } from "@/shared/components/ui/select";
 import { TicketPriority } from "../types/ticket";
 import { Loader2, Upload } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 interface CreateTicketModalProps {
   isOpen: boolean;
@@ -109,7 +109,10 @@ export function CreateTicketModal({
 
           <div className="space-y-2">
             <Label htmlFor="priority">Prioritet</Label>
-            <Select value={priority} onValueChange={(value) => setPriority(value as TicketPriority)}>
+            <Select
+              value={priority}
+              onValueChange={(value) => setPriority(value as TicketPriority)}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -203,4 +206,3 @@ export function CreateTicketModal({
     </Dialog>
   );
 }
-

@@ -14,7 +14,7 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { FileType } from "../types/file";
 import { Loader2, Upload, X, File as FileIcon } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { cn } from "@/shared/lib/utils";
 import { BotType } from "@/shared/types/bot";
 import {
@@ -46,7 +46,7 @@ export function UploadFileModal({
 }: UploadFileModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [detectedFileType, setDetectedFileType] = useState<FileType | null>(
-    null
+    null,
   );
   const [projectId, setProjectId] = useState<number>(0);
 
@@ -113,7 +113,7 @@ export function UploadFileModal({
         setFile(selectedFile);
       }
     },
-    [detectFileType]
+    [detectFileType],
   );
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,7 +151,7 @@ export function UploadFileModal({
         handleFileSelect(droppedFile);
       }
     },
-    [handleFileSelect]
+    [handleFileSelect],
   );
 
   const resetForm = useCallback(() => {
@@ -228,7 +228,7 @@ export function UploadFileModal({
                 isDragging
                   ? "border-primary bg-primary/5"
                   : "border-border hover:border-primary/50",
-                file && "border-primary/50"
+                file && "border-primary/50",
               )}
             >
               <Input
@@ -286,13 +286,13 @@ export function UploadFileModal({
                   <div
                     className={cn(
                       "w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-colors",
-                      isDragging ? "bg-primary/20" : "bg-muted"
+                      isDragging ? "bg-primary/20" : "bg-muted",
                     )}
                   >
                     <Upload
                       className={cn(
                         "h-6 w-6 transition-colors",
-                        isDragging ? "text-primary" : "text-muted-foreground"
+                        isDragging ? "text-primary" : "text-muted-foreground",
                       )}
                     />
                   </div>

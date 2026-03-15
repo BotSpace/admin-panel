@@ -32,7 +32,7 @@ import { TemplateSubmissionRequest } from "@/features/templates/types/submission
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
 import { BotType } from "@/shared/types/bot";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Link from "next/link";
 
 export default function NewTemplateSubmissionPage() {
@@ -40,7 +40,9 @@ export default function NewTemplateSubmissionPage() {
   const params = useParams();
   const lang = params?.lang as string;
 
-  const [formData, setFormData] = useState<Omit<TemplateSubmissionRequest, 'project'> & { project: number | null }>({
+  const [formData, setFormData] = useState<
+    Omit<TemplateSubmissionRequest, "project"> & { project: number | null }
+  >({
     project: null,
     name: "",
     short_description: "",
@@ -137,7 +139,8 @@ export default function NewTemplateSubmissionPage() {
             Shablon sifatida yuborish
           </h1>
           <p className="text-muted-foreground">
-            Loyihangizni shablon sifatida yuborish uchun ma'lumotlarni to'ldiring
+            Loyihangizni shablon sifatida yuborish uchun ma'lumotlarni
+            to'ldiring
           </p>
         </div>
       </div>
@@ -186,7 +189,10 @@ export default function NewTemplateSubmissionPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {projects.map((project) => (
-                      <SelectItem key={project.id} value={project.id.toString()}>
+                      <SelectItem
+                        key={project.id}
+                        value={project.id.toString()}
+                      >
                         {project.name}
                       </SelectItem>
                     ))}
@@ -220,7 +226,10 @@ export default function NewTemplateSubmissionPage() {
                 id="short_description"
                 value={formData.short_description}
                 onChange={(e) =>
-                  setFormData({ ...formData, short_description: e.target.value })
+                  setFormData({
+                    ...formData,
+                    short_description: e.target.value,
+                  })
                 }
                 placeholder="Qisqa tavsif (1-2 jumla)"
                 required
@@ -327,7 +336,10 @@ export default function NewTemplateSubmissionPage() {
                 <Label>Kategoriyalar</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 rounded-md border p-4">
                   {categories.map((category) => (
-                    <div key={category.id} className="flex items-center space-x-2">
+                    <div
+                      key={category.id}
+                      className="flex items-center space-x-2"
+                    >
                       <Checkbox
                         id={`category-${category.id}`}
                         checked={formData.categories?.includes(category.id)}
@@ -356,7 +368,10 @@ export default function NewTemplateSubmissionPage() {
                 <Label>Xususiyatlar</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 rounded-md border p-4">
                   {features.map((feature) => (
-                    <div key={feature.id} className="flex items-center space-x-2">
+                    <div
+                      key={feature.id}
+                      className="flex items-center space-x-2"
+                    >
                       <Checkbox
                         id={`feature-${feature.id}`}
                         checked={formData.features?.includes(feature.id)}
@@ -386,7 +401,14 @@ export default function NewTemplateSubmissionPage() {
               >
                 Bekor qilish
               </Button>
-              <Button type="submit" disabled={mutation.isPending || projects.length === 0 || !formData.project}>
+              <Button
+                type="submit"
+                disabled={
+                  mutation.isPending ||
+                  projects.length === 0 ||
+                  !formData.project
+                }
+              >
                 {mutation.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -15,7 +15,7 @@ import { Plus, File, Image, Video, Music } from "lucide-react";
 import { FileListItem, FileType } from "@/features/bot/files/types/file";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { instanceAuth } from "@/shared/services/instance";
 import { BotType } from "@/shared/types/bot";
 import PageHeader from "@/shared/components/common/page-header";

@@ -9,7 +9,7 @@ import { ApiRetrieveResponse, APIListResponse } from "@/shared/types/http";
 import { Plan } from "@/shared/types/plan";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { instanceAuth } from "@/shared/services/instance";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { Balance } from "@/features/auth/types/get-me";
 
 import { PlansHeader } from "@/features/bot/plans/components/plans-header";

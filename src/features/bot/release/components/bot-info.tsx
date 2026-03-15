@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { instance, instanceAuth } from "@/shared/services/instance";
 import { Button } from "@/shared/components/ui/button";
 import { useParams } from "next/navigation";
@@ -47,10 +47,10 @@ export default function BotInfo({ className }: BotInfoProps) {
 
   const handleSaveToken = async () => {
     setIsEditing(false);
-    const toastId = toast.success("Loading...");
+    const toastId = toast.loading("Loading...");
 
     const { data: newBot } = await instance.get(
-      `https://api.telegram.org/bot${token}/getMe`
+      `https://api.telegram.org/bot${token}/getMe`,
     );
 
     if (!newBot.ok) {
@@ -171,8 +171,9 @@ function PermissionItem({ title, value }: { title: string; value: boolean }) {
     <Card className="p-3 flex flex-row items-center justify-between border rounded-lg">
       <span className="text-sm font-medium">{title}</span>
       <span
-        className={`text-sm font-bold ${value ? "text-green-600" : "text-red-600"
-          }`}
+        className={`text-sm font-bold ${
+          value ? "text-green-600" : "text-red-600"
+        }`}
       >
         {value ? "✓" : "✗"}
       </span>

@@ -28,13 +28,13 @@ import {
 } from "@/shared/services/requests/message";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Button } from "@/shared/components/ui/button";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { uploadFile } from "@/shared/services/requests/file";
 
 function Page() {
   const { id } = useParams<{ id: string }>();
   const [selectedUser, setSelectedUser] = useState<UserMessageListItem | null>(
-    null
+    null,
   );
   const [messageText, setMessageText] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -113,7 +113,7 @@ function Page() {
 
     if (file.size > maxSize) {
       toast.error(
-        `Fayl hajmi juda katta. Maksimal hajm: ${maxSize / 1024 / 1024}MB`
+        `Fayl hajmi juda katta. Maksimal hajm: ${maxSize / 1024 / 1024}MB`,
       );
       return;
     }
@@ -141,7 +141,7 @@ function Page() {
   };
 
   const getFileType = (
-    file: File
+    file: File,
   ): "photo" | "video" | "audio" | "document" => {
     if (file.type.startsWith("image/")) return "photo";
     if (file.type.startsWith("video/")) return "video";
@@ -150,7 +150,7 @@ function Page() {
   };
 
   const getFileTypeForUpload = (
-    file: File
+    file: File,
   ): "photo" | "video" | "audio" | "file" => {
     if (file.type.startsWith("image/")) return "photo";
     if (file.type.startsWith("video/")) return "video";
@@ -290,7 +290,7 @@ function Page() {
                       key={item.user._id}
                       className={cn(
                         "hover:bg-muted/50 cursor-pointer transition-colors",
-                        isSelected && "bg-muted"
+                        isSelected && "bg-muted",
                       )}
                       onClick={() => setSelectedUser(item)}
                     >
@@ -314,7 +314,7 @@ function Page() {
                               <div className="text-xs text-muted-foreground">
                                 {format(
                                   new Date(item.user.created_at),
-                                  "dd.MM.yyyy"
+                                  "dd.MM.yyyy",
                                 )}
                               </div>
                             </>

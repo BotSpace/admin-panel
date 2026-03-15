@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/shared/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { instanceAuth } from "@/shared/services/instance";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 // Format number with thousand separators for UZS
 function formatUZSAmount(amount: number): string {
@@ -138,7 +138,7 @@ export function PaymentMethodsSection({
           <Input
             className={cn(
               "pr-16",
-              error && "border-destructive focus-visible:ring-destructive"
+              error && "border-destructive focus-visible:ring-destructive",
             )}
             value={formatUZSAmount(amount)}
             onChange={(e) => {

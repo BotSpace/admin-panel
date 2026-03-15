@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { Save, Lock, Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
@@ -60,7 +60,7 @@ export function PasswordSection() {
       } else {
         toast.error(
           response.data.message || "Parol yangilashda xatolik yuz berdi",
-          { id: toastId }
+          { id: toastId },
         );
       }
     } catch (error: any) {
