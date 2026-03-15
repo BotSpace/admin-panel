@@ -1,7 +1,7 @@
 "use client";
 
 import { Player } from "@lottiefiles/react-lottie-player";
-import Confettie from "../../../../../../../public/Confetti.json";
+import Confettie from "../../../../../public/Confetti.json";
 
 type ConfettiAnimationProps = {
   isActive: boolean;

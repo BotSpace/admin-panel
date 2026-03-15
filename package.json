@@ -9,6 +9,11 @@
     "lint": "eslint .",
     "prepare": "husky"
   },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "npm run build"
+    ]
+  },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@lottiefiles/react-lottie-player": "^3.6.0",
@@ -60,6 +65,7 @@
     "@types/react": "19.2.7",
     "eslint": "9.39.2",
     "eslint-config-next": "16.1.1",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0"
   }
 }
