@@ -1,20 +1,48 @@
-// BotInfo component rewritten with shadcn/ui components
-
 "use client";
 
 import { useState } from "react";
-import { Copy, Check } from "lucide-react";
+import {
+  Copy,
+  Check,
+  Pencil,
+  Shield,
+  Bot,
+  Key,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 import { instance, instanceAuth } from "@/shared/services/instance";
 import { Button } from "@/shared/components/ui/button";
 import { useParams } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card";
+import { Card, CardContent } from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
+import { Badge } from "@/shared/components/ui/badge";
+import { cn } from "@/shared/lib/utils";
+
+interface BotData {
+  id: number;
+  is_bot: boolean;
+  first_name: string;
+  username: string;
+  can_join_groups: boolean;
+  can_read_all_group_messages: boolean;
+  supports_inline_queries: boolean;
+  can_connect_to_business: boolean;
+  has_main_web_app: boolean;
+}
+
+const defaultBotData: BotData = {
+  id: 0,
+  is_bot: true,
+  first_name: "Bot nomi",
+  username: "bot_username",
+  can_join_groups: false,
+  can_read_all_group_messages: false,
+  supports_inline_queries: false,
+  can_connect_to_business: false,
+  has_main_web_app: false,
+};
 
 interface BotInfoProps {
   className?: string;
@@ -23,18 +51,7 @@ interface BotInfoProps {
 export default function BotInfo({ className }: BotInfoProps) {
   const { id }: { id: string } = useParams();
 
-  const [botData, setBotData] = useState({
-    id: 7979771827,
-    is_bot: true,
-    first_name: "sizning_bot",
-    username: "bu_sizning_bot",
-    can_join_groups: true,
-    can_read_all_group_messages: false,
-    supports_inline_queries: false,
-    can_connect_to_business: false,
-    has_main_web_app: false,
-  });
-
+  const [botData, setBotData] = useState<BotData>(defaultBotData);
   const [token, setToken] = useState("");
   const [tokenCopied, setTokenCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -43,140 +60,186 @@ export default function BotInfo({ className }: BotInfoProps) {
     navigator.clipboard.writeText(token);
     setTokenCopied(true);
     setTimeout(() => setTokenCopied(false), 2000);
+    toast.success("Token nusxalandi");
   };
 
   const handleSaveToken = async () => {
-    setIsEditing(false);
-    const toastId = toast.loading("Loading...");
+    if (!token.trim()) return;
+    const toastId = toast.loading("Tekshirilmoqda...");
 
-    const { data: newBot } = await instance.get(
-      `https://api.telegram.org/bot${token}/getMe`,
-    );
+    try {
+      const { data: newBot } = await instance.get(
+        `https://api.telegram.org/bot${token}/getMe`,
+      );
 
-    if (!newBot.ok) {
-      toast.error("Bot tokeni xato", { id: toastId });
-      return;
+      if (!newBot.ok) {
+        toast.error("Bot tokeni noto'g'ri", { id: toastId });
+        return;
+      }
+
+      await instanceAuth.patch(`/enviroment/RELEASE_BOT_TOKEN/?project=${id}`, {
+        value: token,
+      });
+
+      setBotData(newBot.result);
+      setIsEditing(false);
+      toast.success("Bot tokeni yangilandi", { id: toastId });
+    } catch {
+      toast.error("Xatolik yuz berdi", { id: toastId });
     }
-
-    instanceAuth
-      .patch(`/enviroment/RELEASE_BOT_TOKEN/?project=${id}`, { value: token })
-      .then(() => {
-        setBotData(newBot.result);
-        toast.success("Bot tokeni yangilandi", { id: toastId });
-      })
-      .catch(() => toast.error("Xatolik yuz berdi", { id: toastId }));
   };
 
-  return (
-    <Card className={`shadow ${className}`}>
-      <CardHeader>
-        <div className="flex items-center gap-4 border-b pb-4">
-          <div className="w-20 h-20 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center text-3xl shadow-lg">
-            🤖
-          </div>
-          <div className="flex-1">
-            <CardTitle className="text-xl font-bold">
-              {botData.first_name}
-            </CardTitle>
-            <p className="text-indigo-600 dark:text-indigo-400 font-medium">
-              @{botData.username}
-            </p>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-              ID: {botData.id}
-            </p>
-          </div>
-        </div>
-      </CardHeader>
+  const permissions = [
+    { label: "Guruhga qo'shilish", key: "can_join_groups" },
+    { label: "Barcha xabarlarni o'qish", key: "can_read_all_group_messages" },
+    { label: "Inline so'rovlar", key: "supports_inline_queries" },
+    { label: "Biznes ulanish", key: "can_connect_to_business" },
+    { label: "Web ilovasi", key: "has_main_web_app" },
+    { label: "Bot ekanlik", key: "is_bot" },
+  ] as const;
 
-      <CardContent className="space-y-6 mt-4">
-        {/* Token */}
-        <div className="space-y-3">
-          <label className="block text-sm font-semibold">Bot Token</label>
+  return (
+    <Card className={cn("overflow-hidden", className)}>
+      {/* Bot profile header */}
+      <div className="flex items-center gap-4 p-6 border-b bg-muted/20">
+        <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center shrink-0 shadow-sm">
+          <Bot className="h-7 w-7 text-primary-foreground" />
+        </div>
+        <div className="min-w-0">
+          <h3 className="font-bold text-lg leading-tight truncate">
+            {botData.first_name}
+          </h3>
+          <p className="text-sm text-primary">@{botData.username}</p>
+          {botData.id !== 0 && (
+            <p className="text-xs text-muted-foreground mt-0.5">
+              ID: {botData.id.toLocaleString()}
+            </p>
+          )}
+        </div>
+        <Badge
+          variant="outline"
+          className="ml-auto shrink-0 bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5" />
+          Faol
+        </Badge>
+      </div>
+
+      <CardContent className="p-6 space-y-6">
+        {/* Token section */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 mb-3">
+            <Key className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-semibold">Bot Token</span>
+          </div>
+
           <div className="flex gap-2">
             {isEditing ? (
               <Input
                 type="text"
-                placeholder="Paste your bot token here"
+                placeholder="123456789:ABC-DEF..."
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
                 className="flex-1 font-mono text-sm"
+                autoFocus
               />
             ) : (
-              <div className="flex-1 px-4 py-2 rounded-lg border font-mono text-sm truncate flex items-center">
-                {"*".repeat(Math.max(8, token.length / 2))}
+              <div className="flex-1 px-3 py-2 rounded-lg border bg-muted/30 font-mono text-sm text-muted-foreground select-none">
+                {token
+                  ? "•".repeat(Math.min(32, token.length))
+                  : "Token kiritilmagan"}
               </div>
             )}
 
             {!isEditing ? (
-              <>
-                <Button variant="outline" size="sm" onClick={handleCopyToken}>
+              <div className="flex gap-1">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-9 w-9"
+                  onClick={handleCopyToken}
+                  disabled={!token}
+                  title="Nusxalash"
+                >
                   {tokenCopied ? (
-                    <Check className="w-4 h-4" />
+                    <Check className="h-4 w-4 text-green-500" />
                   ) : (
-                    <Copy className="w-4 h-4" />
+                    <Copy className="h-4 w-4" />
                   )}
                 </Button>
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="icon"
+                  className="h-9 w-9"
                   onClick={() => setIsEditing(true)}
+                  title="Tahrirlash"
                 >
-                  Edit
+                  <Pencil className="h-4 w-4" />
                 </Button>
-              </>
+              </div>
             ) : (
-              <Button size="sm" onClick={handleSaveToken}>
-                Save
-              </Button>
+              <div className="flex gap-1">
+                <Button
+                  size="sm"
+                  onClick={handleSaveToken}
+                  disabled={!token.trim()}
+                >
+                  Saqlash
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditing(false)}
+                >
+                  Bekor
+                </Button>
+              </div>
             )}
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Keep your bot token secure and never share it publicly
+          <p className="text-xs text-muted-foreground">
+            Bot tokenini maxfiy saqlang, hech kimga bermang
           </p>
         </div>
 
         {/* Permissions */}
-        <div>
-          <label className="block text-sm font-semibold mb-2">
-            Permissions
-          </label>
-          <div className="grid col-span-1 md:grid-cols-2 gap-3">
-            <PermissionItem
-              title="Join Groups"
-              value={botData.can_join_groups}
-            />
-            <PermissionItem
-              title="Read All Messages"
-              value={botData.can_read_all_group_messages}
-            />
-            <PermissionItem
-              title="Inline Queries"
-              value={botData.supports_inline_queries}
-            />
-            <PermissionItem
-              title="Business Connection"
-              value={botData.can_connect_to_business}
-            />
-            <PermissionItem title="Web App" value={botData.has_main_web_app} />
-            <PermissionItem title="Is Bot" value={botData.is_bot} />
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-semibold">Ruxsatlar</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {permissions.map(({ label, key }) => {
+              const enabled = botData[key];
+              return (
+                <div
+                  key={key}
+                  className={cn(
+                    "flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg border text-sm",
+                    enabled
+                      ? "bg-green-500/5 border-green-500/20"
+                      : "bg-muted/30 border-border",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "font-medium",
+                      !enabled && "text-muted-foreground",
+                    )}
+                  >
+                    {label}
+                  </span>
+                  {enabled ? (
+                    <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                  ) : (
+                    <XCircle className="h-4 w-4 text-muted-foreground/40 shrink-0" />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
-}
-
-function PermissionItem({ title, value }: { title: string; value: boolean }) {
-  return (
-    <Card className="p-3 flex flex-row items-center justify-between border rounded-lg">
-      <span className="text-sm font-medium">{title}</span>
-      <span
-        className={`text-sm font-bold ${
-          value ? "text-green-600" : "text-red-600"
-        }`}
-      >
-        {value ? "✓" : "✗"}
-      </span>
     </Card>
   );
 }

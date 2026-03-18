@@ -9,18 +9,21 @@ import {
 } from "@/shared/types/chat-message";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/shared/components/ui/table";
 import { Badge } from "@/shared/components/ui/badge";
 import { format } from "date-fns";
 import { cn } from "@/shared/lib/utils";
-import { MessageCircle, User, Send, Paperclip, X } from "lucide-react";
+import {
+  MessageCircle,
+  Send,
+  Paperclip,
+  X,
+  Search,
+  ArrowLeft,
+  CheckCheck,
+  Users,
+  ImageIcon,
+  FileText,
+} from "lucide-react";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import {
   markMessagesAsRead,
@@ -28,8 +31,38 @@ import {
 } from "@/shared/services/requests/message";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
+import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
 import { toast } from "sonner";
 import { uploadFile } from "@/shared/services/requests/file";
+
+function getInitials(firstName: string, lastName: string): string {
+  return `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`.toUpperCase() || "?";
+}
+
+function formatTime(date: string): string {
+  try {
+    return format(new Date(date), "HH:mm");
+  } catch {
+    return "";
+  }
+}
+
+function formatDate(date: string): string {
+  try {
+    return format(new Date(date), "dd.MM.yyyy");
+  } catch {
+    return "";
+  }
+}
+
+function MessageTypeIcon({ type }: { type: string }) {
+  if (type === "photo")
+    return <ImageIcon className="h-3 w-3 inline mr-1 opacity-70" />;
+  if (type === "document" || type === "video" || type === "audio")
+    return <FileText className="h-3 w-3 inline mr-1 opacity-70" />;
+  return null;
+}
 
 function Page() {
   const { id } = useParams<{ id: string }>();
@@ -41,15 +74,15 @@ function Page() {
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
+  const [search, setSearch] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading } = useReactQueryAction<
     APIDetailCreateResponse<SendMessageUsersListResponse>
   >({
     url: "/chat/users/[id]/",
-    query: {
-      project: id,
-    },
+    query: { project: id },
   });
 
   const {
@@ -61,26 +94,23 @@ function Page() {
     enabled: !!selectedUser,
   });
 
-  // Foydalanuvchi xabarlarni ko'rganda, ularni o'qilgan deb belgilash
+  // Auto-scroll to bottom when messages load
   useEffect(() => {
-    if (
-      selectedUser &&
-      messagesData?.data?.messages &&
-      messagesData.data.messages.length > 0 &&
-      id
-    ) {
-      markMessagesAsRead(id, {
-        chat_id: selectedUser.user.chat_id,
-      }).catch((error) => {
-        // Xatolikni console'ga chiqarish (production'da error tracking service ishlatish mumkin)
-        if (process.env.NODE_ENV === "development") {
-          console.error("Failed to mark messages as read:", error);
-        }
-      });
+    if (messagesData?.data?.messages) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messagesData]);
+
+  // Mark messages as read
+  useEffect(() => {
+    if (selectedUser && messagesData?.data?.messages?.length && id) {
+      markMessagesAsRead(id, { chat_id: selectedUser.user.chat_id }).catch(
+        () => {},
+      );
     }
   }, [selectedUser, messagesData, id]);
 
-  // Reset message form when user changes
+  // Reset form when user changes
   useEffect(() => {
     setMessageText("");
     setSelectedFile(null);
@@ -88,15 +118,13 @@ function Page() {
       URL.revokeObjectURL(filePreview);
       setFilePreview(null);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only reset when selectedUser changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedUser]);
 
-  // Cleanup file preview on unmount
+  // Cleanup preview on unmount
   useEffect(() => {
     return () => {
-      if (filePreview) {
-        URL.revokeObjectURL(filePreview);
-      }
+      if (filePreview) URL.revokeObjectURL(filePreview);
     };
   }, [filePreview]);
 
@@ -104,26 +132,20 @@ function Page() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check file size based on type
-    const fileType = file.type;
-    let maxSize = 50 * 1024 * 1024; // 50MB default
-    if (fileType.startsWith("image/")) {
-      maxSize = 10 * 1024 * 1024; // 10MB for photos
-    }
+    const maxSize = file.type.startsWith("image/")
+      ? 10 * 1024 * 1024
+      : 50 * 1024 * 1024;
 
     if (file.size > maxSize) {
       toast.error(
-        `Fayl hajmi juda katta. Maksimal hajm: ${maxSize / 1024 / 1024}MB`,
+        `Fayl hajmi juda katta. Maksimal: ${maxSize / 1024 / 1024}MB`,
       );
       return;
     }
 
     setSelectedFile(file);
-
-    // Create preview for images
-    if (fileType.startsWith("image/")) {
-      const preview = URL.createObjectURL(file);
-      setFilePreview(preview);
+    if (file.type.startsWith("image/")) {
+      setFilePreview(URL.createObjectURL(file));
     } else {
       setFilePreview(null);
     }
@@ -135,9 +157,7 @@ function Page() {
       URL.revokeObjectURL(filePreview);
       setFilePreview(null);
     }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const getFileType = (
@@ -160,7 +180,6 @@ function Page() {
 
   const handleSendMessage = async () => {
     if (!selectedUser || !id) return;
-
     if (!messageText.trim() && !selectedFile) {
       toast.error("Iltimos, xabar matni yoki fayl qo'shing");
       return;
@@ -172,261 +191,338 @@ function Page() {
     try {
       let fileUuid: string | undefined;
 
-      // Upload file first if selected
       if (selectedFile) {
         setIsUploadingFile(true);
         try {
-          const fileTypeForUpload = getFileTypeForUpload(selectedFile);
-          const uploadResponse = await uploadFile({
+          const res = await uploadFile({
             file: selectedFile,
-            filetype: fileTypeForUpload,
+            filetype: getFileTypeForUpload(selectedFile),
             project: Number(id),
           });
-          fileUuid = uploadResponse.data.data.uuid;
-        } catch (_error: unknown) {
-          toast.error("Fayl yuklashda xatolik yuz berdi", { id: toastId });
-          setIsSending(false);
-          setIsUploadingFile(false);
+          fileUuid = res.data.data.uuid;
+        } catch {
+          toast.error("Fayl yuklashda xatolik", { id: toastId });
           return;
         } finally {
           setIsUploadingFile(false);
         }
       }
 
-      // Send message
       const requestData: {
         chat_id: string;
         message?: string;
         file?: string;
         file_type?: "photo" | "video" | "audio" | "document";
-      } = {
-        chat_id: selectedUser.user.chat_id,
-      };
+      } = { chat_id: selectedUser.user.chat_id };
 
-      if (messageText.trim()) {
-        requestData.message = messageText.trim();
-      }
-
+      if (messageText.trim()) requestData.message = messageText.trim();
       if (fileUuid) {
         requestData.file = fileUuid;
         requestData.file_type = getFileType(selectedFile!);
       }
 
       await sendChatMessage(id, requestData);
-
-      // Reset form
       setMessageText("");
       handleRemoveFile();
-
-      // Refetch messages
       refetchMessages();
-
-      toast.success("Xabar muvaffaqiyatli yuborildi!", { id: toastId });
+      toast.success("Xabar yuborildi!", { id: toastId });
     } catch (error: any) {
-      console.error("Xabar yuborishda xatolik:", error);
-      const errorMessage =
-        error?.response?.data?.error ||
-        error?.response?.data?.message ||
-        "Xabar yuborishda xatolik yuz berdi";
-      toast.error(errorMessage, { id: toastId });
+      toast.error(error?.response?.data?.error || "Xabar yuborishda xatolik", {
+        id: toastId,
+      });
     } finally {
       setIsSending(false);
     }
   };
 
-  const users = data?.data?.users || [];
+  const allUsers = data?.data?.users || [];
+  const users = search
+    ? allUsers.filter((u) =>
+        `${u.user.first_name} ${u.user.last_name}`
+          .toLowerCase()
+          .includes(search.toLowerCase()),
+      )
+    : allUsers;
+
+  const totalUnread = allUsers.reduce(
+    (sum, u) => sum + (u.unread_count || 0),
+    0,
+  );
 
   return (
-    <div className="flex h-[calc(100vh-200px)] gap-6">
-      {/* Left side - Users table */}
-      <div className="w-[500px] bg-card border border-border rounded-2xl shadow-sm overflow-hidden flex flex-col">
-        <div className="p-4 border-b">
-          <h2 className="text-lg font-semibold">Foydalanuvchilar</h2>
-          {data?.data?.total ? (
-            <p className="text-sm text-muted-foreground mt-1">
-              Jami: {data.data.total} ta
-            </p>
-          ) : (
-            <Skeleton className="h-4 w-20 block"></Skeleton>
-          )}
+    <div className="flex h-[calc(100svh-8rem)] rounded-xl border overflow-hidden bg-card shadow-sm">
+      {/* ─── LEFT: User list ─── */}
+      <div
+        className={cn(
+          "w-full md:w-72 lg:w-80 shrink-0 border-r flex flex-col bg-card",
+          selectedUser && "hidden md:flex",
+        )}
+      >
+        {/* Header */}
+        <div className="p-4 border-b space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-muted-foreground" />
+              <h2 className="font-semibold text-sm">Foydalanuvchilar</h2>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {data?.data?.total !== undefined && (
+                <Badge variant="secondary" className="h-5 px-1.5 text-xs">
+                  {data.data.total}
+                </Badge>
+              )}
+              {totalUnread > 0 && (
+                <Badge className="h-5 px-1.5 text-xs">
+                  {totalUnread} yangi
+                </Badge>
+              )}
+            </div>
+          </div>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            <Input
+              placeholder="Qidirish..."
+              className="pl-8 h-8 text-sm"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
 
+        {/* List */}
         <div className="flex-1 overflow-y-auto">
           {isLoading ? (
-            <div className="p-6">
-              <div className="space-y-4">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className="h-16 bg-muted/50 rounded-lg animate-pulse"
-                  />
-                ))}
-              </div>
+            <div className="p-2 space-y-1">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3 p-3">
+                  <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                  <div className="flex-1 space-y-1.5">
+                    <Skeleton className="h-3.5 w-28" />
+                    <Skeleton className="h-3 w-40" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : users.length === 0 ? (
-            <div className="p-12 text-center">
-              <User className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                Foydalanuvchilar mavjud emas
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Hozircha hech qanday foydalanuvchi yo'q
+            <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+              <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center mb-3">
+                <MessageCircle className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <p className="font-medium text-sm">
+                {search ? "Topilmadi" : "Foydalanuvchilar yo'q"}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {search
+                  ? "Boshqa so'z bilan qidiring"
+                  : "Hali hech kim xabar yozmagan"}
               </p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Foydalanuvchi</TableHead>
-                  <TableHead>Oxirgi xabar</TableHead>
-                  <TableHead className="text-right">Xabarlar</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((item: UserMessageListItem) => {
-                  const isSelected = selectedUser?.user._id === item.user._id;
-                  return (
-                    <TableRow
-                      key={item.user._id}
-                      className={cn(
-                        "hover:bg-muted/50 cursor-pointer transition-colors",
-                        isSelected && "bg-muted",
+            <div className="p-1">
+              {users.map((item) => {
+                const isSelected = selectedUser?.user._id === item.user._id;
+                return (
+                  <button
+                    key={item.user._id}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left",
+                      isSelected
+                        ? "bg-primary/10 text-foreground"
+                        : "hover:bg-accent/60",
+                    )}
+                    onClick={() => setSelectedUser(item)}
+                  >
+                    <div className="relative shrink-0">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback
+                          className={cn(
+                            "font-semibold text-sm",
+                            isSelected
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-primary/15 text-primary",
+                          )}
+                        >
+                          {getInitials(
+                            item.user.first_name,
+                            item.user.last_name,
+                          )}
+                        </AvatarFallback>
+                      </Avatar>
+                      {item.unread_count > 0 && (
+                        <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-bold">
+                          {item.unread_count > 9 ? "9+" : item.unread_count}
+                        </span>
                       )}
-                      onClick={() => setSelectedUser(item)}
-                    >
-                      <TableCell>
-                        <div className="flex flex-col gap-1">
-                          <div className="font-medium text-sm">
-                            {item.user.first_name} {item.user.last_name}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            ID: {item.user.chat_id}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col gap-1">
-                          {item.last_message ? (
-                            <>
-                              <div className="text-sm truncate max-w-[200px]">
-                                {item.last_message.message}
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                {format(
-                                  new Date(item.user.created_at),
-                                  "dd.MM.yyyy",
-                                )}
-                              </div>
-                            </>
-                          ) : (
-                            <span className="text-sm text-muted-foreground">
-                              Xabar yo'q
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex flex-col items-end gap-1">
-                          <span className="text-sm text-muted-foreground">
-                            {item.total_messages}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-medium text-sm truncate">
+                          {item.user.first_name} {item.user.last_name}
+                        </span>
+                        {item.last_message && (
+                          <span className="text-[10px] text-muted-foreground shrink-0">
+                            {formatDate(item.user.created_at)}
                           </span>
-                          {item.unread_count > 0 && (
-                            <Badge
-                              variant="secondary"
-                              className="bg-primary/10 text-primary text-xs"
-                            >
-                              {item.unread_count} yangi
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate mt-0.5">
+                        {item.last_message ? (
+                          <>
+                            <MessageTypeIcon
+                              type={item.last_message.message_type}
+                            />
+                            {item.last_message.message || "Fayl yuborildi"}
+                          </>
+                        ) : (
+                          "Xabar yo'q"
+                        )}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
 
-      {/* Right side - Messages area */}
-      <div className="flex-1 bg-card border border-border rounded-2xl shadow-sm overflow-hidden flex flex-col">
+      {/* ─── RIGHT: Chat area ─── */}
+      <div className="flex-1 flex flex-col min-w-0 bg-background/50">
         {selectedUser ? (
           <>
-            <div className="p-4 border-b">
-              <h2 className="text-lg font-semibold">Xabarlar</h2>
-              {messagesData?.data?.total !== undefined ? (
-                <p className="text-sm text-muted-foreground mt-1">
-                  Jami: {messagesData.data.total} ta
+            {/* Chat header */}
+            <div className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden shrink-0 h-8 w-8"
+                onClick={() => setSelectedUser(null)}
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <Avatar className="h-9 w-9 shrink-0">
+                <AvatarFallback className="bg-primary/15 text-primary font-semibold text-sm">
+                  {getInitials(
+                    selectedUser.user.first_name,
+                    selectedUser.user.last_name,
+                  )}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm truncate leading-tight">
+                  {selectedUser.user.first_name} {selectedUser.user.last_name}
                 </p>
-              ) : (
-                <Skeleton className="h-4 w-20 block mt-1"></Skeleton>
-              )}
+                <p className="text-xs text-muted-foreground">
+                  ID: {selectedUser.user.chat_id}
+                </p>
+              </div>
+              <Badge variant="outline" className="text-xs shrink-0">
+                {selectedUser.total_messages} xabar
+              </Badge>
             </div>
 
-            <div className="flex-1 overflow-y-auto">
-              {!messagesData && selectedUser.last_message && (
-                <div className="p-4 space-y-4">
-                  <div className="p-4 bg-muted/30 rounded-lg border border-border">
-                    <p className="text-sm text-foreground whitespace-pre-wrap break-words">
-                      {selectedUser.last_message.message}
-                    </p>
-                  </div>
-                </div>
-              )}
-
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
               {messagesLoading ? (
-                <div className="p-6">
-                  <div className="space-y-4">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <div
-                        key={i}
-                        className="h-20 bg-muted/50 rounded-lg animate-pulse"
-                      />
-                    ))}
-                  </div>
-                </div>
-              ) : messagesData?.data?.messages?.length === 0 ? (
-                <div className="flex-1 flex items-center justify-center p-8">
-                  <div className="text-center">
-                    <MessageCircle className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">
-                      Xabarlar mavjud emas
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Bu foydalanuvchi uchun hozircha xabarlar yo'q
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="p-4 space-y-4">
-                  {messagesData?.data?.messages?.map((message) => (
+                <div className="space-y-3">
+                  {[1, 2, 3, 4].map((i) => (
                     <div
-                      key={message._id}
-                      className="p-4 bg-muted/30 rounded-lg border border-border"
+                      key={i}
+                      className={cn(
+                        "flex",
+                        i % 2 === 0 ? "justify-end" : "justify-start",
+                      )}
                     >
-                      <p className="text-sm text-foreground whitespace-pre-wrap break-words">
-                        {message.message}
-                      </p>
+                      <Skeleton
+                        className={cn(
+                          "rounded-2xl",
+                          i % 2 === 0 ? "w-48 h-10" : "w-56 h-14",
+                        )}
+                      />
                     </div>
                   ))}
                 </div>
+              ) : !messagesData?.data?.messages?.length ? (
+                <div className="flex flex-col items-center justify-center h-full text-center py-16">
+                  <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-3">
+                    <MessageCircle className="h-7 w-7 text-primary" />
+                  </div>
+                  <p className="font-semibold">Xabarlar yo'q</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Birinchi xabarni yuboring
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {messagesData.data.messages.map((message) => (
+                    <div
+                      key={message._id}
+                      className={cn(
+                        "flex items-end gap-2",
+                        message.from_admin ? "justify-end" : "justify-start",
+                      )}
+                    >
+                      {!message.from_admin && (
+                        <Avatar className="h-7 w-7 shrink-0 mb-0.5">
+                          <AvatarFallback className="bg-primary/15 text-primary text-xs font-semibold">
+                            {getInitials(
+                              selectedUser.user.first_name,
+                              selectedUser.user.last_name,
+                            )}
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
+                      <div
+                        className={cn(
+                          "max-w-[65%] rounded-2xl px-4 py-2.5",
+                          message.from_admin
+                            ? "bg-primary text-primary-foreground rounded-br-sm"
+                            : "bg-card border rounded-bl-sm shadow-sm",
+                        )}
+                      >
+                        <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
+                          {message.message || (
+                            <span className="italic opacity-70 text-xs">
+                              Fayl yuborildi
+                            </span>
+                          )}
+                        </p>
+                        <div
+                          className={cn(
+                            "flex items-center gap-1 mt-1",
+                            message.from_admin
+                              ? "justify-end opacity-70"
+                              : "justify-end opacity-50",
+                          )}
+                        >
+                          <span className="text-[10px]">
+                            {formatTime(message.created_at)}
+                          </span>
+                          {message.from_admin && (
+                            <CheckCheck className="h-3 w-3" />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </>
               )}
             </div>
 
-            {/* Message input area */}
-            <div className="p-4 border-t bg-muted/20">
+            {/* Input area */}
+            <div className="px-4 py-3 border-t bg-card shrink-0">
               {selectedFile && (
-                <div className="mb-3 flex items-center gap-2 p-2 bg-background rounded-lg border">
+                <div className="mb-2 flex items-center gap-2 p-2 bg-muted rounded-lg border">
                   {filePreview ? (
                     // eslint-disable-next-line @next/next/no-img-element -- blob URL for file preview
                     <img
                       src={filePreview}
                       alt="Preview"
-                      className="h-12 w-12 object-cover rounded"
+                      className="h-10 w-10 object-cover rounded shrink-0"
                     />
                   ) : (
-                    <Paperclip className="h-5 w-5 text-muted-foreground" />
+                    <Paperclip className="h-5 w-5 text-muted-foreground shrink-0" />
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">
@@ -439,58 +535,56 @@ function Page() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8"
+                    className="h-7 w-7 shrink-0"
                     onClick={handleRemoveFile}
                   >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
               )}
-              <div className="flex gap-2">
-                <div className="flex-1 relative">
-                  <Textarea
-                    placeholder="Xabar yozing..."
-                    value={messageText}
-                    onChange={(e) => setMessageText(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        if (
-                          !isSending &&
-                          (messageText.trim() || selectedFile)
-                        ) {
-                          handleSendMessage();
-                        }
-                      }
-                    }}
-                    className="min-h-[60px] max-h-[120px] resize-none pr-20"
-                    disabled={isSending || isUploadingFile}
-                  />
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    onChange={handleFileSelect}
-                    accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-2 bottom-2 h-8 w-8"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isSending || isUploadingFile}
-                  >
-                    <Paperclip className="h-4 w-4" />
-                  </Button>
-                </div>
+
+              <div className="flex items-end gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileSelect}
+                  accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+                />
                 <Button
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0 h-9 w-9 text-muted-foreground hover:text-foreground"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isSending || isUploadingFile}
+                >
+                  <Paperclip className="h-4 w-4" />
+                </Button>
+                <Textarea
+                  placeholder="Xabar yozing... (Enter = yuborish, Shift+Enter = yangi qator)"
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      if (!isSending && (messageText.trim() || selectedFile)) {
+                        handleSendMessage();
+                      }
+                    }
+                  }}
+                  className="min-h-[38px] max-h-[120px] resize-none text-sm"
+                  disabled={isSending || isUploadingFile}
+                  rows={1}
+                />
+                <Button
+                  size="icon"
+                  className="shrink-0 h-9 w-9"
                   onClick={handleSendMessage}
                   disabled={
                     isSending ||
                     isUploadingFile ||
                     (!messageText.trim() && !selectedFile)
                   }
-                  className="h-[60px] px-6"
                 >
                   {isSending || isUploadingFile ? (
                     <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -502,16 +596,25 @@ function Page() {
             </div>
           </>
         ) : (
+          /* Empty state */
           <div className="flex-1 flex items-center justify-center p-8">
-            <div className="text-center">
-              <User className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                Foydalanuvchi tanlang
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Xabarlarni ko'rish uchun chap tarafdagi jadvaldan foydalanuvchi
-                tanlang
-              </p>
+            <div className="text-center space-y-4 max-w-xs">
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
+                <MessageCircle className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Foydalanuvchi tanlang</h3>
+                <p className="text-sm text-muted-foreground mt-1.5">
+                  Xabarlarni ko'rish va yuborish uchun chap tarafdagi ro'yxatdan
+                  foydalanuvchini tanlang
+                </p>
+              </div>
+              {totalUnread > 0 && (
+                <Badge className="gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground animate-pulse" />
+                  {totalUnread} ta o'qilmagan xabar
+                </Badge>
+              )}
             </div>
           </div>
         )}

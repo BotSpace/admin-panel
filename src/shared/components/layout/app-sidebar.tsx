@@ -2,12 +2,7 @@
 
 import * as React from "react";
 import type { LucideIcon } from "lucide-react";
-import {
-  ChevronDown,
-  Settings,
-  LogOut,
-  MoveLeft,
-} from "lucide-react";
+import { ChevronDown, Settings, LogOut, MoveLeft } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -117,17 +112,17 @@ export function ReusableSidebar({
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild>
                 <Link href={brand.href ?? "/"} onClick={handleLinkClick}>
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
                     {brand.image ? (
                       <Image
                         src={brand.image}
                         alt={brand.name}
-                        className="rounded-2xl"
+                        className="rounded-lg"
                       />
                     ) : null}
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{brand.name}</span>
+                    <span className="truncate font-bold">{brand.name}</span>
                     {brand.version ? (
                       <span className="truncate text-xs text-muted-foreground">
                         {brand.version}
@@ -139,10 +134,14 @@ export function ReusableSidebar({
             </SidebarMenuItem>
 
             {isBackActive && (
-              <SidebarMenuItem className="mt-2">
-                <SidebarMenuButton asChild>
+              <SidebarMenuItem className="mt-1">
+                <SidebarMenuButton
+                  asChild
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <Link href={"/"}>
-                    <MoveLeft /> Ortga
+                    <MoveLeft className="size-4" />
+                    <span>Orqaga qaytish</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -194,11 +193,7 @@ export function ReusableSidebar({
         <SidebarFooter>
           <SidebarMenu>
             {/* Custom Action (optional) */}
-            {customAction && (
-              <SidebarMenuItem>
-                {customAction}
-              </SidebarMenuItem>
-            )}
+            {customAction && <SidebarMenuItem>{customAction}</SidebarMenuItem>}
 
             {/* User footer (optional) */}
             {showUserFooter && (

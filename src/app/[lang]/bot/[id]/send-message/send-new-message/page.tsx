@@ -4,25 +4,20 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 import {
   Send,
-  Eye,
-  FileText,
-  Grid3x3,
-  Users,
-  AlertCircle,
   CheckCircle2,
   Clock,
   XCircle,
   History,
+  Megaphone,
+  ChevronDown,
+  Users,
+  Eye,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/shared/components/ui/card";
+import { Separator } from "@/shared/components/ui/separator";
 import InlineButtons from "@/features/bot/detail/components/inline-buttons";
+import SendMessage from "@/features/bot/detail/components/send-message";
 import { useChatMessageStore } from "@/shared/store/chat-message";
 import MessagePreview from "@/features/bot/detail/components/message-preview";
 import { sendMessage } from "@/shared/services/requests/message";
@@ -32,90 +27,130 @@ import {
   MessageStatus,
 } from "@/shared/types/broadcast-message";
 import { toast } from "sonner";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/shared/components/ui/tabs";
 import { Badge } from "@/shared/components/ui/badge";
 import { useReactQueryAction } from "@/shared/services/react-query";
+import { cn } from "@/shared/lib/utils";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
-import { format } from "date-fns";
-import { uz } from "date-fns/locale";
 
-function getStatusIcon(status: string) {
-  switch (status) {
-    case "delivered":
-      return <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />;
-    case "pending":
-      return <Clock className="h-3.5 w-3.5 text-yellow-500 animate-pulse" />;
-    default:
-      return <XCircle className="h-3.5 w-3.5 text-red-500" />;
-  }
+/* ─── Status badge ─── */
+function StatusDot({ status }: { status: string }) {
+  if (status === "delivered")
+    return (
+      <span className="flex items-center gap-1 text-[11px] text-green-600 dark:text-green-400 font-medium">
+        <CheckCircle2 className="h-3 w-3" /> Yetkazildi
+      </span>
+    );
+  if (status === "pending")
+    return (
+      <span className="flex items-center gap-1 text-[11px] text-amber-500 font-medium">
+        <Clock className="h-3 w-3 animate-pulse" /> Yuborilmoqda
+      </span>
+    );
+  return (
+    <span className="flex items-center gap-1 text-[11px] text-destructive font-medium">
+      <XCircle className="h-3 w-3" /> Xato
+    </span>
+  );
 }
 
+/* ─── Section wrapper ─── */
+function Section({
+  step,
+  title,
+  description,
+  badge,
+  children,
+  collapsible = false,
+  defaultOpen = true,
+}: {
+  step: number;
+  title: string;
+  description?: string;
+  badge?: React.ReactNode;
+  children: React.ReactNode;
+  collapsible?: boolean;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className="rounded-xl border bg-card overflow-hidden">
+      <button
+        type="button"
+        onClick={() => collapsible && setOpen((v) => !v)}
+        className={cn(
+          "w-full flex items-center gap-4 px-6 py-4 text-left",
+          collapsible && "hover:bg-muted/40 transition-colors",
+        )}
+      >
+        {/* Step number */}
+        <div className="h-7 w-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shrink-0">
+          {step}
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-semibold text-sm">{title}</span>
+            {badge}
+          </div>
+          {description && (
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {description}
+            </p>
+          )}
+        </div>
+
+        {collapsible && (
+          <ChevronDown
+            className={cn(
+              "h-4 w-4 text-muted-foreground transition-transform shrink-0",
+              open && "rotate-180",
+            )}
+          />
+        )}
+      </button>
+
+      {(!collapsible || open) && (
+        <>
+          <Separator />
+          <div className="p-6">{children}</div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/* ─── Main page ─── */
 function Page() {
   const { id } = useParams<{ id: string }>();
   const [isSending, setIsSending] = useState(false);
-  const [activeTab, setActiveTab] = useState("message");
 
   const { text_content, files, inlineButtons } = useChatMessageStore();
 
-  // Fetch message history
   const { data: historyData, refetch: refetchHistory } =
     useReactQueryAction<MessageListResponse>({
       url: "message/",
       query: { project: id },
     });
 
-  // Map API status to frontend status
-  const mapStatus = (
-    status: MessageStatus,
-  ): "pending" | "delivered" | "failed" => {
-    switch (status) {
-      case "progress":
-        return "pending";
-      case "done":
-        return "delivered";
-      case "failed":
-        return "failed";
-      default:
-        return "pending";
-    }
+  const mapStatus = (s: MessageStatus): "pending" | "delivered" | "failed" => {
+    if (s === "done") return "delivered";
+    if (s === "failed") return "failed";
+    return "pending";
   };
 
-  // Transform API data
   const messageHistory = useMemo(() => {
     if (!historyData?.data?.results) return [];
-
     return historyData.data.results.map((msg) => {
-      let status: MessageStatus;
-
+      let status: MessageStatus = "done";
       if (msg.status) {
         status = msg.status;
-      } else {
-        if (msg.total === 0 && msg.done === 0 && msg.fail === 0) {
-          status = "done";
-        } else if (msg.total > 0) {
-          if (msg.done === msg.total) {
-            status = "done";
-          } else if (
-            msg.fail > 0 &&
-            msg.done === 0 &&
-            msg.done + msg.fail === msg.total
-          ) {
-            status = "failed";
-          } else if (msg.done > 0 || msg.fail > 0) {
-            status = "progress";
-          } else {
-            status = "progress";
-          }
-        } else {
-          status = "done";
-        }
+      } else if (msg.total > 0) {
+        if (msg.done === msg.total) status = "done";
+        else if (msg.fail > 0 && msg.done + msg.fail === msg.total)
+          status = "failed";
+        else status = "progress";
       }
-
       return {
         id: String(msg.id),
         content: msg.caption,
@@ -123,13 +158,11 @@ function Page() {
         count: msg.total || 0,
         done: msg.done || 0,
         fail: msg.fail || 0,
-        message_type: msg.message_type,
-        sentAt: new Date(),
+        type: msg.message_type,
       };
     });
   }, [historyData]);
 
-  // Reset store on mount
   useEffect(() => {
     return () => {
       useChatMessageStore.getState().setFiles([]);
@@ -143,384 +176,266 @@ function Page() {
       toast.error("Iltimos xabar matni yoki fayl qo'shing");
       return;
     }
-
     setIsSending(true);
-    const toastId = toast.loading("Xabar yuborilmoqda...");
-
+    const toastId = toast.loading("Yuborilmoqda...");
     try {
-      // Determine message type based on files
       let message_type: "text" | "photo" | "video" = "text";
-      if (files.length > 0) {
-        const firstFile = files[0];
-        if (firstFile.type.startsWith("image/")) {
-          message_type = "photo";
-        } else if (firstFile.type.startsWith("video/")) {
-          message_type = "video";
-        }
-      }
+      if (files[0]?.type.startsWith("image/")) message_type = "photo";
+      else if (files[0]?.type.startsWith("video/")) message_type = "video";
 
-      // Convert inline buttons to API format
       const apiButtons: ApiButton[][] = inlineButtons.map((row) =>
-        row.map((button) => {
-          const apiButton: ApiButton = {
-            title: button.text,
+        row.map((b) => {
+          const btn: ApiButton = {
+            title: b.text,
             request_contact: false,
             request_location: false,
           };
-
-          if (button.url) {
-            apiButton.link = button.url;
-          } else if (button.callback_data) {
-            apiButton.callback_data = button.callback_data;
-          }
-
-          return apiButton;
+          if (b.url) btn.link = b.url;
+          else if (b.callback_data) btn.callback_data = b.callback_data;
+          return btn;
         }),
       );
 
-      // Prepare request data
-      const requestData = {
-        project: Number(id),
-        caption: text_content || "",
-        message_type,
-        button_type:
-          inlineButtons.length > 0 ? ("inline" as const) : ("reply" as const),
-        buttons: apiButtons,
-      };
-
-      // If there are files, we need to use FormData
       if (files.length > 0) {
-        const formData = new FormData();
-
-        // Add text fields as JSON string (some APIs require this)
-        formData.append("project", id);
-        formData.append("caption", text_content || "");
-        formData.append("message_type", message_type);
-        formData.append(
-          "button_type",
-          inlineButtons.length > 0 ? "inline" : "reply",
-        );
-        formData.append("buttons", JSON.stringify(apiButtons));
-
-        // Add files
-        files.forEach((file, index) => {
-          if (message_type === "photo" && file.type.startsWith("image/")) {
-            formData.append("photo", file);
-          } else if (
-            message_type === "video" &&
-            file.type.startsWith("video/")
-          ) {
-            formData.append("video", file);
-          } else {
-            formData.append(`file_${index}`, file);
-          }
+        const fd = new FormData();
+        fd.append("project", id);
+        fd.append("caption", text_content || "");
+        fd.append("message_type", message_type);
+        fd.append("button_type", inlineButtons.length > 0 ? "inline" : "reply");
+        fd.append("buttons", JSON.stringify(apiButtons));
+        files.forEach((f) => {
+          if (message_type === "photo" && f.type.startsWith("image/"))
+            fd.append("photo", f);
+          else if (message_type === "video" && f.type.startsWith("video/"))
+            fd.append("video", f);
         });
-
-        // Send with FormData
-        await sendMessage(formData as any);
+        await sendMessage(fd as any);
       } else {
-        // Send as JSON
-        await sendMessage(requestData);
+        await sendMessage({
+          project: Number(id),
+          caption: text_content || "",
+          message_type,
+          button_type: inlineButtons.length > 0 ? "inline" : "reply",
+          buttons: apiButtons,
+        });
       }
 
-      // Reset form
       useChatMessageStore.getState().setFiles([]);
       useChatMessageStore.getState().changeTextContent("");
       useChatMessageStore.getState().setInlineButtons([]);
-
-      // Refetch history
       refetchHistory();
-
-      toast.success("Xabar muvaffaqiyatli yuborildi!", { id: toastId });
-    } catch (error: any) {
-      console.error("Xabar yuborishda xatolik:", error);
-      const errorMessage =
-        error?.response?.data?.data?.non_field_errors?.[0] ||
-        error?.response?.data?.message ||
-        "Xabar yuborishda xatolik yuz berdi";
-      toast.error(errorMessage, { id: toastId });
+      toast.success("Xabar yuborildi!", { id: toastId });
+    } catch (e: any) {
+      toast.error(
+        e?.response?.data?.data?.non_field_errors?.[0] ||
+          e?.response?.data?.message ||
+          "Xatolik yuz berdi",
+        { id: toastId },
+      );
     } finally {
       setIsSending(false);
     }
   };
 
   const canSend = text_content.trim().length > 0 || files.length > 0;
-  const buttonCount = inlineButtons.reduce((acc, row) => acc + row.length, 0);
+  const buttonCount = inlineButtons.reduce((a, r) => a + r.length, 0);
 
   return (
-    <div className="space-y-6 max-w-[1800px] mx-auto pb-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="max-w-5xl mx-auto space-y-6 pb-12">
+      {/* ── Page header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <Megaphone className="h-5 w-5 text-primary" />
+          </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            <h1 className="text-2xl font-bold tracking-tight">
               Xabar yuborish
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Barcha foydalanuvchilarga xabar yuborish
+            <p className="text-sm text-muted-foreground">
+              Barcha obunachilarga ommaviy xabar tarqating
             </p>
           </div>
         </div>
-
-        {/* Quick stats */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <Badge variant="secondary" className="gap-1.5">
-            <Users className="h-3.5 w-3.5" />
-            Barcha obunachilar
-          </Badge>
-          {messageHistory.length > 0 && (
-            <Badge variant="outline" className="gap-1.5">
-              <History className="h-3.5 w-3.5" />
-              {messageHistory.length} yuborilgan
-            </Badge>
-          )}
-        </div>
+        <Badge variant="secondary" className="gap-1.5 self-start sm:self-auto">
+          <Users className="h-3.5 w-3.5" />
+          Barcha obunachilar
+        </Badge>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        {/* Left Column - Message Composer */}
-        <div className="xl:col-span-7 space-y-4">
-          {/* Alert */}
-          {!canSend && (
-            <div className="flex items-start gap-3 p-4 rounded-lg border border-amber-500/20 bg-amber-500/10">
-              <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-              <div className="flex-1 space-y-1">
-                <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
-                  Xabar bo'sh
-                </p>
-                <p className="text-xs text-amber-600/80 dark:text-amber-400/80">
-                  Yuborish uchun kamida matn yoki fayl qo'shing
-                </p>
+      {/* ── Main layout ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
+        {/* ── LEFT: Composer steps ── */}
+        <div className="space-y-4">
+          {/* Step 1 – Message */}
+          <Section
+            step={1}
+            title="Xabar tuzish"
+            description="Matn va media fayllarni qo'shing"
+            badge={
+              canSend ? (
+                <Badge className="h-5 px-2 text-[10px] gap-1 bg-green-500/15 text-green-600 dark:text-green-400 border-green-500/20">
+                  <CheckCircle2 className="h-2.5 w-2.5" /> Tayyor
+                </Badge>
+              ) : null
+            }
+          >
+            <SendMessage />
+          </Section>
+
+          {/* Step 2 – Buttons (collapsible) */}
+          <Section
+            step={2}
+            title="Inline tugmalar"
+            description="Ixtiyoriy — URL yoki callback tugmalar qo'shing"
+            collapsible
+            defaultOpen={buttonCount > 0}
+            badge={
+              buttonCount > 0 ? (
+                <Badge variant="secondary" className="h-5 px-2 text-[10px]">
+                  {buttonCount} ta
+                </Badge>
+              ) : (
+                <Badge
+                  variant="outline"
+                  className="h-5 px-2 text-[10px] text-muted-foreground"
+                >
+                  Ixtiyoriy
+                </Badge>
+              )
+            }
+          >
+            <InlineButtons />
+          </Section>
+        </div>
+
+        {/* ── RIGHT: Sticky sidebar ── */}
+        <div className="self-start sticky top-20 space-y-4">
+          {/* Preview card */}
+          <div className="rounded-xl border bg-card overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-3 border-b bg-muted/30">
+              <Eye className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-semibold">Ko'rinish</span>
+              <span className="text-xs text-muted-foreground ml-auto">
+                Telegram
+              </span>
+            </div>
+
+            {/* Telegram-style preview container */}
+            <div className="p-4 bg-muted/20">
+              <div className="min-h-[140px] flex items-start">
+                {canSend ? (
+                  <MessagePreview />
+                ) : (
+                  <div className="w-full flex flex-col items-center justify-center py-10 text-center">
+                    <Megaphone className="h-8 w-8 text-muted-foreground/30 mb-2" />
+                    <p className="text-xs text-muted-foreground">
+                      Xabar tuzishni boshlang
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-3 divide-x border-t">
+              {[
+                {
+                  label: "Belgi",
+                  value: text_content.length,
+                  active: text_content.length > 0,
+                },
+                {
+                  label: "Fayl",
+                  value: files.length,
+                  active: files.length > 0,
+                },
+                { label: "Tugma", value: buttonCount, active: buttonCount > 0 },
+              ].map(({ label, value, active }) => (
+                <div key={label} className="flex flex-col items-center py-3">
+                  <span
+                    className={cn(
+                      "text-lg font-bold tabular-nums leading-none",
+                      active ? "text-primary" : "text-muted-foreground/40",
+                    )}
+                  >
+                    {value}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground mt-1">
+                    {label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Send button */}
+          <Button
+            className="w-full h-11 text-sm font-semibold gap-2"
+            onClick={handleSend}
+            disabled={!canSend || isSending}
+            size="lg"
+          >
+            {isSending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Yuborilmoqda...
+              </>
+            ) : (
+              <>
+                <Send className="h-4 w-4" /> Hammaga yuborish
+              </>
+            )}
+          </Button>
+
+          {!canSend && (
+            <p className="text-center text-xs text-muted-foreground">
+              Yuborish uchun matn yoki fayl qo'shing
+            </p>
           )}
 
-          {/* Tabs for better organization */}
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="message" className="gap-2">
-                <FileText className="h-4 w-4" />
-                Xabar tuzish
-                {(text_content || files.length > 0) && (
-                  <Badge
-                    variant="secondary"
-                    className="ml-1 h-5 px-1.5 text-xs"
-                  >
-                    {files.length > 0 ? files.length : "✓"}
-                  </Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="buttons" className="gap-2">
-                <Grid3x3 className="h-4 w-4" />
-                Inline tugmalar
-                {buttonCount > 0 && (
-                  <Badge
-                    variant="secondary"
-                    className="ml-1 h-5 px-1.5 text-xs"
-                  >
-                    {buttonCount}
-                  </Badge>
-                )}
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="message" className="mt-4 space-y-4">
-              <Card className="border-2">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg">Xabar tarkibi</CardTitle>
-                  <CardDescription>
-                    Matn, rasm, video va boshqa fayllarni yuklash mumkin
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {/* TODO: Add SendMessage component */}
-                  {/* <SendMessage /> */}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="buttons" className="mt-4 space-y-4">
-              <Card className="border-2">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg">Inline tugmalar</CardTitle>
-                  <CardDescription>
-                    Xabarga interaktiv tugmalar qo'shing (havolalar, callback)
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <InlineButtons />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-
-        {/* Middle Column - Preview & Actions */}
-        <div className="xl:col-span-3">
-          <div className="sticky top-6 space-y-4">
-            {/* Preview Card */}
-            <Card className="border-2">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Eye className="h-4 w-4" />
-                    Ko'rinish
-                  </CardTitle>
+          {/* History */}
+          {messageHistory.length > 0 && (
+            <div className="rounded-xl border bg-card overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
+                <div className="flex items-center gap-2">
+                  <History className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-semibold">Yuborilgan</span>
                 </div>
-                <CardDescription className="text-xs">
-                  Xabar Telegramda qanday ko'rinadi
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="rounded-lg border bg-muted/30 p-4 min-h-[200px]">
-                  <MessagePreview />
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-3 pt-2">
-                  <div className="text-center space-y-1">
-                    <div className="text-2xl font-bold text-primary">
-                      {text_content.length}
-                    </div>
-                    <div className="text-xs text-muted-foreground">belgi</div>
-                  </div>
-                  <div className="text-center space-y-1">
-                    <div className="text-2xl font-bold text-blue-500">
-                      {files.length}
-                    </div>
-                    <div className="text-xs text-muted-foreground">fayl</div>
-                  </div>
-                  <div className="text-center space-y-1">
-                    <div className="text-2xl font-bold text-purple-500">
-                      {buttonCount}
-                    </div>
-                    <div className="text-xs text-muted-foreground">tugma</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Send Action Card */}
-            <Card className="border-2 border-primary/20 bg-primary/5">
-              <CardContent className="pt-6 space-y-4">
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Tayyor yuborishga?</p>
-                  <p className="text-xs text-muted-foreground">
-                    Xabar barcha bot foydalanuvchilariga yuboriladi
-                  </p>
-                </div>
-
-                <Button
-                  className="w-full h-11"
-                  onClick={handleSend}
-                  disabled={!canSend || isSending}
-                  size="lg"
-                >
-                  {isSending ? (
-                    <>
-                      <Send className="h-4 w-4 mr-2 animate-pulse" />
-                      Yuborilmoqda...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4 mr-2" />
-                      Xabarni yuborish
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Right Column - Message History Sidebar */}
-        <div className="xl:col-span-2">
-          <div className="sticky top-6">
-            <Card className="border-2">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <History className="h-4 w-4" />
-                    Yuborilgan xabarlar
-                  </CardTitle>
-                  <Badge variant="secondary" className="h-6">
-                    {messageHistory.length}
-                  </Badge>
-                </div>
-                <CardDescription className="text-xs">
-                  So'nggi yuborilgan xabarlar tarixi
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                <ScrollArea className="h-[600px] px-4">
-                  {messageHistory.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <div className="rounded-full bg-muted p-3 mb-3">
-                        <Send className="h-6 w-6 text-muted-foreground" />
+                <Badge variant="secondary" className="h-5 px-1.5 text-[10px]">
+                  {messageHistory.length}
+                </Badge>
+              </div>
+              <ScrollArea className="max-h-64">
+                <div className="p-2 space-y-1.5">
+                  {messageHistory.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className="rounded-lg border bg-background px-3 py-2.5 space-y-1.5 hover:border-primary/20 transition-colors"
+                    >
+                      <p className="text-xs line-clamp-1 font-medium">
+                        {msg.content || (
+                          <span className="text-muted-foreground italic">
+                            {msg.type === "photo" ? "📷 Rasm" : "🎥 Video"}
+                          </span>
+                        )}
+                      </p>
+                      <div className="flex items-center justify-between gap-2">
+                        <StatusDot status={msg.status} />
+                        <span className="text-[10px] text-muted-foreground tabular-nums">
+                          {msg.done}/{msg.count}
+                          {msg.fail > 0 && (
+                            <span className="text-destructive ml-1">
+                              · {msg.fail} xato
+                            </span>
+                          )}
+                        </span>
                       </div>
-                      <p className="text-sm font-medium mb-1">
-                        Hali xabar yuborilmagan
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Birinchi xabaringizni yuborishni boshlang
-                      </p>
                     </div>
-                  ) : (
-                    <div className="space-y-2 py-2">
-                      {messageHistory.map((message) => (
-                        <div
-                          key={message.id}
-                          className="group rounded-lg border bg-card p-3 hover:border-primary/40 hover:bg-accent/5 transition-all"
-                        >
-                          <div className="space-y-2">
-                            {/* Message preview */}
-                            <div className="flex items-start justify-between gap-2">
-                              <p className="text-sm line-clamp-2 flex-1 min-w-0">
-                                {message.content || "Fayl yuborildi"}
-                              </p>
-                              <div className="flex items-center gap-1 shrink-0">
-                                {getStatusIcon(message.status)}
-                              </div>
-                            </div>
-
-                            {/* Stats */}
-                            <div className="flex items-center justify-between text-xs">
-                              <div className="flex items-center gap-3">
-                                <span className="text-muted-foreground">
-                                  {message.message_type === "photo"
-                                    ? "🖼️"
-                                    : message.message_type === "video"
-                                      ? "🎥"
-                                      : "📝"}
-                                </span>
-                                <Badge variant="outline" className="h-5 px-1.5">
-                                  {message.done}/{message.count}
-                                </Badge>
-                                {message.fail > 0 && (
-                                  <span className="text-destructive font-medium">
-                                    {message.fail} xato
-                                  </span>
-                                )}
-                              </div>
-                              <span className="text-muted-foreground">
-                                {format(message.sentAt, "HH:mm", {
-                                  locale: uz,
-                                })}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
         </div>
       </div>
     </div>
