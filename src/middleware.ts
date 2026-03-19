@@ -8,6 +8,8 @@ const intlMiddleware = createIntlMiddleware(localeConfig);
 const publicPaths = [
   new RegExp(`^\\/(${localeConfig.locales.join("|")})\\/website(?:\\/.*)?$`),
   new RegExp(`^\\/website(?:\\/.*)?$`),
+  // Landing page — root path uchun auth shart emas
+  new RegExp(`^\\/(${localeConfig.locales.join("|")})\\/?$`),
 ];
 
 const authMiddleware = withAuth(

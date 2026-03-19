@@ -7,6 +7,7 @@ import {
   HomePageNavigation,
 } from "@/shared/config/navigations";
 import { useParams, usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 import LogoImage from "../../../public/botmather.png";
 import { SidebarInsetHeader } from "@/shared/components/layout/sidebar-inset-header";
@@ -18,10 +19,13 @@ type Props = {
 export default function LayoutController({ children }: Props) {
   const pathname = usePathname();
   const { id }: { id: string } = useParams();
+  const { status } = useSession();
 
   if (/^\/[a-z]{2}\/auth(\/|$)/.test(pathname)) return children;
   if (/^\/[a-z]{2}\/shared-collection(\/|$)/.test(pathname)) return children;
-  if (/^\/[a-z]{2}\/?$/.test(pathname)) return children;
+  // Landing page: root path uchun faqat unauthenticated holida sidebar yo'q
+  if (/^\/[a-z]{2}\/?$/.test(pathname) && status !== "authenticated")
+    return children;
 
   const isBotPage = /^\/([a-z]{2})\/bot\/([a-zA-Z0-9_-]+)(?:\/.*)?$/.test(
     pathname,
