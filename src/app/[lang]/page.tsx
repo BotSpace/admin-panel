@@ -28,10 +28,6 @@ import {
   Puzzle,
   Code2,
   Globe,
-  Lock,
-  Cpu,
-  Play,
-  CheckCircle,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/lib/utils";
@@ -412,7 +408,7 @@ function LandingPage() {
           <p className="text-white/35 text-sm">Uch qadam — tayyor bot</p>
         </div>
         <div className="flex flex-col gap-8">
-          {STEPS.map((step, i) => (
+          {STEPS.map((step) => (
             <div key={step.num} className="flex gap-5 items-start">
               <div
                 className="flex-shrink-0 w-16 h-16 rounded-2xl flex flex-col items-center justify-center border text-sm font-bold font-mono"
