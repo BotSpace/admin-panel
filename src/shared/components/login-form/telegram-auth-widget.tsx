@@ -9,10 +9,8 @@ import {
 import { signIn, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/shared/i18n/routing";
-
 import { toast } from "sonner";
-import { Button } from "@/shared/components/ui/button";
-import { Send, Loader2 } from "lucide-react";
+import { Loader2, Send, ExternalLink } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 export default function TelegramAuth() {
@@ -24,113 +22,111 @@ export default function TelegramAuth() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Codeni set qilish
   React.useEffect(() => {
     const code = searchParams.get("code");
-    if (code) {
-      setCode(code);
-    }
+    if (code) setCode(code);
   }, [searchParams]);
 
-  // Client-side'da mount bo'lganda
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Agar foydalanuvchi allaqachon kirgan bo'lsa, dashboardga redirect qilish
   React.useEffect(() => {
     if (mounted && status === "authenticated" && session?.user) {
-      router.push(`/`);
+      router.push("/");
     }
   }, [mounted, status, session, router]);
 
   const LoginUser = async () => {
     setIsLoading(true);
-
-    const response = await signIn("credentials", {
-      code: code,
-      redirect: false,
-    });
-
-    if (response?.ok) {
-    } else {
-      toast.error(t("error"));
-    }
-
+    const response = await signIn("credentials", { code, redirect: false });
+    if (!response?.ok) toast.error(t("error"));
     setIsLoading(false);
   };
 
   React.useEffect(() => {
-    if (code.length == 6) {
-      LoginUser();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- LoginUser is stable callback
+    if (code.length === 6) LoginUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code]);
 
-  // Hydration mismatch'ni oldini olish uchun dastlabki render'da loading ko'rsatish
-  if (!mounted || status === "loading") {
+  if (
+    !mounted ||
+    status === "loading" ||
+    (status === "authenticated" && session?.user)
+  ) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-background">
-        <div className="text-muted-foreground">Yuklanmoqda...</div>
-      </div>
-    );
-  }
-
-  // Agar foydalanuvchi allaqachon kirgan bo'lsa, loading ko'rsatish (redirect bo'ladi)
-  if (status === "authenticated" && session?.user) {
-    return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-background">
-        <div className="text-muted-foreground">Yuklanmoqda...</div>
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-5 w-5 animate-spin text-white/30" />
       </div>
     );
   }
 
   return (
-    <>
-      <div className="text-center">
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <b>
-          <a className="text-blue-500" href="https://t.me/botmother_authbot">
-            @botmother_authbot
-          </a>
-        </b>{" "}
-        telegram botiga kiring va kodeni oling.
+    <div className="flex flex-col gap-5">
+      {/* Instruction */}
+      <div
+        className="rounded-xl p-4 text-center"
+        style={{
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.07)",
+        }}
+      >
+        <p className="text-xs text-white/45 leading-relaxed mb-2">
+          {t("title")}
+        </p>
+        <a
+          href="https://t.me/botmother_authbot"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+          style={{ color: "#0da2e7" }}
+        >
+          @botmother_authbot
+          <ExternalLink className="h-3 w-3 opacity-70" />
+        </a>
+        <p className="text-xs text-white/30 mt-1.5">
+          telegram botiga kiring va kodni oling
+        </p>
       </div>
 
-      {/* Kod kiritish maydoni */}
-      <div className="flex justify-center">
-        <InputOTP
-          value={code}
-          onChange={setCode}
-          maxLength={6}
-          className="w-full"
-        >
+      {/* OTP input */}
+      <div className="flex flex-col items-center gap-3">
+        <p className="text-xs text-white/35">6 xonali kodni kiriting</p>
+        <InputOTP value={code} onChange={setCode} maxLength={6}>
           <InputOTPGroup>
-            <InputOTPSlot index={0} className="h-14 w-12 text-2xl" />
-            <InputOTPSlot index={1} className="h-14 w-12 text-2xl" />
-            <InputOTPSlot index={2} className="h-14 w-12 text-2xl" />
-            <InputOTPSlot index={3} className="h-14 w-12 text-2xl" />
-            <InputOTPSlot index={4} className="h-14 w-12 text-2xl" />
-            <InputOTPSlot index={5} className="h-14 w-12 text-2xl" />
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <InputOTPSlot
+                key={i}
+                index={i}
+                className="h-12 w-10 text-xl border-white/10 bg-white/[0.04] text-white focus:border-purple-500/50"
+              />
+            ))}
           </InputOTPGroup>
         </InputOTP>
       </div>
 
-      <div className="text-center text-xs text-muted-foreground">
-        {t("note")}
-      </div>
+      {/* Submit */}
+      <button
+        onClick={LoginUser}
+        disabled={isLoading || code.length < 6}
+        className="flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white transition-all disabled:opacity-40"
+        style={{
+          background: "linear-gradient(135deg, #a855f7, #7c3aed)",
+          boxShadow:
+            code.length === 6 ? "0 0 20px rgba(168,85,247,0.3)" : "none",
+        }}
+      >
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Send className="h-4 w-4" />
+        )}
+        {t("sendCode")}
+      </button>
 
-      {/* Kodeni yuborish tugmasi */}
-      <div className="flex gap-2">
-        <Button className="w-full" onClick={LoginUser} disabled={isLoading}>
-          {isLoading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Send className="mr-2 h-4 w-4" />
-          )}
-          {t("sendCode")}
-        </Button>
-      </div>
-    </>
+      <p className="text-center text-[11px] text-white/25 leading-relaxed">
+        {t("note")}
+      </p>
+    </div>
   );
 }
