@@ -21,6 +21,7 @@ export default function LayoutController({ children }: Props) {
 
   if (/^\/[a-z]{2}\/auth(\/|$)/.test(pathname)) return children;
   if (/^\/[a-z]{2}\/shared-collection(\/|$)/.test(pathname)) return children;
+  if (/^\/[a-z]{2}\/?$/.test(pathname)) return children;
 
   const isBotPage = /^\/([a-z]{2})\/bot\/([a-zA-Z0-9_-]+)(?:\/.*)?$/.test(
     pathname,
