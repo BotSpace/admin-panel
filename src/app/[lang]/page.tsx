@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useReactQueryAction } from "@/shared/services/react-query";
 import { APIListResponse } from "@/shared/types/http";
@@ -675,6 +675,7 @@ function Dashboard() {
   const [prompt, setPrompt] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const autoStarted = useRef(false);
 
   const { data, isLoading, refetch } = useReactQueryAction<
     APIListResponse<BotType[]>
@@ -718,6 +719,17 @@ function Dashboard() {
       if (!isCreating) handleCreate();
     }
   };
+
+  // Landing page'dan kelgan prompt — bir marta avtomatik loyiha yaratish
+  useEffect(() => {
+    if (autoStarted.current) return;
+    const saved = sessionStorage.getItem("ai_prompt");
+    if (!saved) return;
+    autoStarted.current = true;
+    sessionStorage.removeItem("ai_prompt");
+    handleCreate(saved);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex flex-col min-h-[calc(100svh-5rem)]">
