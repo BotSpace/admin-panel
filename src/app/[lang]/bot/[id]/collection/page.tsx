@@ -1,11 +1,11 @@
-import React from 'react'
+"use client";
+
+import CollectionMainPage from "@/features/collection/main-page";
+import { useParams } from "next/navigation";
 
 function Page() {
-    return (
-        <div>
-            <h1>Collection</h1>
-        </div>
-    )
+  const { id }: { id: string } = useParams();
+  return <CollectionMainPage project_id={id} />;
 }
 
-export default Page
+export default Page;

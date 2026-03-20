@@ -33,7 +33,7 @@ export default function LayoutController({ children }: Props) {
   const nav = isBotPage ? BotPageNavigation(id) : HomePageNavigation;
 
   return (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider defaultOpen={isBotPage}>
       <ReusableSidebar
         isBackActive={isBotPage}
         brand={{ name: "Botmother", version: "v1.0", image: LogoImage }}

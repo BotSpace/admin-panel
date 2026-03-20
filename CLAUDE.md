@@ -10,7 +10,7 @@ npm run build    # Production build
 npm run lint     # ESLint check
 ```
 
-Pre-commit hooks run automatically via Husky: ESLint + Prettier on staged `src/` files.
+Pre-commit hooks run automatically via Husky: ESLint + Prettier on staged `src/` files. Pre-push hook runs `npm run build` — fix build errors before pushing.
 
 ## Architecture
 
@@ -28,7 +28,7 @@ src/
 │   ├── monitoring/      # Global analytics
 │   ├── profile/         # User settings
 │   └── api/auth/        # NextAuth route handler
-├── features/            # Feature modules (auth, bot, templates, tickets, monitoring, home)
+├── features/            # Feature modules (auth, bot, templates, tickets, monitoring, home, billing)
 └── shared/
     ├── components/ui/   # shadcn/ui components
     ├── services/        # API layer
@@ -45,7 +45,7 @@ src/
 
 ### Key Patterns
 
-**Routing:** All routes live under `src/app/[lang]/`. Middleware (`src/middleware.ts`) enforces locale routing and authentication — public routes are `/website/*` only.
+**Routing:** All routes live under `src/app/[lang]/`. Middleware (`src/middleware.ts`) enforces locale routing and authentication — public routes are `/website/*` and the landing page (`/` and `/{lang}/`). Auth redirects to `/uz/auth`; sign-out redirects to `/uz/website`. Import alias `@/*` maps to `src/*`.
 
 **Authentication:** NextAuth.js with two providers: Credentials (Telegram OTP → returns access+refresh tokens) and Google OAuth. Sessions contain `access`/`refresh` tokens. Roles: `admin`, `user`, `moderator`.
 
@@ -53,7 +53,7 @@ src/
 - `instanceAuth` — auto-attaches Bearer token from session, handles 401 with token refresh retry
 - `instance` — unauthenticated requests
 
-Use `useReactQueryAction()` hook (`shared/services/react-query/use-react-query-action.ts`) for data fetching — it handles URL param substitution, query strings, debounce, retry with exponential backoff, and 5-min stale time.
+Use `useReactQueryAction()` hook (`shared/services/react-query/use-react-query-action.ts`) for data fetching — it handles URL param substitution (replaces `[paramName]` with current route params), query strings, debounce, retry with exponential backoff (max 30s, skips on 401/403/404), and 5-min stale time. `refetchOnWindowFocus` is disabled globally.
 
 **State:** React Query for server state; Zustand for client state (e.g., `useChatMessageStore` for message composition).
 
