@@ -698,9 +698,13 @@ function Dashboard() {
         .post<APIDetailCreateResponse<Project>>("/project/", { name: botName })
         .then(({ data }) => {
           toast.success("Bot yaratildi!", { id: toastId });
-          const userPrompt = (name ?? prompt).trim();
+          const userPrompt = prompt.trim();
+          let query = ""
+          if (userPrompt != "") {
+            query = `?prompt=${encodeURIComponent(userPrompt)}`
+          }
           const constructorPath = userPrompt
-            ? `/bot/${data.data.id}/constructor?prompt=${encodeURIComponent(userPrompt)}`
+            ? `/bot/${data.data.id}/constructor${query}`
             : `/bot/${data.data.id}/constructor`;
           router.push(constructorPath);
         })
