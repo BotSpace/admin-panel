@@ -26,6 +26,12 @@ export default function LayoutController({ children }: Props) {
   // Landing page: root path uchun faqat unauthenticated holida sidebar yo'q
   if (/^\/[a-z]{2}\/?$/.test(pathname) && status !== "authenticated")
     return children;
+  // Templates: unauth userlar uchun sidebar yo'q (public landing sahifa)
+  if (
+    /^\/[a-z]{2}\/templates(\/|$)/.test(pathname) &&
+    status !== "authenticated"
+  )
+    return children;
 
   const isBotPage = /^\/([a-z]{2})\/bot\/([a-zA-Z0-9_-]+)(?:\/.*)?$/.test(
     pathname,

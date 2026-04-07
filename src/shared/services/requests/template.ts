@@ -1,4 +1,4 @@
-import { instanceAuth } from "../instance";
+import { instance, instanceAuth } from "../instance";
 import { AxiosResponse } from "axios";
 import {
   Category,
@@ -41,8 +41,8 @@ function buildTemplateListUrl(params: TemplateListParams): string {
 export async function getTemplates(
   params: TemplateListParams = {}
 ): Promise<AxiosResponse<APIListResponse<TemplateListType[]>>> {
-  return await instanceAuth.get<APIListResponse<TemplateListType[]>>(
-    buildTemplateListUrl(params)
+  return await instance.get<APIListResponse<TemplateListType[]>>(
+    "/api/" + buildTemplateListUrl(params)
   );
 }
 
@@ -57,16 +57,16 @@ export async function getTemplateBySlug(
 export async function getTemplateCategories(): Promise<
   AxiosResponse<APIListResponse<Category[]>>
 > {
-  return await instanceAuth.get<APIListResponse<Category[]>>(
-    "template/category/?page_size=100"
+  return await instance.get<APIListResponse<Category[]>>(
+    "/api/" + "template/category/?page_size=100"
   );
 }
 
 export async function getTemplateFeatures(): Promise<
   AxiosResponse<APIListResponse<Feature[]>>
 > {
-  return await instanceAuth.get<APIListResponse<Feature[]>>(
-    "template/feature/?page_size=100"
+  return await instance.get<APIListResponse<Feature[]>>(
+    "/api/" + "template/feature/?page_size=100"
   );
 }
 

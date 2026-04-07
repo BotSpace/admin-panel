@@ -1,4 +1,4 @@
-import { instanceAuth } from "../instance";
+import { instance, instanceAuth } from "../instance";
 import { AxiosResponse } from "axios";
 import {
   TemplateSubmission,
@@ -157,7 +157,7 @@ export async function deleteTemplateSubmission(
 export async function getCategories(): Promise<
   AxiosResponse<APIListResponse<{ id: number; name: string }[]>>
 > {
-  return await instanceAuth.get<
+  return await instance.get<
     APIListResponse<{ id: number; name: string }[]>
   >("template/category/");
 }
@@ -168,7 +168,7 @@ export async function getCategories(): Promise<
 export async function getFeatures(): Promise<
   AxiosResponse<APIListResponse<{ id: number; name: string; value?: string }[]>>
 > {
-  return await instanceAuth.get<
+  return await instance.get<
     APIListResponse<{ id: number; name: string; value?: string }[]>
   >("template/feature/");
 }

@@ -1,48 +1,40 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card";
-import { Skeleton } from "@/shared/components/ui/skeleton";
-
 export const TemplateCardSkeleton = () => {
   return (
-    <Card className="flex h-full flex-col overflow-hidden bg-card py-0">
-      {/* Preview area */}
-      <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-lg border-b border-border/50 bg-muted">
-        <Skeleton className="absolute right-3 top-3 h-5 w-12 rounded-full" />
+    <div
+      className="flex flex-col rounded-2xl border border-white/[0.07] overflow-hidden animate-pulse"
+      style={{ background: "rgba(255,255,255,0.02)" }}
+    >
+      {/* Preview */}
+      <div
+        className="aspect-video border-b border-white/[0.06]"
+        style={{ background: "rgba(255,255,255,0.04)" }}
+      />
+
+      {/* Content */}
+      <div className="flex-1 p-4 space-y-3">
+        <div className="h-4 w-3/4 rounded-lg" style={{ background: "rgba(255,255,255,0.06)" }} />
+        <div className="flex gap-1.5">
+          <div className="h-5 w-16 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }} />
+          <div className="h-5 w-20 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }} />
+        </div>
+        <div className="space-y-2">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-3 rounded-md" style={{ background: "rgba(255,255,255,0.04)", width: `${70 - i * 10}%` }} />
+          ))}
+        </div>
       </div>
 
-      <CardHeader className="pb-4">
-        <CardTitle>
-          <Skeleton className="h-5 w-32 rounded-md" />
-        </CardTitle>
-        <CardDescription>
-          <Skeleton className="mt-2 h-4 w-full rounded-md" />
-          <Skeleton className="mt-1 h-4 w-3/4 rounded-md" />
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent className="flex-1 pb-4">
-        <ul className="space-y-2">
-          {[...Array(4)].map((_, idx) => (
-            <li key={idx} className="flex items-start gap-2">
-              <Skeleton className="h-3 w-24 rounded-md" />
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-
-      <CardFooter className="flex items-center justify-between border-t border-border/50 pt-4">
-        <div className="flex flex-col gap-1">
-          <Skeleton className="h-6 w-16 rounded-md" />
-          <Skeleton className="h-3 w-10 rounded-md" />
+      {/* Footer */}
+      <div className="px-4 pb-4 pt-3 space-y-3 border-t border-white/[0.05]">
+        <div className="flex items-center justify-between">
+          <div className="h-6 w-24 rounded-lg" style={{ background: "rgba(255,255,255,0.06)" }} />
+          <div className="h-3 w-16 rounded-md" style={{ background: "rgba(255,255,255,0.04)" }} />
         </div>
-        <Skeleton className="h-8 w-20 rounded-lg" />
-      </CardFooter>
-    </Card>
+        <div className="flex gap-2">
+          <div className="h-9 flex-1 rounded-xl" style={{ background: "rgba(255,255,255,0.04)" }} />
+          <div className="h-9 flex-1 rounded-xl" style={{ background: "rgba(255,255,255,0.04)" }} />
+        </div>
+      </div>
+    </div>
   );
 };

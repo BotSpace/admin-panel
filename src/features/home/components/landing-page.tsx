@@ -13,6 +13,9 @@ import {
   BarChart3,
   Globe,
   ArrowRight,
+  ShoppingBag,
+  Zap,
+  Star,
 } from "lucide-react";
 import { Link, useRouter } from "@/shared/i18n/routing";
 import { SUGGESTIONS } from "@/features/home/constants";
@@ -152,6 +155,12 @@ export function LandingPage() {
         </div>
         <div className="flex items-center gap-2">
           <Link
+            href="/templates"
+            className="text-sm text-white/50 hover:text-white transition-colors px-3 py-1.5"
+          >
+            Shablonlar
+          </Link>
+          <Link
             href="/auth"
             className="text-sm text-white/50 hover:text-white transition-colors px-3 py-1.5"
           >
@@ -275,6 +284,107 @@ export function LandingPage() {
                 {s.split(" uchun")[0].split(" va")[0]}
               </button>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Templates CTA ── */}
+      <section className="relative z-10 max-w-5xl mx-auto px-4 mb-20">
+        <div
+          className="relative rounded-2xl overflow-hidden border border-white/[0.07] p-8"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(13,162,231,0.06) 0%, rgba(168,85,247,0.06) 100%)",
+          }}
+        >
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            {/* Left: text */}
+            <div className="flex-1 text-center md:text-left">
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4 border"
+                style={{
+                  borderColor: "rgba(13,162,231,0.3)",
+                  background: "rgba(13,162,231,0.08)",
+                  color: "#38bdf8",
+                }}
+              >
+                <Zap className="h-3 w-3" />
+                Tez boshlang
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+                Tayyor shablondan{" "}
+                <span
+                  style={{
+                    background: "linear-gradient(135deg, #0da2e7, #a855f7)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  boshlang
+                </span>
+              </h2>
+              <p className="text-white/40 text-sm leading-relaxed mb-6 max-w-md">
+                Noldan boshlashning hoji yo'q. Tayyor shablonni tanlang —
+                bir necha daqiqada o'zingizning botingizga aylantiring.
+              </p>
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                <Link
+                  href="/templates"
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 hover:scale-105"
+                  style={{
+                    background: "linear-gradient(135deg, #0da2e7, #0284c7)",
+                    boxShadow: "0 0 24px rgba(13,162,231,0.25)",
+                  }}
+                >
+                  <ShoppingBag className="h-4 w-4" />
+                  Shablonlarni ko'rish
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: example template cards */}
+            <div className="flex-shrink-0 flex flex-col gap-2 w-full md:w-64">
+              {[
+                { icon: "🛒", name: "Do'kon boti", price: "Bepul", badge: null },
+                { icon: "📅", name: "Booking boti", price: "29 000 so'm", badge: "Mashhur" },
+                { icon: "🎓", name: "Ta'lim boti", price: "49 000 so'm", badge: null },
+              ].map((t) => (
+                <div
+                  key={t.name}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/[0.07] transition-colors hover:border-white/[0.14]"
+                  style={{ background: "rgba(255,255,255,0.02)" }}
+                >
+                  <span className="text-xl">{t.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-white/80 truncate">
+                        {t.name}
+                      </span>
+                      {t.badge && (
+                        <span
+                          className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                          style={{
+                            background: "rgba(168,85,247,0.15)",
+                            color: "#c084fc",
+                          }}
+                        >
+                          {t.badge}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-white/30">{t.price}</span>
+                  </div>
+                  <Star className="h-3.5 w-3.5 text-white/15 shrink-0" />
+                </div>
+              ))}
+              <Link
+                href="/templates"
+                className="text-center text-xs text-white/30 hover:text-white/55 transition-colors py-1"
+              >
+                Va yana ko'plab shablonlar →
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -522,6 +632,14 @@ export function LandingPage() {
                 Bepul boshlash
                 <ArrowRight className="h-4 w-4" />
               </Link>
+              <Link
+                href="/templates"
+                className="flex items-center gap-2 px-8 py-4 rounded-xl text-sm font-semibold text-white/70 hover:text-white transition-all border border-white/[0.1] hover:border-white/[0.2]"
+                style={{ background: "rgba(255,255,255,0.03)" }}
+              >
+                <ShoppingBag className="h-4 w-4" />
+                Shablonlarni ko'rish
+              </Link>
             </div>
           </div>
         </div>
@@ -540,12 +658,20 @@ export function LandingPage() {
             />
             <span className="text-sm text-white/30">BotMother © 2025</span>
           </div>
-          <Link
-            href="/auth"
-            className="text-sm text-white/25 hover:text-white/50 transition-colors"
-          >
-            Kirish
-          </Link>
+          <div className="flex items-center gap-5">
+            <Link
+              href="/templates"
+              className="text-sm text-white/25 hover:text-white/50 transition-colors"
+            >
+              Shablonlar
+            </Link>
+            <Link
+              href="/auth"
+              className="text-sm text-white/25 hover:text-white/50 transition-colors"
+            >
+              Kirish
+            </Link>
+          </div>
         </div>
       </footer>
     </div>

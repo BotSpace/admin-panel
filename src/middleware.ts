@@ -11,6 +11,9 @@ const publicPaths = [
   // Landing page — root va /<lang>/ uchun auth shart emas
   new RegExp(`^\\/(${localeConfig.locales.join("|")})\\/?$`),
   new RegExp(`^\\/?$`),
+  // Templates marketplace — unauth userlar ham ko'rishi mumkin
+  new RegExp(`^\\/(${localeConfig.locales.join("|")})\\/templates(?:\\/.*)?$`),
+  new RegExp(`^\\/templates(?:\\/.*)?$`),
 ];
 
 const authMiddleware = withAuth(
