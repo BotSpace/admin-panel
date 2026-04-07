@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mening Shablonlarim | Botmother",
-  description: "Sotib olgan shablonlaringizni ko'rib chiqing va boshqaring.",
+  title: "Shablonlar Bozori | Botmother",
+  description: "Tayyor shablonlarni sotib oling va loyihangizni tezda boshlang.",
 };
 
 export default function TemplatesLayout({
