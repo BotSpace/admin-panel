@@ -2,19 +2,13 @@
 
 import { Link } from "@/shared/i18n/routing";
 import { Button } from "@/shared/components/ui/button";
-import { usePathname } from "next/navigation";
-import { cn } from "@/shared/lib/utils";
 import { Bot } from "lucide-react";
-
-const NAV_LINKS = [{ href: "/website/templates", label: "Shablonlar" }];
 
 export default function WebsiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-
   return (
     <div className="min-h-screen bg-[#06060f] text-white">
       {/* Background glows */}
@@ -63,27 +57,6 @@ export default function WebsiteLayout({
             </div>
             <span className="font-bold text-sm tracking-tight">Botmother</span>
           </Link>
-
-          {/* Nav links */}
-          <nav className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map((link) => {
-              const active = pathname.includes(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href as any}
-                  className={cn(
-                    "px-3 py-1.5 rounded-md text-sm transition-colors",
-                    active
-                      ? "text-white bg-white/10"
-                      : "text-white/60 hover:text-white hover:bg-white/5",
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
 
           {/* Auth buttons */}
           <div className="flex items-center gap-2">
