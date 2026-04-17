@@ -45,7 +45,7 @@ export const HomePageNavigation: NavGroup[] = [
     title: "Qo'shimchalar",
     items: [
       {
-        title: "Shablonlarim",
+        title: "Shablonlar",
         href: "/templates",
         icon: Library,
         exact: true,
