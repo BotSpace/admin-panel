@@ -198,14 +198,6 @@ function LandingPage() {
           />
           <span className="text-base font-bold tracking-tight">BotMother</span>
         </div>
-        <div className="hidden md:flex items-center gap-1">
-          <Link
-            href="/website/templates"
-            className="text-sm text-white/50 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
-          >
-            Shablonlar
-          </Link>
-        </div>
         <div className="flex items-center gap-2">
           <Link
             href="/auth"
@@ -226,17 +218,32 @@ function LandingPage() {
       {/* ── Hero ── */}
       <section className="relative z-10 flex flex-col items-center text-center px-4 pt-20 pb-24 max-w-5xl mx-auto">
         {/* Badge */}
-        <div
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-8 border"
-          style={{
-            borderColor: "rgba(168,85,247,0.35)",
-            background: "rgba(168,85,247,0.1)",
-            color: "#c084fc",
-          }}
-        >
-          <Sparkles className="h-3 w-3" />
-          AI bilan Telegram bot yarating
-          <ChevronRight className="h-3 w-3 opacity-60" />
+        <div className="flex flex-col sm:flex-row items-center gap-3 mb-8">
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border"
+            style={{
+              borderColor: "rgba(168,85,247,0.35)",
+              background: "rgba(168,85,247,0.1)",
+              color: "#c084fc",
+            }}
+          >
+            <Sparkles className="h-3 w-3" />
+            AI bilan Telegram bot yarating
+            <ChevronRight className="h-3 w-3 opacity-60" />
+          </div>
+          <Link
+            href="/website/templates"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:opacity-80"
+            style={{
+              borderColor: "rgba(13,162,231,0.35)",
+              background: "rgba(13,162,231,0.08)",
+              color: "#38bdf8",
+            }}
+          >
+            <Layers className="h-3 w-3" />
+            Tayyor shablonlar
+            <ChevronRight className="h-3 w-3 opacity-60" />
+          </Link>
         </div>
 
         {/* Headline */}
