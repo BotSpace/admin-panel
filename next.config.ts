@@ -27,48 +27,9 @@ const constructor_rewrites = [
   },
 ];
 
-const website_rewrites = [
-  // Barcha website sahifalarini proksi qilish
-
-  // SEO Section
-  // sitemap.xml
-  {
-    source: "/website/sitemap.xml",
-    destination: `${env.SALES_URL}/website/sitemap.xml`,
-  },
-  // robots.txt
-  {
-    source: "/website/robots.txt",
-    destination: `${env.SALES_URL}/website/robots.txt`,
-  },
-  // Favicon
-  {
-    source: "/website/favicon.ico",
-    destination: `${env.SALES_URL}/website/favicon.ico`,
-  },
-
-  // Main website path
-  {
-    source: "/:lang/website/:path*",
-    destination: `${env.SALES_URL}/website/:lang/:path*`,
-  },
-
-  // media (static files, chunks, images)
-  {
-    source: "/website/_next/:path*",
-    destination: `${env.SALES_URL}/website/_next/:path*`,
-  },
-
-  // constructor (existing child)
-  {
-    source: "/share/:path*",
-    destination: `${env.CONSTRUCTOR_URL}/share/:path*`,
-  },
-];
-
 export default withNextIntl({
   async rewrites() {
-    return [...constructor_rewrites, ...website_rewrites];
+    return [...constructor_rewrites];
   },
   images: {
     domains: [
