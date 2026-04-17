@@ -10,12 +10,6 @@ const constructor_rewrites = [
     destination: `${env.CONSTRUCTOR_URL}/share/_next/image`,
   },
 
-  // Media files - sales (new child)
-  {
-    source: "/:lang/bot/:bot/sales/_next/image",
-    destination: `${env.SALES_URL}/share/_next/image`,
-  },
-
   // constructor (existing child)
   {
     source: "/share/:path*",
