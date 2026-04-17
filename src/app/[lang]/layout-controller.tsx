@@ -23,6 +23,7 @@ export default function LayoutController({ children }: Props) {
 
   if (/^\/[a-z]{2}\/auth(\/|$)/.test(pathname)) return children;
   if (/^\/[a-z]{2}\/shared-collection(\/|$)/.test(pathname)) return children;
+  if (/^\/[a-z]{2}\/website(\/|$)/.test(pathname)) return children;
   // Landing page: root path uchun faqat unauthenticated holida sidebar yo'q
   if (/^\/[a-z]{2}\/?$/.test(pathname) && status !== "authenticated")
     return children;
