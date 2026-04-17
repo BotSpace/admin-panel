@@ -198,6 +198,14 @@ function LandingPage() {
           />
           <span className="text-base font-bold tracking-tight">BotMother</span>
         </div>
+        <div className="hidden md:flex items-center gap-1">
+          <Link
+            href="/website/templates"
+            className="text-sm text-white/50 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
+          >
+            Shablonlar
+          </Link>
+        </div>
         <div className="flex items-center gap-2">
           <Link
             href="/auth"
@@ -612,6 +620,18 @@ function LandingPage() {
                 Bepul boshlash
                 <ArrowRight className="h-4 w-4" />
               </Link>
+              <Link
+                href="/website/templates"
+                className="flex items-center gap-2 px-8 py-4 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  color: "rgba(255,255,255,0.7)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <Layers className="h-4 w-4" />
+                Shablonlarni ko'rish
+              </Link>
             </div>
           </div>
         </div>
@@ -630,12 +650,20 @@ function LandingPage() {
             />
             <span className="text-sm text-white/30">BotMother © 2025</span>
           </div>
-          <Link
-            href="/auth"
-            className="text-sm text-white/25 hover:text-white/50 transition-colors"
-          >
-            Kirish
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/website/templates"
+              className="text-sm text-white/25 hover:text-white/50 transition-colors"
+            >
+              Shablonlar
+            </Link>
+            <Link
+              href="/auth"
+              className="text-sm text-white/25 hover:text-white/50 transition-colors"
+            >
+              Kirish
+            </Link>
+          </div>
         </div>
       </footer>
     </div>
@@ -699,9 +727,9 @@ function Dashboard() {
         .then(({ data }) => {
           toast.success("Bot yaratildi!", { id: toastId });
           const userPrompt = prompt.trim();
-          let query = ""
+          let query = "";
           if (userPrompt != "") {
-            query = `?prompt=${encodeURIComponent(userPrompt)}`
+            query = `?prompt=${encodeURIComponent(userPrompt)}`;
           }
           const constructorPath = userPrompt
             ? `/bot/${data.data.id}/constructor${query}`
