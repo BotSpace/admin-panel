@@ -12,6 +12,10 @@ export const instance = axios.create({
   baseURL: env.NEXT_PUBLIC_API,
 });
 
+export const instancePublic = axios.create({
+  baseURL: env.NEXT_PUBLIC_API + "/api/",
+});
+
 // interceptors
 instanceAuth.interceptors.request.use(
   async (config) => {
@@ -21,7 +25,7 @@ instanceAuth.interceptors.request.use(
 
     return config;
   },
-  (error: unknown) => Promise.reject(error)
+  (error: unknown) => Promise.reject(error),
 );
 
 instanceAuth.interceptors.response.use(
@@ -50,5 +54,5 @@ instanceAuth.interceptors.response.use(
     // if (env.NODE_ENV === "production") await signOut();
 
     return Promise.reject(error);
-  }
+  },
 );

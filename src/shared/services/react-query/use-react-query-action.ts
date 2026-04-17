@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { instanceAuth } from "../instance";
+import { instanceAuth, instancePublic } from "../instance";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 import { queryGenerator } from "@/shared/lib/query-generator";
 
@@ -15,6 +15,7 @@ export const useReactQueryAction = <T>({
   data,
   refetchInterval,
   refetchIntervalInBackground,
+  auth = true,
 }: {
   url: string;
   query?: Record<string, any>;
@@ -24,6 +25,7 @@ export const useReactQueryAction = <T>({
   data?: any;
   refetchInterval?: number | false;
   refetchIntervalInBackground?: boolean;
+  auth?: boolean;
 }) => {
   const params = useParams();
 
@@ -51,7 +53,8 @@ export const useReactQueryAction = <T>({
     queryKey: [finalUrl],
     queryFn: async () => {
       try {
-        const { data: responseData } = await instanceAuth.request({
+        const axiosInstance = auth ? instanceAuth : instancePublic;
+        const { data: responseData } = await axiosInstance.request({
           method,
           url: finalUrl,
           data,

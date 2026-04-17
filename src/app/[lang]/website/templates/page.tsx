@@ -35,10 +35,12 @@ export default function WebsiteTemplatesPage() {
     url: "/template/list/",
     query,
     debounceTime: search ? 400 : 0,
+    auth: false,
   });
 
   const { data: categoriesData } = useReactQueryAction<any>({
     url: "/template/category/",
+    auth: false,
   });
 
   const templates = data?.data?.results ?? [];

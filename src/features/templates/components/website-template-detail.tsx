@@ -51,6 +51,7 @@ export function WebsiteTemplateDetail({ template, onClose }: Props) {
   >({
     url: `/template/list/${template?.slug}/`,
     enabled: !!template?.slug,
+    auth: false,
   });
 
   const templateDetail = detail?.data;
