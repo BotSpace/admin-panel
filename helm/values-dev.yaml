@@ -1,0 +1,16 @@
+image:
+  tag: "2.1.17-dev"
+
+service:
+  nodePort: 31001
+
+configMaps:
+  config:
+    DEBUG: "true"
+    NEXT_PUBLIC_API: "https://api-dev.botspace.uz/api"
+    CONSTRUCTOR_URL: "http://constructor:3000"
+    SALES_URL: "http://market:3000"
+    NEXTAUTH_SECRET: "change-me"
+    NEXTAUTH_URL: "https://dev.botspace.uz"
+    PORT: "3000"
+    NODE_ENV: "development"
