@@ -23,7 +23,7 @@ configMaps:
     NEXT_PUBLIC_API: "https://api.botspace.uz/api"
     CONSTRUCTOR_URL: "http://constructor:3000"
     SALES_URL: "http://market:3000"
-    NEXTAUTH_SECRET: "change-me"
+    NEXTAUTH_SECRET: "botmother-admin-secret-key-2026-production"
     NEXTAUTH_URL: "https://botspace.uz"
     PORT: "3000"
     NODE_ENV: "production"
